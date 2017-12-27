@@ -1,4 +1,4 @@
-# Warden Blog
+# Warden's Life
 
 > 只为记录生活，以及工作心得 。
 > 
@@ -22,7 +22,7 @@
 # Friends
 friends: [
     {
-        title: "Warden Blog",
+        title: "Warden's Life",
         href: "https://taizhengfs.github.io/"
     },
     {
@@ -38,6 +38,5 @@ friends: [
         href: "https://500px.com/13567115174"
     }
 ]
-disqus_username: taizhengfs
 
 

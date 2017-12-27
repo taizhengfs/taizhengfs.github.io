@@ -1,29 +1,23 @@
 # Site settings
-title: Warden Blog
-SEOTitle: 方盛的博客 | Warden Blog
+title: Warden's Life
+SEOTitle: 方盛的博客 | Warden's Life
 header-img: img/post-bg-rwd-2.png
 email: warden0214.kath@gmail.com
 description: "当你觉得为时已晚，恰恰是最早的时候."
-keyword: "WARDEN, WARDEN Blog, 方盛的博客, gongfangsheng, 龚方盛, 前端, google, web"
+keyword: "WARDEN, Warden's Life, 方盛的博客, gongfangsheng, 龚方盛, 前端, google, web"
 url: "http://taizhengfs.github.io"          # your host, for absolute URL
 baseurl: ""      # for example, '/blog' if your blog hosted on 'host/blog'
 # github_repo: "https://github.com/qiubaiying/qiubaiying.github.io.git" # you code repository
 
 # Sidebar settings
 sidebar: true                           # whether or not using Sidebar.
-sidebar-about-description: "Wherever you go, no matter what the weather, always bring your own sunshine.!"
+sidebar-about-description: "One of the greatest discoveries a person makes is to find they can do what they were afraid they couldn't do..!"
 sidebar-avatar: /img/about-BY-gentle.jpg      # use absolute URL, seeing it's used in both `/` and `/about/`
 
 
 
 # SNS settings
 RSS: false
-# weibo_username:     qiubaiying
-# zhihu_username:     qiubaiying
-# github_username:    qiubaiying
-# facebook_username:  baiying.qiu.7
-# jianshu_username:   e71990ada2fd
-#twitter_username:   qiubaiying
 
 
 
