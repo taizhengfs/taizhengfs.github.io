@@ -62,32 +62,32 @@ layout: default
 
                 <hr style="visibility: hidden;">
 
-                {% if site.duoshuo_share && site.duoshuo_username %}
-                <!-- 多说 Share start -->
-                <div class="ds-share"
-                    style="text-align: right"
-                    data-thread-key="{{page.id}}"
-                    data-title="{{page.title}}"
-                    data-url="{{site.url}}{{site.baseurl}}{{page.url}}"
-                    data-images="{{ site.url }}{{site.baseurl}}/{% if page.header-img %}{{ page.header-img }}{% else %}{{ site.header-img }}{% endif %}"
-                    data-content="{{ content | strip_html | truncate:80 }} | {{ site.SEOTitle }} " >
-                    <div class="ds-share-inline">
-                      <style> 
-                        .ds-share-icons-16 {display:none;} 
-                      </style>
-                      <ul class="ds-share-icons-16">
-                        <li data-toggle="ds-share-icons-more"><a class="ds-more" href="#">分享到：</a></li>
-                        <li><a class="ds-wechat flat" href="javascript:void(0);" data-service="wechat">微信</a></li>
-                        <li><a class="ds-weibo flat" href="javascript:void(0);" data-service="weibo">微博</a></li>
-                        <li><a class="ds-douban flat" href="javascript:void(0);" data-service="douban">豆瓣</a></li>
-                      </ul>
-                      <div class="ds-share-icons-more">
-                      </div>
-                    </div>
-                <hr>
-                </div>
-                <!-- 多说 Share end-->
-                {% endif %}
+                <!--{% if site.duoshuo_share && site.duoshuo_username %}-->
+                <!--&lt;!&ndash; 多说 Share start &ndash;&gt;-->
+                <!--<div class="ds-share"-->
+                    <!--style="text-align: right"-->
+                    <!--data-thread-key="{{page.id}}"-->
+                    <!--data-title="{{page.title}}"-->
+                    <!--data-url="{{site.url}}{{site.baseurl}}{{page.url}}"-->
+                    <!--data-images="{{ site.url }}{{site.baseurl}}/{% if page.header-img %}{{ page.header-img }}{% else %}{{ site.header-img }}{% endif %}"-->
+                    <!--data-content="{{ content | strip_html | truncate:80 }} | {{ site.SEOTitle }} " >-->
+                    <!--<div class="ds-share-inline">-->
+                      <!--<style> -->
+                        <!--.ds-share-icons-16 {display:none;} -->
+                      <!--</style>-->
+                      <!--<ul class="ds-share-icons-16">-->
+                        <!--<li data-toggle="ds-share-icons-more"><a class="ds-more" href="#">分享到：</a></li>-->
+                        <!--<li><a class="ds-wechat flat" href="javascript:void(0);" data-service="wechat">微信</a></li>-->
+                        <!--<li><a class="ds-weibo flat" href="javascript:void(0);" data-service="weibo">微博</a></li>-->
+                        <!--<li><a class="ds-douban flat" href="javascript:void(0);" data-service="douban">豆瓣</a></li>-->
+                      <!--</ul>-->
+                      <!--<div class="ds-share-icons-more">-->
+                      <!--</div>-->
+                    <!--</div>-->
+                <!--<hr>-->
+                <!--</div>-->
+                <!--&lt;!&ndash; 多说 Share end&ndash;&gt;-->
+                <!--{% endif %}-->
 
 
                 <ul class="pager">
@@ -109,26 +109,44 @@ layout: default
                     {% endif %}
                 </ul>
 
+                <!-- 来必力City版安装代码 -->
+                <div id="lv-container" data-id="city" data-uid="MTAyMC8zMjcxOC85Mjc5">
+                    <script type="text/javascript">
+                        (function(d, s) {
+                            var j, e = d.getElementsByTagName(s)[0];
 
-                {% if site.duoshuo_username %}
-                <!-- 多说评论框 start -->
-                <div class="comment">
-                    <div class="ds-thread"
-                        data-thread-key="{{page.id}}"
-                        data-title="{{page.title}}"
-                        data-url="{{site.url}}{{site.baseurl}}{{page.url}}" >
-                    </div>
-                </div>
-                <!-- 多说评论框 end -->
-                {% endif %}
+                            if (typeof LivereTower === 'function') { return; }
 
-                {% if site.disqus_username %}
-                <!-- disqus 评论框 start -->
-                <div class="comment">
-                    <div id="disqus_thread" class="disqus-thread"></div>
+                            j = d.createElement(s);
+                            j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+                            j.async = true;
+
+                            e.parentNode.insertBefore(j, e);
+                        })(document, 'script');
+                    </script>
+                    <noscript> 为正常使用来必力评论功能请激活JavaScript</noscript>
                 </div>
-                <!-- disqus 评论框 end -->
-                {% endif %}
+                <!-- City版安装代码已完成 -->
+
+                <!--{% if site.duoshuo_username %}-->
+                <!--&lt;!&ndash; 多说评论框 start &ndash;&gt;-->
+                <!--<div class="comment">-->
+                    <!--<div class="ds-thread"-->
+                        <!--data-thread-key="{{page.id}}"-->
+                        <!--data-title="{{page.title}}"-->
+                        <!--data-url="{{site.url}}{{site.baseurl}}{{page.url}}" >-->
+                    <!--</div>-->
+                <!--</div>-->
+                <!--&lt;!&ndash; 多说评论框 end &ndash;&gt;-->
+                <!--{% endif %}-->
+
+                <!--{% if site.disqus_username %}-->
+                <!--&lt;!&ndash; disqus 评论框 start &ndash;&gt;-->
+                <!--<div class="comment">-->
+                    <!--<div id="disqus_thread" class="disqus-thread"></div>-->
+                <!--</div>-->
+                <!--&lt;!&ndash; disqus 评论框 end &ndash;&gt;-->
+                <!--{% endif %}-->
 
             </div>  
 
