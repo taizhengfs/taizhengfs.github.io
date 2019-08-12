@@ -101,3 +101,5 @@ friends: [
         href: "https://500px.com/13567115174"
     }
 ]
+
+theme: jekyll-theme-cayman
