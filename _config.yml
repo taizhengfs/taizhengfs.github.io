@@ -4,7 +4,7 @@ SEOTitle: 方盛的博客 | Warden's Life
 header-img: img/post-bg-rwd-2.png
 email: warden0214.kath@gmail.com
 description: "当你觉得为时已晚，恰恰是最早的时候."
-keyword: "WARDEN, Warden's Life, 方盛的博客, gongfangsheng, 龚方盛, 前端, google, web"
+keyword: "龚方盛, 太真洞, 太真乡, WARDEN, gongfangsheng, 前端, google, web, 生态保护"
 url: "http://taizhengfs.github.io"          # your host, for absolute URL
 baseurl: ""      # for example, '/blog' if your blog hosted on 'host/blog'
 # github_repo: "https://github.com/qiubaiying/qiubaiying.github.io.git" # you code repository
@@ -93,9 +93,6 @@ friends: [
     },{
         title: "Weibo",
         href: "https://weibo.com/warden00"
-    },{
-        title: "Ergeng",
-        href: "http://www.ergengtv.com/"
     },{
         title: "500PX",
         href: "https://500px.com/13567115174"
