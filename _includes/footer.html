@@ -99,14 +99,20 @@
 </footer>
 
 <!-- jQuery -->
-<script src="{{ "/js/jquery.min.js " | prepend: site.baseurl }}"></script>
-<script src="{{ "/js/highlight.min.js " | prepend: site.baseurl }}"></script>
+
+<link rel="stylesheet" href="{{ site.baseurl }}/js/jquery.min.js">
+<!-- <script src="{{ "/js/jquery.min.js " | prepend: site.baseurl }}"></script> -->
+
+<link rel="stylesheet" href="{{ site.baseurl }}/js/highlight.min.js">
+<!-- <script src="{{ "/js/highlight.min.js " | prepend: site.baseurl }}"></script> -->
 
 <!-- Bootstrap Core JavaScript -->
-<script src="{{ "/js/bootstrap.min.js " | prepend: site.baseurl }}"></script>
+<!-- <script src="{{ "/js/bootstrap.min.js " | prepend: site.baseurl }}"></script> -->
+<link rel="stylesheet" href="{{ site.baseurl }}/js/bootstrap.min.js">
 
 <!-- Custom Theme JavaScript -->
-<script src="{{ "/js/hux-blog.min.js " | prepend: site.baseurl }}"></script>
+<!-- <script src="{{ "/js/hux-blog.min.js " | prepend: site.baseurl }}"></script> -->
+<link rel="stylesheet" href="{{ site.baseurl }}/js/hux-blog.min.js">
 
 <!-- Service Worker -->
 {% if site.service-worker %}
