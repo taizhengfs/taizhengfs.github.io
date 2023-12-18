@@ -110,7 +110,7 @@ layout: default
                 </ul>
 
                 <!-- 来必力City版安装代码 -->
-                <div id="lv-container" data-id="city" data-uid="MTAyMC8zMjcxOC85Mjc5">
+                <!-- <div id="lv-container" data-id="city" data-uid="MTAyMC8zMjcxOC85Mjc5">
                     <script type="text/javascript">
                         (function(d, s) {
                             var j, e = d.getElementsByTagName(s)[0];
@@ -125,7 +125,7 @@ layout: default
                         })(document, 'script');
                     </script>
                     <noscript> 为正常使用来必力评论功能请激活JavaScript</noscript>
-                </div>
+                </div> -->
                 <!-- City版安装代码已完成 -->
 
                 <!--{% if site.duoshuo_username %}-->
@@ -208,7 +208,7 @@ layout: default
 
 {% if site.duoshuo_username %}
 <!-- 多说公共JS代码 start (一个网页只需插入一次) -->
-<script type="text/javascript">
+<!-- <script type="text/javascript">
     // dynamic User by Hux
     var _user = '{{site.duoshuo_username}}';
 
@@ -222,14 +222,14 @@ layout: default
         (document.getElementsByTagName('head')[0]
          || document.getElementsByTagName('body')[0]).appendChild(ds);
     })();
-</script>
+</script> -->
 <!-- 多说公共JS代码 end -->
 {% endif %}
 
 
 {% if site.disqus_username %}
 <!-- disqus 公共JS代码 start (一个网页只需插入一次) -->
-<script type="text/javascript">
+<!-- <script type="text/javascript">
     /* * * CONFIGURATION VARIABLES * * */
     var disqus_shortname = "{{site.disqus_username}}";
     var disqus_identifier = "{{page.id}}";
@@ -240,7 +240,7 @@ layout: default
         dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
         (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
     })();
-</script>
+</script> -->
 <!-- disqus 公共JS代码 end -->
 {% endif %}
 
