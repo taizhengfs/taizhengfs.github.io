@@ -1089,3 +1089,8 @@ img::-moz-selection {
 .page-fullscreen footer .copyright a:hover {
   color: #ddd;
 }
+.icon_ba {
+  width: 36px;
+  height: 40px;
+  display: inline-block;
+}
