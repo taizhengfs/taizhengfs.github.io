@@ -4,7 +4,7 @@ title:      Cocos creator前端人士学习笔记（二）               # 标�
 subtitle:   前端开发者如何进行进行Cocos开发 #副标题
 date:       2022-11-02              # 时间
 author:     Warden_Gfs                      # 作者
-header-img: img/head-bg-view-20.png    #这篇文章标题背景图片
+header-img: img/head-bg-view-17.png    #这篇文章标题背景图片
 catalog: true                       # 是否归档
 tags:                               #标签
     - 技术研讨
