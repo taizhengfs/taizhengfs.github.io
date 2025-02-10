@@ -8,7 +8,8 @@ header-img: img/head-bg-view-17.png    #这篇文章标题背景图片
 catalog: true                       # 是否归档
 tags:                               #标签
     - 技术研讨
-    - 双向绑定
+    - Cocos creator
+    - 游戏开发
 ---
 
 > 世界上最顶级的学习方法之一，费曼学习法，通过向别人解说某一件事，来确定自己是否真正弄懂这件事。
