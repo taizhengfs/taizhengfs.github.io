@@ -1,0 +1,524 @@
+---
+layout: null
+permalink: /rich/
+---
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>核心—卫星一页计划器（四周换仓清单）</title>
+<style>
+  :root{
+    --bg:#0f172a;          /* slate-900 */
+    --panel:#111827;       /* gray-900 */
+    --muted:#9ca3af;       /* gray-400 */
+    --text:#e5e7eb;        /* gray-200 */
+    --accent:#22c55e;      /* green-500 */
+    --accent2:#60a5fa;     /* blue-400 */
+    --warn:#f59e0b;        /* amber-500 */
+    --danger:#ef4444;      /* red-500 */
+    --ok:#10b981;          /* emerald-500 */
+    --card:#0b1220;
+    --border:#1f2937;      /* gray-800 */
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font:16px/1.45 system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,"Apple Color Emoji","Segoe UI Emoji"}
+  a{color:var(--accent2);text-decoration:none}
+  .wrap{max-width:1100px;margin:0 auto;padding:16px}
+  header{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin-bottom:12px}
+  h1{font-size:20px;margin:0}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  @media (max-width:800px){.grid{grid-template-columns:1fr}}
+  .card{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:14px}
+  h2{font-size:16px;margin:0 0 8px}
+  h3{font-size:15px;margin:12px 0 6px;color:#d1d5db}
+  label{display:block;font-size:13px;color:var(--muted);margin-bottom:6px}
+  input,select,button,textarea{
+    width:100%;background:#0b1220;border:1px solid var(--border);color:var(--text);
+    padding:10px;border-radius:10px;font-size:14px;outline:none
+  }
+  input[type="checkbox"]{width:auto}
+  .row{display:flex;gap:10px;align-items:center}
+  .row > *{flex:1}
+  .pill{display:inline-flex;align-items:center;gap:6px;background:#0b1220;border:1px solid var(--border);padding:6px 10px;border-radius:999px;font-size:12px;color:var(--muted)}
+  .pill b{color:var(--text)}
+  .muted{color:var(--muted);font-size:13px}
+  .warn{color:var(--warn)}
+  .danger{color:var(--danger)}
+  .ok{color:var(--ok)}
+  .small{font-size:12px}
+  .kpi{display:flex;gap:10px;flex-wrap:wrap}
+  .kpi .card{flex:1;min-width:220px}
+  .kpi .val{font-weight:700;font-size:18px}
+  .table{width:100%;border-collapse:collapse}
+  .table th,.table td{border-bottom:1px dashed var(--border);padding:8px 6px;text-align:right}
+  .table th:first-child,.table td:first-child{text-align:left}
+  .table tfoot td{font-weight:700}
+  .btn{background:linear-gradient(135deg,var(--accent),#16a34a);border:none}
+  .btn2{background:linear-gradient(135deg,var(--accent2),#3b82f6);border:none}
+  .btn:active,.btn2:active{transform:translateY(1px)}
+  .right{float:right}
+  .flex{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+  .code{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;background:#0b1220;border:1px solid var(--border);padding:8px;border-radius:8px}
+  .week{border-left:4px solid var(--border);padding-left:10px;margin:8px 0}
+  .tag{padding:2px 6px;border-radius:6px;border:1px solid var(--border);font-size:12px;color:var(--muted)}
+  .tag.ok{color:#22c55e;border-color:#14532d}
+  .tag.warn{color:#f59e0b;border-color:#785a0b}
+  footer{margin:18px 0 8px}
+  .sticky{position:sticky;top:8px;z-index:5}
+  .note{background:#0b1220;border:1px solid var(--border);padding:10px;border-radius:10px}
+  .split{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  @media(max-width:600px){.split{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>核心—卫星一页计划器（四周换仓清单）</h1>
+    <div class="flex">
+      <button class="btn2" id="saveBtn" title="保存到本机浏览器">保存</button>
+      <button class="btn" onclick="window.print()">打印 / 存PDF</button>
+    </div>
+  </header>
+
+  <div class="kpi">
+    <div class="card">
+      <h2>总览与纪律</h2>
+      <div class="note small">
+        目标：用规则代替情绪，在4周内完成"核心—卫星"切换。
+        <ul>
+          <li>卫星基准：AAPL/GOOG/TSLA 各4%（带宽±0.5%），本月不加仓卫星，只按比例减至目标。</li>
+          <li>核心ETF合计≈88%：VTI 30.8%、VXUS 22.0%、SMH 13.2%、QQQ 8.8%、AVUV 8.8%、VWO 4.4%。</li>
+          <li>买入节奏：35% / 30% / 20% / 15%（每周三执行）。</li>
+          <li>极端市况开关（可选）：若当周选择"减半"，本周ETF买入金额减半，剩余顺延。</li>
+        </ul>
+      </div>
+    </div>
+    <div class="card">
+      <h2>快速参数</h2>
+      <div class="row">
+        <div>
+          <label>账户总额（USD）</label>
+          <input type="number" id="total" inputmode="decimal" step="0.01" value="43823" />
+        </div>
+        <div>
+          <label>开始周（三）日期</label>
+          <input type="date" id="startDate" />
+        </div>
+      </div>
+      <div class="row">
+        <div>
+          <label>卫星上限（单只，%）</label>
+          <input type="number" id="satCap" step="0.1" value="6" />
+        </div>
+        <div>
+          <label>卫星带宽（±%，仅用于修正）</label>
+          <input type="number" id="band" step="0.1" value="0.5" />
+        </div>
+      </div>
+      <div class="row">
+        <div>
+          <label>本月不加仓卫星</label>
+          <select id="noAddSat">
+            <option value="yes" selected>是（仅卖超额）</option>
+            <option value="no">否（低于目标可补至目标）</option>
+          </select>
+        </div>
+        <div>
+          <label>买入节奏（%）W1/W2/W3/W4</label>
+          <input id="schedule" value="35,30,20,15" />
+        </div>
+      </div>
+      <div class="pill">数据会自动暂存到你的浏览器（本地，仅你可见）。</div>
+    </div>
+  </div>
+
+  <div class="grid">
+    <div class="card">
+      <h2>权重设置</h2>
+      <div class="split">
+        <div>
+          <h3>核心ETF（合计建议 88%）</h3>
+          <div id="coreWeights"></div>
+        </div>
+        <div>
+          <h3>卫星仓（合计建议 12%）</h3>
+          <div id="satWeights"></div>
+        </div>
+      </div>
+      <div class="row" style="margin-top:8px">
+        <div class="pill" id="sumCore">核心合计：—</div>
+        <div class="pill" id="sumSat">卫星合计：—</div>
+        <div class="pill" id="sumAll">总计：—</div>
+      </div>
+      <div class="muted small" id="sumWarn"></div>
+    </div>
+
+    <div class="card">
+      <h2>我的当前持仓（美元）</h2>
+      <div class="split">
+        <div>
+          <h3>卫星三只</h3>
+          <div id="satCurrent"></div>
+        </div>
+        <div>
+          <h3>非卫星个股（建议逐步出清）</h3>
+          <div class="small muted">如你持有其中，请填入当前市值；为空则忽略。</div>
+          <div id="others"></div>
+        </div>
+      </div>
+      <div class="muted small" style="margin-top:6px">
+        说明：本页会按默认顺序分三周出清非卫星个股（W1：COIN/PYPL/QCOM 全部；W2：AMZN 全部，COST/BRK.B 50%；W3：COST/BRK.B 余量；W4：无）。
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>目标金额与本周金额</h2>
+    <div class="row">
+      <div class="pill"><b>卫星目标（每只）</b> <span id="satTarget">$—</span></div>
+      <div class="pill"><b>ETF目标合计</b> <span id="coreTarget">$—</span></div>
+      <div class="pill"><b>四周节奏</b> <span id="schedText">—</span></div>
+    </div>
+
+    <h3>ETF 目标金额</h3>
+    <table class="table" id="etfTargets"></table>
+
+    <h3>每周极端市况开关（可选）</h3>
+    <div class="row">
+      <label class="row"><input type="checkbox" id="halfW1" /> 第1周减半</label>
+      <label class="row"><input type="checkbox" id="halfW2" /> 第2周减半</label>
+      <label class="row"><input type="checkbox" id="halfW3" /> 第3周减半</label>
+      <label class="row"><input type="checkbox" id="halfW4" /> 第4周减半</label>
+    </div>
+  </div>
+
+  <div class="grid">
+    <div class="card sticky">
+      <h2>四周换仓清单（自动计算）</h2>
+      <div id="weeks"></div>
+    </div>
+
+    <div class="card">
+      <h2>执行说明与公式</h2>
+      <div class="note small">
+        下单节奏：每周三（美东）11:30–12:00，限价单：买=中间价×1.002，卖=中间价×0.998。
+        <ul>
+          <li>卫星目标(美元) = 账户总额 × 卫星单只目标%</li>
+          <li>ETF目标(美元) = 账户总额 × 对应ETF目标%</li>
+          <li>本周ETF买入(美元) = ETF目标 × 本周比例（35/30/20/15，若勾"减半"则×0.5）</li>
+          <li>本周卫星卖出(美元) = max(当前市值 − 卫星目标, 0) × 本周比例；若选择允许加仓且低于目标，则买至目标×本周比例</li>
+        </ul>
+      </div>
+      <div class="note small">
+        风险与纪律：
+        <ul>
+          <li>核心ETF不设止损；每周只按计划下单，48小时不看盘不改单。</li>
+          <li>卫星上限：单只不超过 <span id="capEcho">6</span>%；平时目标各4%（带宽±<span id="bandEcho">0.5</span>%）。</li>
+          <li>若TSLA触发你自定义的"风险开关"（如连收3周在200日线下或30日回撤>25%），可把其暂时压到2%，恢复条件满足后再回4%。</li>
+        </ul>
+      </div>
+      <div class="note small">
+        免责声明：本工具仅供教育信息，不构成投资建议或收益保证。交易有风险，执行前请自行确认。
+      </div>
+      <div class="code small">
+        默认权重（可改）：VTI 30.8%，VXUS 22.0%，SMH 13.2%，QQQ 8.8%，AVUV 8.8%，VWO 4.4%；卫星：AAPL/GOOG/TSLA 各4%。
+      </div>
+    </div>
+  </div>
+
+  <footer class="muted small">
+    © 2025 个人使用工具。本地计算，数据不出浏览器。
+  </footer>
+</div>
+
+<script>
+const $ = sel => document.querySelector(sel);
+const $$ = sel => Array.from(document.querySelectorAll(sel));
+
+const CORE = ["VTI","VXUS","SMH","QQQ","AVUV","VWO"];
+const SATS = ["AAPL","GOOG","TSLA"];
+const OTHERS = ["COIN","PYPL","QCOM","AMZN","COST","BRK.B"];
+
+function numberInput(id, value){
+  const el = document.createElement('input');
+  el.type = 'number'; el.step = '0.01'; el.inputMode = 'decimal';
+  el.value = value; el.dataset.id = id;
+  el.addEventListener('input', () => { compute(); saveState(); });
+  return el;
+}
+function labeledRow(name, id, value, suffix='%'){
+  const w = document.createElement('div');
+  const lab = document.createElement('label'); lab.textContent = name;
+  const row = document.createElement('div'); row.className='row';
+  const inp = numberInput(id, value);
+  const suf = document.createElement('div'); suf.className='pill'; suf.textContent = suffix;
+  row.appendChild(inp); row.appendChild(suf);
+  w.appendChild(lab); w.appendChild(row);
+  return w;
+}
+function money(x){ if(isNaN(x)||!isFinite(x)) return '$—'; return x<0 ? '-$'+Math.abs(x).toLocaleString() : '$'+x.toLocaleString(); }
+function pct(x){ if(isNaN(x)) return '—%'; return (Math.round(x*1000)/10)+'%'; }
+
+function initWeights(){
+  const coreBox = $("#coreWeights");
+  const satBox = $("#satWeights");
+  coreBox.innerHTML=''; satBox.innerHTML='';
+  const defaultsCore = load('coreW') || {VTI:30.8,VXUS:22.0,SMH:13.2,QQQ:8.8,AVUV:8.8,VWO:4.4};
+  const defaultsSat = load('satW') || {AAPL:4,GOOG:4,TSLA:4};
+  CORE.forEach(k=>{
+    const w = labeledRow(k, 'core-'+k, defaultsCore[k] ?? 0);
+    coreBox.appendChild(w);
+  });
+  SATS.forEach(k=>{
+    const w = labeledRow(k, 'sat-'+k, defaultsSat[k] ?? 0);
+    satBox.appendChild(w);
+  });
+}
+function initCurrent(){
+  const satC = $("#satCurrent"); satC.innerHTML='';
+  SATS.forEach(k=>{
+    const w = document.createElement('div');
+    w.appendChild(labeledRow(k+' 当前市值 (USD)', 'cur-'+k, load('cur-'+k) ?? ''));
+    satC.appendChild(w);
+  });
+  const oth = $("#others"); oth.innerHTML='';
+  OTHERS.forEach(k=>{
+    const w = document.createElement('div');
+    w.appendChild(labeledRow(k+' 当前市值 (USD)', 'cur-'+k, load('cur-'+k) ?? '','USD'));
+    oth.appendChild(w);
+  });
+}
+
+function schedule(){ 
+  const parts = $("#schedule").value.split(',').map(s=>parseFloat(s.trim())).filter(x=>!isNaN(x));
+  if(parts.length!==4){ return [35,30,20,15]; }
+  const sum = parts.reduce((a,b)=>a+b,0);
+  return parts.map(x=> x/sum*100);
+}
+
+function compute(){
+  const T = parseFloat($("#total").value)||0;
+  const band = parseFloat($("#band").value)||0.5;
+  const satCap = parseFloat($("#satCap").value)||6;
+  $("#bandEcho").textContent = band;
+  $("#capEcho").textContent = satCap;
+
+  // Read weights
+  const coreW = {}; let coreSum=0;
+  CORE.forEach(k=>{
+    const v = parseFloat($(`[data-id="core-${k}"]`).value)||0;
+    coreW[k]=v; coreSum+=v;
+  });
+  const satW = {}; let satSum=0;
+  SATS.forEach(k=>{
+    const v = parseFloat($(`[data-id="sat-${k}"]`).value)||0;
+    satW[k]=v; satSum+=v;
+  });
+  const allSum = coreSum+satSum;
+
+  $("#sumCore").innerHTML = `核心合计：<b>${pct(coreSum/100)}</b>`;
+  $("#sumSat").innerHTML = `卫星合计：<b>${pct(satSum/100)}</b>`;
+  $("#sumAll").innerHTML = `总计：<b>${pct(allSum/100)}</b>`;
+  $("#sumWarn").innerHTML = (Math.abs(allSum-100)>0.01)
+    ? `<span class="warn">提示：</span> 当前权重和为 ${pct(allSum/100)}，建议校准至 100%。`
+    : `<span class="ok">OK：</span> 权重和为 100%。`;
+
+  // Targets
+  const satTarget = T * ( (satW[SATS[0]]||0)/100 ); // 单只卫星目标（默认各4%）
+  $("#satTarget").textContent = money(satTarget);
+  const etfTargetTbl = $("#etfTargets"); etfTargetTbl.innerHTML='';
+  let coreTargetSum = 0;
+  const thead = document.createElement('thead');
+  thead.innerHTML = `<tr><th>标的</th><th>目标权重</th><th>目标金额</th></tr>`;
+  etfTargetTbl.appendChild(thead);
+  const tbody = document.createElement('tbody');
+  CORE.forEach(k=>{
+    const w = (coreW[k]||0)/100;
+    const amt = T*w; coreTargetSum+=amt;
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td>${k}</td><td>${pct(w)}</td><td>${money(Math.round(amt))}</td>`;
+    tbody.appendChild(tr);
+  });
+  etfTargetTbl.appendChild(tbody);
+  const tfoot = document.createElement('tfoot');
+  tfoot.innerHTML = `<tr><td>合计</td><td>${pct(coreSum/100)}</td><td>${money(Math.round(coreTargetSum))}</td></tr>`;
+  etfTargetTbl.appendChild(tfoot);
+  $("#coreTarget").textContent = money(Math.round(coreTargetSum));
+
+  // Schedule text
+  const sched = schedule();
+  $("#schedText").textContent = sched.map(x=>Math.round(x)).join('% / ')+'%';
+
+  // Weekly half toggles factor
+  const halves = [$("#halfW1").checked?0.5:1,$("#halfW2").checked?0.5:1,$("#halfW3").checked?0.5:1,$("#halfW4").checked?0.5:1];
+
+  // Current holdings (satellites)
+  const cur = {};
+  SATS.concat(OTHERS).forEach(k=>{
+    cur[k] = parseFloat($(`[data-id="cur-${k}"]`)?.value)||0;
+  });
+
+  // Weekly plan build
+  const weeksBox = $("#weeks"); weeksBox.innerHTML='';
+  const noAddSat = $("#noAddSat").value === 'yes';
+  const weekTitles = ['第1周','第2周','第3周','第4周'];
+  const start = $("#startDate").value ? new Date($("#startDate").value) : null;
+
+  // Other stocks sell plan
+  const otherPlan = [
+    { // W1
+      sellAll: ["COIN","PYPL","QCOM"],
+      sellHalf: []
+    },
+    { // W2
+      sellAll: ["AMZN"],
+      sellHalf: ["COST","BRK.B"]
+    },
+    { // W3
+      sellAll: [],
+      sellHalf: ["COST","BRK.B"] // remaining half
+    },
+    { // W4
+      sellAll: [],
+      sellHalf: []
+    }
+  ];
+
+  // Build per week sections
+  for(let w=0; w<4; w++){
+    const card = document.createElement('div'); card.className='week';
+    const dateStr = (start ? (()=>{ const d=new Date(start); d.setDate(d.getDate()+7*w); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; })() : '（可在上方设定日期）');
+    const schedPct = schedule()[w]/100 * halves[w];
+
+    card.innerHTML = `<h3>${weekTitles[w]}（${dateStr}） <span class="tag">节奏：${Math.round(schedule()[w]*(halves[w]))}%</span></h3>`;
+
+    // SELL satellites (excess only; or also buy if allowed)
+    const satOps = [];
+    SATS.forEach(sym=>{
+      const target = satTarget; // 单只卫星目标
+      const current = cur[sym]||0;
+      const diff = current - target;
+      if(diff>0){
+        // sell excess * sched
+        const amt = Math.max(0, diff) * schedPct;
+        if(amt>1) satOps.push({sym, action:'卖出（按超额的比例）', amt});
+      }else if(!noAddSat && diff<0){
+        // allowed to add up to target proportionally
+        const amt = Math.min(target - current, target) * schedPct;
+        if(amt>1) satOps.push({sym, action:'买入（补至目标的比例）', amt});
+      }
+    });
+
+    // SELL others
+    const otherOps = [];
+    otherPlan[w].sellAll.forEach(sym=>{
+      if(cur[sym]>0) otherOps.push({sym, action:'卖出全部', amt:cur[sym]});
+    });
+    otherPlan[w].sellHalf.forEach(sym=>{
+      if(cur[sym]>0){
+        // week2 sell half; week3 sell remaining half
+        const amt = (w===1 ? cur[sym]*0.5 : cur[sym]*0.5); // both show half each week
+        otherOps.push({sym, action:'卖出约一半', amt});
+      }
+    });
+
+    // BUY ETFs proportional
+    const buyEtf = CORE.map(sym=>{
+      const wgt = (parseFloat($(`[data-id="core-${sym}"]`).value)||0)/100;
+      const targetAmt = T * wgt;
+      const buyAmt = targetAmt * schedPct;
+      return {sym, amt: buyAmt};
+    });
+
+    // Render lists
+    const sellList = [];
+    if(satOps.length>0){
+      sellList.push(`<div class="small muted">卫星（按超额×本周比例）：</div>`);
+      sellList.push(`<ul>${satOps.map(o=>`<li>${o.sym}：${o.action} <b>${money(Math.round(o.amt))}</b></li>`).join('')}</ul>`);
+    }
+    if(otherOps.length>0){
+      sellList.push(`<div class="small muted">非卫星个股（规则化出清）：</div>`);
+      sellList.push(`<ul>${otherOps.map(o=>`<li>${o.sym}：${o.action} <b>${money(Math.round(o.amt))}</b></li>`).join('')}</ul>`);
+    }
+    if(sellList.length===0) sellList.push(`<div class="muted small">本周无必须卖出项（如需调整请在上方输入当前市值）。</div>`);
+
+    const buyList = `<ul>${buyEtf.map(o=>`<li>买入 ${o.sym}：<b>${money(Math.round(o.amt))}</b></li>`).join('')}</ul>`;
+
+    // Checklist
+    const checks = `
+      <div class="small">
+        <ul>
+          <li>仅在固定时段下单：周三 11:30–12:00（可在券商选择限价 / VWAP）。</li>
+          <li>单日净成交不宜超过总资产35%；若超出，可把部分顺延至周五收盘前。</li>
+          <li>下单后48小时不看盘、不改单。</li>
+        </ul>
+      </div>`;
+
+    card.innerHTML += `
+      <div><b>先卖</b>${sellList.join('')}</div>
+      <div style="margin-top:8px"><b>再买（ETF）</b>${buyList}</div>
+      <div style="margin-top:8px">${checks}</div>
+    `;
+    weeksBox.appendChild(card);
+  }
+
+  saveWeights(coreW, satW);
+}
+function saveWeights(coreW, satW){
+  save('coreW', coreW);
+  save('satW', satW);
+}
+function saveState(){
+  save('total', $("#total").value);
+  save('startDate', $("#startDate").value);
+  save('band', $("#band").value);
+  save('satCap', $("#satCap").value);
+  save('noAddSat', $("#noAddSat").value);
+  save('schedule', $("#schedule").value);
+  // currents
+  SATS.concat(OTHERS).forEach(k=>{
+    const el = $(`[data-id="cur-${k}"]`);
+    if(el) save('cur-'+k, el.value);
+  });
+  // halves
+  save('halfW1',$("#halfW1").checked);
+  save('halfW2',$("#halfW2").checked);
+  save('halfW3',$("#halfW3").checked);
+  save('halfW4',$("#halfW4").checked);
+}
+function save(key, val){ try{ localStorage.setItem('plan/'+key, JSON.stringify(val)); }catch(e){} }
+function load(key){ try{ const v = localStorage.getItem('plan/'+key); return v? JSON.parse(v): null; }catch(e){ return null; } }
+
+function restore(){
+  $("#total").value = load('total') ?? 43823;
+  $("#startDate").value = load('startDate') ?? '';
+  $("#band").value = load('band') ?? 0.5;
+  $("#satCap").value = load('satCap') ?? 6;
+  $("#noAddSat").value = load('noAddSat') ?? 'yes';
+  $("#schedule").value = load('schedule') ?? '35,30,20,15';
+  // halves
+  $("#halfW1").checked = load('halfW1') ?? false;
+  $("#halfW2").checked = load('halfW2') ?? false;
+  $("#halfW3").checked = load('halfW3') ?? false;
+  $("#halfW4").checked = load('halfW4') ?? false;
+}
+
+function bindGlobal(){
+  ['total','startDate','band','satCap','noAddSat','schedule','halfW1','halfW2','halfW3','halfW4'].forEach(id=>{
+    $( '#'+id ).addEventListener( ['halfW1','halfW2','halfW3','halfW4'].includes(id) ? 'change':'input', ()=>{ compute(); saveState(); });
+  });
+  $("#saveBtn").addEventListener('click', ()=>{ saveState(); compute(); const btn=$("#saveBtn"); btn.textContent='已保存'; setTimeout(()=>btn.textContent='保存',1200); });
+}
+
+window.addEventListener('DOMContentLoaded', ()=>{
+  restore();
+  initWeights();
+  initCurrent();
+  bindGlobal();
+  compute();
+});
+</script>
+</body>
+</html>
