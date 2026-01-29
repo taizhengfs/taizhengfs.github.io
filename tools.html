@@ -1,0 +1,68 @@
+---
+layout: page
+title: "Tools"
+description: "实用工具集合"
+header-img: "img/post-bg-rwd-2.png"
+---
+
+<style>
+.tool-card {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 16px;
+    padding: 24px;
+    color: white;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    text-decoration: none;
+    display: block;
+    margin-bottom: 20px;
+}
+.tool-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+    color: white;
+    text-decoration: none;
+}
+.tool-card h3 {
+    margin: 0 0 8px 0;
+    font-size: 20px;
+    font-weight: 600;
+}
+.tool-card p {
+    margin: 0;
+    opacity: 0.9;
+    font-size: 14px;
+}
+.tool-card .icon {
+    font-size: 32px;
+    margin-bottom: 12px;
+}
+.tool-card.time-record {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+}
+.tool-card.coming-soon {
+    background: linear-gradient(135deg, #64748b 0%, #475569 100%);
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+</style>
+
+<div class="post-container">
+    <p>这里收集了一些我开发的实用小工具 🛠️</p>
+    
+    <div class="row" style="margin-top: 30px;">
+        <div class="col-md-6">
+            <a href="/time-record/" class="tool-card time-record">
+                <div class="icon">📅</div>
+                <h3>保姆工时记录</h3>
+                <p>2026年保姆工时与费用追踪工具，支持云端同步</p>
+            </a>
+        </div>
+        <div class="col-md-6">
+            <div class="tool-card coming-soon">
+                <div class="icon">🚀</div>
+                <h3>更多工具</h3>
+                <p>敬请期待...</p>
+            </div>
+        </div>
+    </div>
+</div>
