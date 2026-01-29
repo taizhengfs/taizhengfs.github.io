@@ -191,7 +191,10 @@
     <script>
         // --- 配置与状态 ---
         const YEAR = 2026;
-        const API_BASE = 'https://json.extendsclass.com/bin';
+        
+        // 存储服务配置 - 部署 Cloudflare Worker 后替换为你自己的地址
+        // 例如: https://nanny-tracker.your-name.workers.dev
+        const API_BASE = localStorage.getItem('nanny_api') || 'https://json-store.warden-worker.workers.dev';
         
         let binId = null;
         let pricePerSession = 150;
@@ -255,11 +258,11 @@
             }
         };
 
-        // --- 云存储 API (extendsclass.com) ---
+        // --- 云存储 API ---
         
         // 创建新的存储
         const createBin = async () => {
-            const response = await fetch(API_BASE, {
+            const response = await fetch(`${API_BASE}/data`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -272,16 +275,18 @@
             if (!response.ok) throw new Error('创建存储失败');
             
             const data = await response.json();
-            // 返回的 uri 格式: https://json.extendsclass.com/bin/XXXX
-            return data.uri.split('/').pop();
+            return data.id;
         };
         
         // 读取数据
         const loadFromCloud = async () => {
             if (!binId) return null;
             
-            const response = await fetch(`${API_BASE}/${binId}`);
-            if (!response.ok) throw new Error('读取数据失败');
+            const response = await fetch(`${API_BASE}/data/${binId}`);
+            if (!response.ok) {
+                if (response.status === 404) return null;
+                throw new Error('读取数据失败');
+            }
             
             return await response.json();
         };
@@ -294,7 +299,7 @@
             updateSyncStatus('pending', '同步中...');
             
             try {
-                const response = await fetch(`${API_BASE}/${binId}`, {
+                const response = await fetch(`${API_BASE}/data/${binId}`, {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
@@ -310,6 +315,8 @@
             } catch (error) {
                 console.error('同步失败:', error);
                 updateSyncStatus('error', '同步失败');
+                // 保存到本地作为备份
+                localStorage.setItem('nanny_local_data', JSON.stringify({ workData, pricePerSession }));
             } finally {
                 isSyncing = false;
             }
@@ -348,6 +355,21 @@
 
         // 初始化
         async function init() {
+            // 先尝试从本地恢复数据（保证页面快速显示）
+            const localData = localStorage.getItem('nanny_local_data');
+            if (localData) {
+                try {
+                    const parsed = JSON.parse(localData);
+                    workData = parsed.workData || {};
+                    pricePerSession = parsed.pricePerSession || 150;
+                    document.getElementById('price-input').value = pricePerSession;
+                } catch(e) {}
+            }
+            
+            // 先渲染页面
+            renderCalendar();
+            updateStats();
+            
             try {
                 // 1. 从 URL 获取 bin ID，或从 localStorage 恢复
                 const urlParams = new URLSearchParams(window.location.search);
@@ -374,33 +396,25 @@
                 
                 // 3. 从云端加载数据
                 const cloudData = await loadFromCloud();
-                if (cloudData) {
-                    workData = cloudData.workData || {};
+                if (cloudData && cloudData.workData) {
+                    workData = cloudData.workData;
                     if (cloudData.pricePerSession) {
                         pricePerSession = cloudData.pricePerSession;
                         document.getElementById('price-input').value = pricePerSession;
                     }
+                    // 同步到本地
+                    localStorage.setItem('nanny_local_data', JSON.stringify({ workData, pricePerSession }));
                 }
                 
-                // 4. 渲染界面
+                // 4. 重新渲染
                 renderCalendar();
                 updateStats();
                 updateSyncStatus('success', '已同步');
                 
             } catch (error) {
                 console.error('初始化失败:', error);
-                updateSyncStatus('error', '连接失败');
-                showToast('⚠️ 云端连接失败，使用本地模式');
-                
-                // 降级为本地模式
-                const localData = localStorage.getItem('nanny_local_data');
-                if (localData) {
-                    const parsed = JSON.parse(localData);
-                    workData = parsed.workData || {};
-                    pricePerSession = parsed.pricePerSession || 150;
-                }
-                renderCalendar();
-                updateStats();
+                updateSyncStatus('error', '离线模式');
+                showToast('⚠️ 网络异常，已切换到离线模式');
             }
         }
 
