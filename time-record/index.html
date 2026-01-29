@@ -192,9 +192,8 @@
         // --- 配置与状态 ---
         const YEAR = 2026;
         
-        // 存储服务配置 - 部署 Cloudflare Worker 后替换为你自己的地址
-        // 例如: https://nanny-tracker.your-name.workers.dev
-        const API_BASE = localStorage.getItem('nanny_api') || 'https://json-store.warden-worker.workers.dev';
+        // Cloudflare Worker 存储服务
+        const API_BASE = 'https://warden.13567115174.workers.dev';
         
         let binId = null;
         let pricePerSession = 150;
