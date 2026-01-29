@@ -191,9 +191,9 @@
     <script>
         // --- 配置与状态 ---
         const YEAR = 2026;
-        const API_BASE = 'https://jsonblob.com/api/jsonBlob';
+        const API_BASE = 'https://json.extendsclass.com/bin';
         
-        let blobId = null;
+        let binId = null;
         let pricePerSession = 150;
         let workData = {}; // 内存中的数据缓存 { "2026-01-01-am": true }
         let syncTimeout = null;
@@ -229,7 +229,7 @@
         
         // 显示分享弹窗
         window.showShareModal = () => {
-            const shareLink = `${window.location.origin}${window.location.pathname}?id=${blobId}`;
+            const shareLink = `${window.location.origin}${window.location.pathname}?id=${binId}`;
             document.getElementById('share-link').value = shareLink;
             document.getElementById('share-modal').classList.add('show');
         };
@@ -255,10 +255,10 @@
             }
         };
 
-        // --- 云存储 API ---
+        // --- 云存储 API (extendsclass.com) ---
         
         // 创建新的存储
-        const createBlob = async () => {
+        const createBin = async () => {
             const response = await fetch(API_BASE, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -271,16 +271,16 @@
             
             if (!response.ok) throw new Error('创建存储失败');
             
-            // 从 Location header 获取 blob ID
-            const location = response.headers.get('Location');
-            return location.split('/').pop();
+            const data = await response.json();
+            // 返回的 uri 格式: https://json.extendsclass.com/bin/XXXX
+            return data.uri.split('/').pop();
         };
         
         // 读取数据
         const loadFromCloud = async () => {
-            if (!blobId) return null;
+            if (!binId) return null;
             
-            const response = await fetch(`${API_BASE}/${blobId}`);
+            const response = await fetch(`${API_BASE}/${binId}`);
             if (!response.ok) throw new Error('读取数据失败');
             
             return await response.json();
@@ -288,13 +288,13 @@
         
         // 保存数据
         const saveToCloud = async () => {
-            if (!blobId || isSyncing) return;
+            if (!binId || isSyncing) return;
             
             isSyncing = true;
             updateSyncStatus('pending', '同步中...');
             
             try {
-                const response = await fetch(`${API_BASE}/${blobId}`, {
+                const response = await fetch(`${API_BASE}/${binId}`, {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
@@ -349,25 +349,25 @@
         // 初始化
         async function init() {
             try {
-                // 1. 从 URL 获取 blob ID，或从 localStorage 恢复
+                // 1. 从 URL 获取 bin ID，或从 localStorage 恢复
                 const urlParams = new URLSearchParams(window.location.search);
-                blobId = urlParams.get('id') || localStorage.getItem('nanny_blob_id');
+                binId = urlParams.get('id') || localStorage.getItem('nanny_bin_id');
                 
                 // 2. 如果没有 ID，创建新的存储
-                if (!blobId) {
+                if (!binId) {
                     updateSyncStatus('pending', '初始化...');
-                    blobId = await createBlob();
-                    localStorage.setItem('nanny_blob_id', blobId);
+                    binId = await createBin();
+                    localStorage.setItem('nanny_bin_id', binId);
                     // 更新 URL（不刷新页面）
-                    const newUrl = `${window.location.pathname}?id=${blobId}`;
+                    const newUrl = `${window.location.pathname}?id=${binId}`;
                     window.history.replaceState({}, '', newUrl);
                     showToast('✅ 已创建云存储，点击分享按钮邀请家人');
                 } else {
                     // 保存到 localStorage（方便下次访问）
-                    localStorage.setItem('nanny_blob_id', blobId);
+                    localStorage.setItem('nanny_bin_id', binId);
                     // 确保 URL 包含 ID
                     if (!urlParams.get('id')) {
-                        const newUrl = `${window.location.pathname}?id=${blobId}`;
+                        const newUrl = `${window.location.pathname}?id=${binId}`;
                         window.history.replaceState({}, '', newUrl);
                     }
                 }
