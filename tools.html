@@ -6,63 +6,216 @@ header-img: "img/post-bg-rwd-2.png"
 ---
 
 <style>
+.tools-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 24px;
+    margin-top: 32px;
+}
+
 .tool-card {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    border-radius: 16px;
-    padding: 24px;
-    color: white;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    position: relative;
+    background: #fff;
+    border-radius: 20px;
+    padding: 32px;
     text-decoration: none;
     display: block;
-    margin-bottom: 20px;
+    overflow: hidden;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.06);
+    border: 1px solid rgba(0,0,0,0.04);
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
+
+.tool-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #10b981, #34d399);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.3s ease;
+}
+
 .tool-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 20px 40px rgba(0,0,0,0.15);
-    color: white;
+    transform: translateY(-8px);
+    box-shadow: 0 20px 40px rgba(16, 185, 129, 0.15);
     text-decoration: none;
 }
+
+.tool-card:hover::before {
+    transform: scaleX(1);
+}
+
+.tool-card .icon-wrapper {
+    width: 64px;
+    height: 64px;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+    background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+}
+
+.tool-card .icon-wrapper svg {
+    width: 32px;
+    height: 32px;
+    color: #059669;
+}
+
 .tool-card h3 {
-    margin: 0 0 8px 0;
+    margin: 0 0 12px 0;
     font-size: 20px;
-    font-weight: 600;
+    font-weight: 700;
+    color: #1e293b;
+    letter-spacing: -0.02em;
 }
+
+.tool-card:hover h3 {
+    color: #059669;
+}
+
 .tool-card p {
-    margin: 0;
-    opacity: 0.9;
+    margin: 0 0 16px 0;
+    color: #64748b;
     font-size: 14px;
+    line-height: 1.6;
 }
-.tool-card .icon {
-    font-size: 32px;
-    margin-bottom: 12px;
+
+.tool-card .tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    background: #f0fdf4;
+    color: #15803d;
+    font-size: 12px;
+    font-weight: 500;
+    border-radius: 20px;
 }
-.tool-card.time-record {
-    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+
+.tool-card .arrow {
+    position: absolute;
+    right: 24px;
+    bottom: 24px;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: #f8fafc;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
 }
+
+.tool-card .arrow svg {
+    width: 18px;
+    height: 18px;
+    color: #94a3b8;
+    transition: all 0.3s ease;
+}
+
+.tool-card:hover .arrow {
+    background: #10b981;
+}
+
+.tool-card:hover .arrow svg {
+    color: #fff;
+    transform: translateX(2px);
+}
+
+/* Coming Soon 样式 */
 .tool-card.coming-soon {
-    background: linear-gradient(135deg, #64748b 0%, #475569 100%);
-    opacity: 0.6;
-    cursor: not-allowed;
+    opacity: 0.65;
+    cursor: default;
+}
+
+.tool-card.coming-soon::before {
+    background: linear-gradient(90deg, #94a3b8, #cbd5e1);
+}
+
+.tool-card.coming-soon .icon-wrapper {
+    background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+}
+
+.tool-card.coming-soon .icon-wrapper svg {
+    color: #94a3b8;
+}
+
+.tool-card.coming-soon .tag {
+    background: #f1f5f9;
+    color: #64748b;
+}
+
+.tool-card.coming-soon:hover {
+    transform: none;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.06);
+}
+
+.tool-card.coming-soon:hover::before {
+    transform: scaleX(0);
+}
+
+.tool-card.coming-soon:hover h3 {
+    color: #1e293b;
+}
+
+.intro-text {
+    font-size: 16px;
+    color: #64748b;
+    line-height: 1.8;
+}
+
+@media (max-width: 640px) {
+    .tools-grid {
+        grid-template-columns: 1fr;
+    }
 }
 </style>
 
 <div class="post-container">
-    <p>这里收集了一些我开发的实用小工具 🛠️</p>
+    <p class="intro-text">这里收集了一些我开发的实用小工具，希望能提升你的效率 ✨</p>
     
-    <div class="row" style="margin-top: 30px;">
-        <div class="col-md-6">
-            <a href="/time-record/" class="tool-card time-record">
-                <div class="icon">📅</div>
-                <h3>保姆工时记录</h3>
-                <p>2026年保姆工时与费用追踪工具，支持云端同步</p>
-            </a>
-        </div>
-        <div class="col-md-6">
-            <div class="tool-card coming-soon">
-                <div class="icon">🚀</div>
-                <h3>更多工具</h3>
-                <p>敬请期待...</p>
+    <div class="tools-grid">
+        <a href="/time-record/" class="tool-card">
+            <div class="icon-wrapper">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                    <line x1="16" y1="2" x2="16" y2="6"></line>
+                    <line x1="8" y1="2" x2="8" y2="6"></line>
+                    <line x1="3" y1="10" x2="21" y2="10"></line>
+                    <path d="M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01M16 18h.01"/>
+                </svg>
             </div>
+            <h3>保姆工时记录</h3>
+            <p>2026年保姆工时与费用追踪工具，轻松记录每天上下午工作情况，自动汇总费用</p>
+            <span class="tag">
+                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                支持云端同步
+            </span>
+            <div class="arrow">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                    <polyline points="12 5 19 12 12 19"></polyline>
+                </svg>
+            </div>
+        </a>
+        
+        <div class="tool-card coming-soon">
+            <div class="icon-wrapper">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                </svg>
+            </div>
+            <h3>更多工具</h3>
+            <p>正在开发中，敬请期待更多实用工具的上线...</p>
+            <span class="tag">
+                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                Coming Soon
+            </span>
         </div>
     </div>
 </div>
