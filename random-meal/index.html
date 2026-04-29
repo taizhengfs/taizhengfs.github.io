@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>今天吃什么 · 家常菜随机菜单</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+    background: linear-gradient(135deg, #ffeaa7 0%, #fab1a0 50%, #ff7675 100%);
+    min-height: 100vh;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .container {
+    width: 100%;
+    max-width: 720px;
+    background: #fff;
+    border-radius: 24px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+    overflow: hidden;
+  }
+  .header {
+    background: linear-gradient(135deg, #e17055 0%, #d63031 100%);
+    color: #fff;
+    padding: 30px 24px;
+    text-align: center;
+  }
+  .header h1 {
+    font-size: 28px;
+    margin-bottom: 6px;
+    letter-spacing: 2px;
+  }
+  .header p {
+    font-size: 14px;
+    opacity: 0.9;
+  }
+  .date-line {
+    margin-top: 10px;
+    font-size: 13px;
+    opacity: 0.85;
+  }
+  .menu {
+    padding: 24px;
+  }
+  .menu-title {
+    font-size: 16px;
+    color: #636e72;
+    margin-bottom: 16px;
+    text-align: center;
+    letter-spacing: 1px;
+  }
+  .dish-list {
+    display: grid;
+    gap: 14px;
+  }
+  .dish {
+    display: flex;
+    align-items: center;
+    padding: 16px 18px;
+    border-radius: 16px;
+    background: #f8f9fa;
+    border-left: 5px solid;
+    transition: transform 0.2s, box-shadow 0.2s;
+    animation: fadeIn 0.5s ease both;
+  }
+  .dish:hover {
+    transform: translateX(4px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  }
+  .dish.meat { border-color: #e17055; background: #fff5f0; }
+  .dish.veg { border-color: #00b894; background: #f0fdf6; }
+  .dish.soup { border-color: #0984e3; background: #f0f8ff; }
+  .dish.staple { border-color: #fdcb6e; background: #fffbf0; }
+
+  .dish-icon {
+    font-size: 32px;
+    margin-right: 14px;
+  }
+  .dish-info { flex: 1; }
+  .dish-name {
+    font-size: 18px;
+    font-weight: 600;
+    color: #2d3436;
+    margin-bottom: 2px;
+  }
+  .dish-tag {
+    font-size: 12px;
+    color: #636e72;
+  }
+  .reroll-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 18px;
+    color: #b2bec3;
+    padding: 6px 10px;
+    border-radius: 8px;
+    transition: all 0.2s;
+  }
+  .reroll-btn:hover {
+    background: rgba(0,0,0,0.06);
+    color: #d63031;
+    transform: rotate(180deg);
+  }
+
+  .actions {
+    padding: 0 24px 24px;
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .btn {
+    flex: 1;
+    min-width: 140px;
+    padding: 14px;
+    border: none;
+    border-radius: 12px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    letter-spacing: 1px;
+  }
+  .btn-primary {
+    background: linear-gradient(135deg, #e17055, #d63031);
+    color: #fff;
+    box-shadow: 0 4px 14px rgba(214,48,49,0.3);
+  }
+  .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(214,48,49,0.4);
+  }
+  .btn-secondary {
+    background: #dfe6e9;
+    color: #2d3436;
+  }
+  .btn-secondary:hover { background: #b2bec3; }
+
+  .stats {
+    padding: 0 24px 20px;
+    text-align: center;
+    font-size: 13px;
+    color: #636e72;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @media (max-width: 480px) {
+    .header h1 { font-size: 22px; }
+    .dish-name { font-size: 16px; }
+    .dish-icon { font-size: 26px; }
+    .btn { min-width: 100%; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <h1>🍚 今天吃什么</h1>
+    <p>家常菜随机菜单 · 荤素搭配</p>
+    <div class="date-line" id="dateLine"></div>
+  </div>
+
+  <div class="menu">
+    <div class="menu-title">— 今日推荐 —</div>
+    <div class="dish-list" id="dishList"></div>
+  </div>
+
+  <div class="stats" id="stats"></div>
+
+  <div class="actions">
+    <button class="btn btn-secondary" onclick="copyMenu()">📋 复制菜单</button>
+    <button class="btn btn-primary" onclick="generateMenu()">🎲 换一套</button>
+  </div>
+</div>
+
+<script>
+  // 菜品库
+  const dishes = {
+    meat: [
+      "红烧肉", "糖醋里脊", "宫保鸡丁", "鱼香肉丝", "回锅肉",
+      "可乐鸡翅", "番茄牛腩", "土豆烧排骨", "辣子鸡", "黑椒牛柳",
+      "梅菜扣肉", "京酱肉丝", "孜然羊肉", "蒜香排骨", "豉油鸡",
+      "干煸四季豆肉末", "青椒肉丝", "尖椒鸡块", "啤酒鸭", "白切鸡",
+      "红烧鸡翅", "卤牛肉", "酱爆鸡丁", "水煮肉片", "椒盐排骨",
+      "豆角焖面", "肉末茄子", "咖喱鸡块", "葱爆羊肉", "糖醋排骨",
+      "红烧带鱼", "清蒸鲈鱼", "干烧黄鱼", "酸菜鱼", "麻辣香锅",
+      "蒜蓉粉丝虾", "白灼虾", "番茄炒蛋", "韭菜炒蛋", "虾仁滑蛋"
+    ],
+    veg: [
+      "清炒时蔬", "蒜蓉西兰花", "凉拌黄瓜", "醋溜土豆丝", "干煸豆角",
+      "麻婆豆腐", "家常豆腐", "蚝油生菜", "手撕包菜", "炝拍黄瓜",
+      "凉拌木耳", "拍黄瓜", "酸辣土豆丝", "地三鲜", "炒青菜",
+      "凉拌豆腐皮", "上汤娃娃菜", "蒜蓉空心菜", "口蘑炒西兰花", "素炒豆芽",
+      "皮蛋豆腐", "凉拌海带丝", "腐乳空心菜", "小葱拌豆腐", "炝炒包菜",
+      "茄子煲", "鱼香茄子", "丝瓜炒蛋", "西红柿炒土豆", "凉拌秋葵",
+      "蒜蓉茼蒿", "清炒苦瓜", "凉拌莴笋丝", "雪菜炒毛豆", "家常烧茄子"
+    ],
+    soup: [
+      "西红柿鸡蛋汤", "紫菜蛋花汤", "冬瓜排骨汤", "玉米排骨汤", "酸辣汤",
+      "丝瓜蛋汤", "海带豆腐汤", "萝卜牛肉汤", "鲫鱼豆腐汤", "山药排骨汤",
+      "莲藕排骨汤", "菌菇鸡汤", "南瓜浓汤", "白菜粉丝汤", "番茄牛肉汤",
+      "皮蛋瘦肉粥", "小米粥", "银耳莲子羹"
+    ],
+    staple: [
+      "米饭", "馒头", "花卷", "葱油饼", "蛋炒饭",
+      "扬州炒饭", "饺子", "手擀面", "凉面", "炸酱面",
+      "西红柿鸡蛋面", "煎饺", "南瓜小米粥", "白粥", "包子"
+    ]
+  };
+
+  const config = {
+    meat: { icon: "🥩", tag: "荤菜" },
+    veg:  { icon: "🥬", tag: "素菜" },
+    soup: { icon: "🍲", tag: "汤品" },
+    staple:{ icon: "🍚", tag: "主食" }
+  };
+
+  let currentMenu = [];
+
+  function pickRandom(arr, exclude = []) {
+    const pool = arr.filter(x => !exclude.includes(x));
+    return pool[Math.floor(Math.random() * pool.length)];
+  }
+
+  function generateMenu() {
+    // 一荤一素一汤一主食 + 偶尔多一道
+    currentMenu = [
+      { type: "meat",   name: pickRandom(dishes.meat) },
+      { type: "meat",   name: "" },  // 占位，下面去重
+      { type: "veg",    name: pickRandom(dishes.veg) },
+      { type: "soup",   name: pickRandom(dishes.soup) },
+      { type: "staple", name: pickRandom(dishes.staple) }
+    ];
+    // 替换第二个荤菜为另一道（保证不重复），50% 概率改为素菜实现荤素2:2
+    const second = Math.random() < 0.5
+      ? { type: "meat", name: pickRandom(dishes.meat, [currentMenu[0].name]) }
+      : { type: "veg",  name: pickRandom(dishes.veg,  [currentMenu[2].name]) };
+    currentMenu[1] = second;
+
+    render();
+  }
+
+  function rerollDish(idx) {
+    const item = currentMenu[idx];
+    const exclude = currentMenu.map(d => d.name);
+    item.name = pickRandom(dishes[item.type], exclude);
+    render();
+  }
+
+  function render() {
+    const list = document.getElementById("dishList");
+    list.innerHTML = "";
+    currentMenu.forEach((d, i) => {
+      const c = config[d.type];
+      const div = document.createElement("div");
+      div.className = "dish " + d.type;
+      div.style.animationDelay = (i * 0.08) + "s";
+      div.innerHTML = `
+        <div class="dish-icon">${c.icon}</div>
+        <div class="dish-info">
+          <div class="dish-name">${d.name}</div>
+          <div class="dish-tag">${c.tag}</div>
+        </div>
+        <button class="reroll-btn" onclick="rerollDish(${i})" title="单独换一道">🔄</button>
+      `;
+      list.appendChild(div);
+    });
+
+    // 统计
+    const meatCount = currentMenu.filter(d => d.type === "meat").length;
+    const vegCount  = currentMenu.filter(d => d.type === "veg").length;
+    document.getElementById("stats").textContent =
+      `共 ${currentMenu.length} 道 · 荤 ${meatCount} 素 ${vegCount} · 含汤含主食`;
+  }
+
+  function copyMenu() {
+    const text = "今日菜单：\n" +
+      currentMenu.map((d, i) => `${i+1}. ${d.name}（${config[d.type].tag}）`).join("\n");
+    const ta = document.createElement("textarea");
+    ta.value = text;
+    document.body.appendChild(ta);
+    ta.select();
+    try {
+      document.execCommand("copy");
+      const btn = event.target;
+      const old = btn.textContent;
+      btn.textContent = "✅ 已复制";
+      setTimeout(() => btn.textContent = old, 1500);
+    } catch(e) {}
+    document.body.removeChild(ta);
+  }
+
+  // 初始化日期
+  const now = new Date();
+  const week = ["日", "一", "二", "三", "四", "五", "六"];
+  document.getElementById("dateLine").textContent =
+    `${now.getFullYear()}年${now.getMonth()+1}月${now.getDate()}日 星期${week[now.getDay()]}`;
+
+  generateMenu();
+</script>
+</body>
+</html>
