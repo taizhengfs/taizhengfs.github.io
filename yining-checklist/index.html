@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#ff8a5c">
+<title>以宁的一年级物品整理清单 - Warden's Life</title>
+<style>
+  :root{
+    --primary:#ff8a5c;
+    --primary-dark:#f76b3a;
+    --secondary:#4ecdc4;
+    --yellow:#ffd93d;
+    --bg:#fff7f0;
+    --card:#ffffff;
+    --text:#4a4a4a;
+    --muted:#8e8e8e;
+    --soft:#f3e9e1;
+    --success:#22a06b;
+    --danger:#dc5b4c;
+    --shadow:0 10px 30px rgba(255,138,92,.18);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{
+    font-family:"PingFang SC","Microsoft YaHei","Helvetica Neue",sans-serif;
+    background:linear-gradient(135deg,#fff1e6 0%,#ffe8d6 100%);
+    color:var(--text);
+    line-height:1.7;
+    padding:20px 16px 32px;
+    min-height:100vh;
+  }
+  button,input{font:inherit;}
+  button{border:0;cursor:pointer;}
+  .wrap{max-width:820px;margin:0 auto;}
+
+  .toolbar{
+    display:flex;align-items:center;justify-content:space-between;gap:12px;
+    margin-bottom:14px;
+  }
+  .home-link{
+    color:#9b593f;text-decoration:none;font-size:13px;font-weight:700;
+    padding:8px 12px;border-radius:12px;background:rgba(255,255,255,.6);
+  }
+  .home-link:hover{background:#fff;}
+  .sync-status{
+    display:flex;align-items:center;gap:7px;color:#8a6d61;font-size:12px;
+    background:rgba(255,255,255,.72);padding:8px 12px;border-radius:20px;
+  }
+  .sync-dot{width:8px;height:8px;border-radius:50%;background:#e4a54b;}
+  .sync-status.success .sync-dot{background:var(--success);}
+  .sync-status.error .sync-dot{background:var(--danger);}
+  .sync-status.pending .sync-dot{animation:pulse 1s infinite alternate;}
+  @keyframes pulse{to{opacity:.35;transform:scale(.75);}}
+
+  .header{
+    background:linear-gradient(135deg,var(--primary),var(--primary-dark));
+    color:#fff;border-radius:28px;padding:36px 28px 32px;text-align:center;
+    box-shadow:var(--shadow);position:relative;overflow:hidden;
+  }
+  .header::before,.header::after{
+    content:"";position:absolute;border-radius:50%;background:rgba(255,255,255,.15);
+  }
+  .header::before{width:160px;height:160px;top:-60px;left:-40px;}
+  .header::after{width:120px;height:120px;bottom:-50px;right:-30px;}
+  .badge{
+    display:inline-block;background:var(--yellow);color:#9a6414;font-size:13px;
+    font-weight:700;padding:6px 18px;border-radius:30px;margin-bottom:16px;letter-spacing:1px;
+  }
+  .header h1{font-size:30px;font-weight:800;margin-bottom:8px;}
+  .header .sub{font-size:15px;opacity:.95;}
+  .school{margin-top:14px;font-size:13px;opacity:.9;}
+  .header-actions{
+    position:relative;z-index:1;display:flex;justify-content:center;gap:10px;margin-top:22px;
+  }
+  .action-btn{
+    display:inline-flex;align-items:center;justify-content:center;gap:6px;
+    padding:9px 15px;border-radius:12px;background:rgba(255,255,255,.2);
+    color:#fff;font-size:13px;font-weight:700;border:1px solid rgba(255,255,255,.35);
+    transition:background .2s,transform .2s;
+  }
+  .action-btn:hover{background:rgba(255,255,255,.3);transform:translateY(-1px);}
+
+  .section{
+    background:var(--card);border-radius:24px;margin-top:26px;padding:28px 24px;
+    box-shadow:0 6px 22px rgba(0,0,0,.06);
+  }
+  .sec-head{display:flex;align-items:center;gap:14px;margin-bottom:22px;}
+  .sec-icon{
+    width:52px;height:52px;flex-shrink:0;border-radius:16px;
+    display:flex;align-items:center;justify-content:center;font-size:26px;
+  }
+  .sec-1 .sec-icon{background:linear-gradient(135deg,#ffe0b2,#ffb877);}
+  .sec-2 .sec-icon{background:linear-gradient(135deg,#b9f3ee,#6dded3);}
+  .sec-3 .sec-icon{background:linear-gradient(135deg,#ffef9f,#ffd93d);}
+  .sec-head h2{font-size:20px;font-weight:800;color:#3d3d3d;}
+  .sec-head .en{font-size:12px;color:#a9a9a9;letter-spacing:1px;}
+
+  .item{
+    display:flex;align-items:flex-start;gap:14px;padding:14px 12px;border-radius:14px;
+    transition:background .2s;cursor:pointer;user-select:none;
+  }
+  .item:hover{background:var(--soft);}
+  .item:focus-visible{outline:3px solid rgba(255,138,92,.35);}
+  .item + .item{border-top:1px dashed #efe0d6;}
+  .checkbox{
+    width:26px;height:26px;flex-shrink:0;border:2.5px solid var(--primary);
+    border-radius:8px;margin-top:2px;position:relative;transition:all .2s;
+  }
+  .item:hover .checkbox{transform:scale(1.08);}
+  .item.done .checkbox{background:var(--primary);}
+  .item.done .checkbox::after{
+    content:"✓";position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+    color:#fff;font-size:15px;font-weight:800;
+  }
+  .item.done .item-text{text-decoration:line-through;color:#b5b5b5;}
+  .item-text{font-size:15px;font-weight:600;}
+  .item-tip{font-size:12.5px;color:var(--muted);margin-top:3px;line-height:1.5;}
+
+  .reminder{
+    background:linear-gradient(135deg,#fff3cd,#ffe8a1);border-radius:20px;
+    padding:22px 24px;margin-top:26px;border:2px dashed #f0c04a;
+  }
+  .reminder h3{color:#9a6414;font-size:16px;margin-bottom:10px;}
+  .reminder ul{list-style:none;}
+  .reminder li{padding:4px 0 4px 26px;position:relative;font-size:14px;color:#785b18;}
+  .reminder li::before{content:"🚫";position:absolute;left:0;top:4px;font-size:13px;}
+
+  .progress-card{
+    background:rgba(255,255,255,.72);border-radius:18px;padding:16px 18px;margin-top:26px;
+  }
+  .progress-row{display:flex;align-items:center;justify-content:space-between;gap:12px;}
+  .progress-text{font-size:13px;color:#a06345;font-weight:700;}
+  .progress-percent{font-size:13px;color:var(--primary-dark);font-weight:800;}
+  .progress-bar{height:10px;background:#ffe0ce;border-radius:30px;margin-top:9px;overflow:hidden;}
+  .progress-fill{
+    height:100%;width:0;background:linear-gradient(90deg,var(--primary),var(--yellow));
+    border-radius:30px;transition:width .4s ease;
+  }
+  .footer{text-align:center;margin-top:28px;color:#b77859;font-size:13px;line-height:1.8;}
+  .footer a{color:#a85b3b;}
+
+  .toast{
+    position:fixed;left:50%;bottom:24px;z-index:100;transform:translate(-50%,80px);
+    opacity:0;background:#4a342c;color:#fff;border-radius:13px;padding:11px 18px;
+    font-size:13px;box-shadow:0 10px 28px rgba(0,0,0,.18);transition:.25s ease;
+  }
+  .toast.show{transform:translate(-50%,0);opacity:1;}
+  .modal{
+    position:fixed;inset:0;z-index:90;display:flex;align-items:center;justify-content:center;
+    padding:20px;background:rgba(65,39,28,.5);backdrop-filter:blur(4px);
+    opacity:0;visibility:hidden;transition:.2s ease;
+  }
+  .modal.show{opacity:1;visibility:visible;}
+  .modal-card{
+    width:min(430px,100%);background:#fff;border-radius:22px;padding:24px;
+    box-shadow:0 20px 60px rgba(0,0,0,.2);
+  }
+  .modal-card h2{font-size:19px;color:#3d3d3d;}
+  .modal-card p{font-size:13px;color:var(--muted);margin-top:5px;}
+  .share-link{
+    width:100%;margin-top:18px;padding:12px;border:1px solid #f0ddd2;border-radius:12px;
+    background:#fff8f4;color:#795548;font-size:12px;outline:none;
+  }
+  .modal-actions{display:flex;gap:10px;margin-top:16px;}
+  .modal-actions button{flex:1;padding:11px;border-radius:12px;font-weight:700;}
+  .copy-btn{background:var(--primary);color:#fff;}
+  .close-btn{background:#f5eee9;color:#795548;}
+
+  @media (max-width:520px){
+    body{padding:14px 12px 26px;}
+    .header{padding:32px 18px 28px;}
+    .header h1{font-size:24px;}
+    .section{padding:22px 16px;}
+    .item-text{font-size:14px;}
+    .toolbar{align-items:flex-start;}
+    .sync-status{max-width:185px;text-align:right;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="toolbar">
+    <a class="home-link" href="/tools/">← 返回工具箱</a>
+    <div id="sync-status" class="sync-status pending" aria-live="polite">
+      <span class="sync-dot"></span><span id="sync-text">正在连接云端...</span>
+    </div>
+  </div>
+
+  <header class="header">
+    <span class="badge">🎒 以宁的一年级准备</span>
+    <h1>你好，一年级！</h1>
+    <div class="sub">物品整理清单 · 一件一件准备，从容开启小学之旅</div>
+    <div class="school">杭州市外语实验小学</div>
+    <div class="header-actions">
+      <button class="action-btn" type="button" onclick="refreshData()">↻ 刷新</button>
+      <button class="action-btn" type="button" onclick="showShareModal()">↗ 分享清单</button>
+    </div>
+  </header>
+
+  <section class="section sec-1">
+    <div class="sec-head">
+      <div class="sec-icon">📚</div>
+      <div><h2>（一）学习用品</h2><div class="en">MY STUDY BUDDIES</div></div>
+    </div>
+    <div class="item" role="checkbox" tabindex="0" aria-checked="false" data-id="backpack"><span class="checkbox"></span><span><div class="item-text">双肩书包</div><div class="item-tip">轻便、大小合适，两侧有口袋；不选翻盖式或拉杆款</div></span></div>
+    <div class="item" role="checkbox" tabindex="0" aria-checked="false" data-id="pencil-case"><span class="checkbox"></span><span><div class="item-text">笔袋</div><div class="item-tip">功能简单不花哨；不选铁质铅笔盒，防掉落声响</div></span></div>
+    <div class="item" role="checkbox" tabindex="0" aria-checked="false" data-id="pencils"><span class="checkbox"></span><span><div class="item-text">HB 木质铅笔</div><div class="item-tip">菱形笔杆更易握，只削一头，贴姓名标签并配笔套</div></span></div>
+    <div class="item" role="checkbox" tabindex="0" aria-checked="false" data-id="file-bags"><span class="checkbox"></span><span><div class="item-text">文件袋（2 个）</div><div class="item-tip">拉链式，收纳练习卷、通知、作业本，按类整理</div></span></div>
+    <div class="item" role="checkbox" tabindex="0" aria-checked="false" data-id="ruler"><span class="checkbox"></span><span><div class="item-text">尺子</div><div class="item-tip">15cm 或 20cm，一边直边一边波浪线；贴姓名贴不遮刻度</div></span></div>
+    <div class="item" role="checkbox" tabindex="0" aria-checked="false" data-id="eraser"><span class="checkbox"></span><span><div class="item-text">橡皮</div><div class="item-tip">质量好、擦得干净，纯色无香味</div></span></div>
+    <div class="item" role="checkbox" tabindex="0" aria-checked="false" data-id="sharpener"><span class="checkbox"></span><span><div class="item-text">削笔器</div><div class="item-tip">普通耐用款即可，放在家里使用，不用带到学校</div></span></div>
+    <div class="item" role="checkbox" tabindex="0" aria-checked="false" data-id="jump-ropes"><span class="checkbox"></span><span><div class="item-text">跳绳（准备 2 根）</div><div class="item-tip">带摇柄普通短绳，一根放学校，一根留家里</div></span></div>
+    <div class="item" role="checkbox" tabindex="0" aria-checked="false" data-id="labels"><span class="checkbox"></span><span><div class="item-text">标签纸</div><div class="item-tip">写好学校、班级、姓名，贴在书本上做标记</div></span></div>
+    <div class="item" role="checkbox" tabindex="0" aria-checked="false" data-id="art-supplies"><span class="checkbox"></span><span><div class="item-text">美术工具</div><div class="item-tip">安全儿童剪刀、固体胶、双面胶、18 色油画棒、36 色水彩笔</div></span></div>
+  </section>
+
+  <section class="section sec-2">
+    <div class="sec-head">
+      <div class="sec-icon">🧸</div>
+      <div><h2>（二）生活用品</h2><div class="en">MY LIFE HELPERS</div></div>
+    </div>
+    <div class="item" role="checkbox" tabindex="0" aria-checked="false" data-id="lunch-set"><span class="checkbox"></span><span><div class="item-text">饭袋 + 餐盒 + 餐垫</div><div class="item-tip">轻便饭袋；四格不锈钢防烫餐盒 + 餐垫 + 一把勺子（暂不带筷子）</div></span></div>
+    <div class="item" role="checkbox" tabindex="0" aria-checked="false" data-id="cloth"><span class="checkbox"></span><span><div class="item-text">小抹布</div><div class="item-tip">每天午餐后用来擦桌子</div></span></div>
+    <div class="item" role="checkbox" tabindex="0" aria-checked="false" data-id="water-bottle"><span class="checkbox"></span><span><div class="item-text">水杯</div><div class="item-tip">约 500ml、不漏水、易打开，不用玻璃材质；学校有直饮水</div></span></div>
+    <div class="item" role="checkbox" tabindex="0" aria-checked="false" data-id="sports-shoes"><span class="checkbox"></span><span><div class="item-text">运动鞋</div><div class="item-tip">每天穿，每天至少 1 小时锻炼；不会系鞋带选无鞋带款</div></span></div>
+  </section>
+
+  <section class="section sec-3">
+    <div class="sec-head">
+      <div class="sec-icon">🌙</div>
+      <div><h2>（三）每晚整理小清单</h2><div class="en">PACKING CHECKLIST</div></div>
+    </div>
+    <div class="item" role="checkbox" tabindex="0" aria-checked="false" data-id="night-books"><span class="checkbox"></span><span><div class="item-text">书包里放好第二天要用的书本了吗？</div></span></div>
+    <div class="item" role="checkbox" tabindex="0" aria-checked="false" data-id="night-pencils"><span class="checkbox"></span><span><div class="item-text">铅笔削好了吗？笔套戴好了吗？</div></span></div>
+    <div class="item" role="checkbox" tabindex="0" aria-checked="false" data-id="night-lunch"><span class="checkbox"></span><span><div class="item-text">餐盒洗干净了吗？抹布带了吗？</div></span></div>
+    <div class="item" role="checkbox" tabindex="0" aria-checked="false" data-id="night-water"><span class="checkbox"></span><span><div class="item-text">水杯装好水了吗？</div></span></div>
+  </section>
+
+  <aside class="reminder">
+    <h3>⚠️ 温馨提醒 · 这些不带去学校</h3>
+    <ul><li>零食、饮料</li><li>电话手表</li><li>玩具</li><li>钱、贵重饰品</li></ul>
+  </aside>
+
+  <div class="progress-card">
+    <div class="progress-row">
+      <div class="progress-text">完成进度：<span id="cnt">0 / 0</span></div>
+      <div class="progress-percent" id="percent">0%</div>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="fill"></div></div>
+  </div>
+
+  <footer class="footer">
+    小学生活就像一本崭新的图画书，每一页都等着以宁去填满色彩 🎨<br>
+    慢慢来，每天都比昨天进步一点点。<br>
+    <small>清单内容来源：杭州市外语实验小学学生发展中心</small>
+  </footer>
+</div>
+
+<div id="share-modal" class="modal" onclick="if(event.target === this) closeShareModal()">
+  <div class="modal-card">
+    <h2>分享以宁的清单</h2>
+    <p>复制下面的链接，家人打开后会看到并编辑同一份云端清单。</p>
+    <input id="share-link" class="share-link" type="text" readonly onclick="this.select()">
+    <div class="modal-actions">
+      <button class="copy-btn" type="button" onclick="copyShareLink()">复制链接</button>
+      <button class="close-btn" type="button" onclick="closeShareModal()">关闭</button>
+    </div>
+  </div>
+</div>
+<div id="toast" class="toast" aria-live="polite"></div>
+
+<script>
+  const API_BASE = 'https://time.taizhendong.com';
+  const BIN_STORAGE_KEY = 'yining_checklist_bin_id';
+  const LOCAL_DATA_PREFIX = 'yining_checklist_data_';
+  const items = Array.from(document.querySelectorAll('.item'));
+  const cnt = document.getElementById('cnt');
+  const fill = document.getElementById('fill');
+  const percent = document.getElementById('percent');
+  let binId = null;
+  let checkedItems = [];
+  let syncTimer = null;
+  let isSyncing = false;
+  let needsAnotherSync = false;
+  const validItemIds = new Set(items.map(item => item.dataset.id));
+
+  const localDataKey = () => binId ? `${LOCAL_DATA_PREFIX}${binId}` : null;
+
+  function normalizeCheckedItems(value) {
+    if (!Array.isArray(value)) return [];
+    return Array.from(new Set(value.filter(id => validItemIds.has(id))));
+  }
+
+  function showToast(message, duration = 2500) {
+    const toast = document.getElementById('toast');
+    toast.textContent = message;
+    toast.classList.add('show');
+    window.setTimeout(() => toast.classList.remove('show'), duration);
+  }
+
+  function updateSyncStatus(status, text) {
+    const statusEl = document.getElementById('sync-status');
+    statusEl.className = `sync-status ${status}`;
+    document.getElementById('sync-text').textContent = text;
+  }
+
+  function persistLocal() {
+    const key = localDataKey();
+    if (!key) return;
+    localStorage.setItem(key, JSON.stringify({ checkedItems, lastSync: new Date().toISOString() }));
+  }
+
+  function restoreLocal() {
+    const key = localDataKey();
+    if (!key) return;
+    try {
+      const saved = JSON.parse(localStorage.getItem(key));
+      checkedItems = normalizeCheckedItems(saved && saved.checkedItems);
+    } catch (error) {
+      checkedItems = [];
+    }
+  }
+
+  function render() {
+    const selected = new Set(checkedItems);
+    items.forEach(item => {
+      const done = selected.has(item.dataset.id);
+      item.classList.toggle('done', done);
+      item.setAttribute('aria-checked', String(done));
+    });
+    const doneCount = selected.size;
+    const progress = items.length ? Math.round(doneCount / items.length * 100) : 0;
+    cnt.textContent = `${doneCount} / ${items.length}`;
+    fill.style.width = `${progress}%`;
+    percent.textContent = `${progress}%`;
+  }
+
+  function toggleItem(item) {
+    const id = item.dataset.id;
+    const selected = new Set(checkedItems);
+    selected.has(id) ? selected.delete(id) : selected.add(id);
+    checkedItems = Array.from(selected);
+    render();
+    persistLocal();
+    debouncedSync();
+  }
+
+  items.forEach(item => {
+    item.addEventListener('click', () => toggleItem(item));
+    item.addEventListener('keydown', event => {
+      if (event.key === 'Enter' || event.key === ' ') {
+        event.preventDefault();
+        toggleItem(item);
+      }
+    });
+  });
+
+  async function createBin() {
+    const response = await fetch(`${API_BASE}/data`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        type: 'yining-school-checklist',
+        version: 1,
+        checkedItems: [],
+        lastSync: new Date().toISOString()
+      })
+    });
+    if (!response.ok) throw new Error('创建云端清单失败');
+    const data = await response.json();
+    return data.id;
+  }
+
+  async function loadFromCloud() {
+    if (!binId) return null;
+    const response = await fetch(`${API_BASE}/data/${encodeURIComponent(binId)}`);
+    if (response.status === 404) return null;
+    if (!response.ok) throw new Error('读取云端清单失败');
+    return response.json();
+  }
+
+  async function saveToCloud() {
+    if (!binId) return;
+    if (isSyncing) {
+      needsAnotherSync = true;
+      return;
+    }
+    isSyncing = true;
+    needsAnotherSync = false;
+    updateSyncStatus('pending', '正在保存...');
+    try {
+      const response = await fetch(`${API_BASE}/data/${encodeURIComponent(binId)}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          type: 'yining-school-checklist',
+          version: 1,
+          checkedItems,
+          lastSync: new Date().toISOString()
+        })
+      });
+      if (!response.ok) throw new Error('保存云端清单失败');
+      updateSyncStatus('success', '已保存到云端');
+    } catch (error) {
+      console.error(error);
+      updateSyncStatus('error', '保存失败，已保留在本机');
+    } finally {
+      isSyncing = false;
+      if (needsAnotherSync) saveToCloud();
+    }
+  }
+
+  function debouncedSync() {
+    window.clearTimeout(syncTimer);
+    updateSyncStatus('pending', '等待保存...');
+    syncTimer = window.setTimeout(saveToCloud, 700);
+  }
+
+  window.refreshData = async () => {
+    updateSyncStatus('pending', '正在刷新...');
+    try {
+      const data = await loadFromCloud();
+      if (data && Array.isArray(data.checkedItems)) {
+        checkedItems = normalizeCheckedItems(data.checkedItems);
+        persistLocal();
+        render();
+      }
+      updateSyncStatus('success', '已与云端同步');
+      showToast('✅ 清单已刷新');
+    } catch (error) {
+      console.error(error);
+      updateSyncStatus('error', '刷新失败，显示本机数据');
+      showToast('暂时无法连接云端，请稍后重试');
+    }
+  };
+
+  window.showShareModal = () => {
+    if (!binId) {
+      showToast('云端清单还在初始化，请稍候');
+      return;
+    }
+    document.getElementById('share-link').value = `${window.location.origin}${window.location.pathname}?id=${encodeURIComponent(binId)}`;
+    document.getElementById('share-modal').classList.add('show');
+  };
+
+  window.closeShareModal = () => document.getElementById('share-modal').classList.remove('show');
+
+  window.copyShareLink = async () => {
+    const input = document.getElementById('share-link');
+    try {
+      await navigator.clipboard.writeText(input.value);
+    } catch (error) {
+      input.select();
+      document.execCommand('copy');
+    }
+    closeShareModal();
+    showToast('✅ 链接已复制，发给家人即可共享');
+  };
+
+  async function init() {
+    render();
+    try {
+      const params = new URLSearchParams(window.location.search);
+      binId = params.get('id') || localStorage.getItem(BIN_STORAGE_KEY);
+
+      if (!binId) {
+        updateSyncStatus('pending', '正在创建云端清单...');
+        binId = await createBin();
+        localStorage.setItem(BIN_STORAGE_KEY, binId);
+        window.history.replaceState({}, '', `${window.location.pathname}?id=${encodeURIComponent(binId)}`);
+        showToast('✅ 云端清单已创建');
+      } else {
+        localStorage.setItem(BIN_STORAGE_KEY, binId);
+        restoreLocal();
+        render();
+        if (!params.get('id')) {
+          window.history.replaceState({}, '', `${window.location.pathname}?id=${encodeURIComponent(binId)}`);
+        }
+      }
+
+      const cloudData = await loadFromCloud();
+      if (cloudData && Array.isArray(cloudData.checkedItems)) {
+        checkedItems = normalizeCheckedItems(cloudData.checkedItems);
+        persistLocal();
+        render();
+      }
+      updateSyncStatus('success', '已与云端同步');
+    } catch (error) {
+      console.error(error);
+      updateSyncStatus('error', '离线模式，本机仍会保留');
+      showToast('网络异常，暂时使用本机数据');
+    }
+  }
+
+  init();
+</script>
+</body>
+</html>
