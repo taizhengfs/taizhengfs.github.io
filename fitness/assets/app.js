@@ -321,7 +321,7 @@ async function load() {
         <b style="color:#ff6b6b">数据加载失败</b><br><br>
         浏览器禁止 <code>file://</code> 下的本地数据读取。请在项目目录启动一个静态服务器：<br><br>
         <code style="background:#151a23;padding:8px 12px;border-radius:8px;display:block">
-        cd /Users/warden/Documents/ChatGPT/Health/garmin-fit-lab<br>python3 -m http.server 8848
+        cd /Users/warden/Developer/garmin/fit-lab<br>python3 -m http.server 8848
         </code><br>然后访问 <code>http://localhost:8848</code><br><br>
         <span style="color:#647084">${e.message}</span></div>`;
   }
