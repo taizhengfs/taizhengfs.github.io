@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<title>Garmin 数据实验室</title>
+<link rel="stylesheet" href="assets/style.css?v=3">
+<script>
+  // 腾讯地图：仅在密钥代理已被运行时注入时（本地 WorkBuddy 环境）才加载底图。
+  // 部署到 GitHub Pages 等静态站点时无代理，跳过加载，直接使用内置的纯 SVG 轨迹图。
+  (function () {
+    var host = 'http://127.0.0.1:__WB_HTTP_PORT__/_TMapService/_wbt/__WB_TMAP_SECRET__';
+    if (host.indexOf('__WB_') === -1) {
+      window._TMapSecurityConfig = { serviceHost: host };
+      var s = document.createElement('script');
+      s.src = 'https://map.qq.com/api/gljs?v=1.exp';
+      document.head.appendChild(s);
+    }
+  })();
+</script>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="brand">
+      <span class="dot"></span>
+      <h1>Garmin 数据实验室</h1>
+      <span class="sub" id="hdr-sub">加载中…</span>
+    </div>
+    <nav class="tabs" id="tabs">
+      <button data-tab="overview" class="on">概览</button>
+      <button data-tab="health">健康趋势</button>
+      <button data-tab="training">训练分析</button>
+      <button data-tab="activity">活动详情</button>
+      <button data-tab="pb">最佳成绩</button>
+    </nav>
+  </header>
+
+  <div id="loading" class="loader">正在加载数据…</div>
+
+  <!-- ============ 概览 ============ -->
+  <section class="tab on" id="tab-overview">
+    <div class="grid g4" id="ov-kpi" style="margin-bottom:16px"></div>
+
+    <div class="note" id="ov-note"></div>
+
+    <div class="grid g-2-1" style="margin-bottom:16px">
+      <div class="card">
+        <div class="card-head"><h3>跑量 · 配速 · 心率 年度走势</h3><span class="hint">仅统计跑步类活动</span></div>
+        <div class="chart" id="ov-run-year"></div>
+        <div class="legend" id="ov-run-year-lg"></div>
+      </div>
+      <div class="card">
+        <div class="card-head"><h3>运动类型构成</h3></div>
+        <div id="ov-sportmix"></div>
+      </div>
+    </div>
+
+    <div class="grid g2" style="margin-bottom:16px">
+      <div class="card">
+        <div class="card-head"><h3>年度训练量</h3><span class="hint">距离 / 时长 / 爬升</span></div>
+        <div class="chart" id="ov-year"></div>
+        <div class="legend" id="ov-year-lg"></div>
+      </div>
+      <div class="card">
+        <div class="card-head"><h3>月度活动分布</h3><span class="hint">按活动次数</span></div>
+        <div class="chart" id="ov-month"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head"><h3>跑步效率：同配速下的心率</h3><span class="hint">点越靠左下越好（更快、更省力）；颜色表示时间由早到晚</span></div>
+      <div class="chart" id="ov-efficiency"></div>
+    </div>
+  </section>
+
+  <!-- ============ 健康趋势 ============ -->
+  <section class="tab" id="tab-health">
+    <div class="grid g4" id="he-kpi" style="margin-bottom:16px"></div>
+    <div class="note" id="he-note"></div>
+
+    <div class="card" style="margin-bottom:16px">
+      <div class="card-head">
+        <div><h3>静息心率 · 长期趋势</h3><span class="hint">浅色为每日值，实线为 30 日滑动平均</span></div>
+        <div class="chips" id="he-rhr-range"></div>
+      </div>
+      <div class="chart" id="he-rhr"></div>
+    </div>
+
+    <div class="grid g2" style="margin-bottom:16px">
+      <div class="card">
+        <div class="card-head"><h3>睡眠时长与评分</h3><span class="hint">30 日均线</span></div>
+        <div class="chart" id="he-sleep"></div>
+        <div class="legend" id="he-sleep-lg"></div>
+      </div>
+      <div class="card">
+        <div class="card-head"><h3>睡眠结构</h3><span class="hint">深睡 / 浅睡 / REM / 清醒（月度小时数）</span></div>
+        <div class="chart" id="he-sleepstruct"></div>
+        <div class="legend" id="he-sleepstruct-lg"></div>
+      </div>
+    </div>
+
+    <div class="grid g2" style="margin-bottom:16px">
+      <div class="card">
+        <div class="card-head"><h3>每日步数</h3><span class="hint">30 日滑动平均</span></div>
+        <div class="chart" id="he-steps"></div>
+      </div>
+      <div class="card">
+        <div class="card-head"><h3>星期节律</h3><span class="hint">各指标按周几的平均表现</span></div>
+        <div class="chart" id="he-weekday"></div>
+        <div class="legend" id="he-weekday-lg"></div>
+      </div>
+    </div>
+
+    <div class="grid g-2-1">
+      <div class="card">
+        <div class="card-head"><h3>半年对比</h3><span class="hint">所有指标的长期变化</span></div>
+        <div class="scroll"><table id="he-half-table"></table></div>
+      </div>
+      <div class="card">
+        <div class="card-head"><h3>指标相关性</h3><span class="hint">皮尔逊相关系数 r</span></div>
+        <div id="he-corr"></div>
+        <div class="hint" style="margin-top:12px">r 为负表示：前者越高，后者越低。|r| &gt; 0.2 在千级样本量下已属显著。</div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:16px">
+      <div class="card-head"><h3>体重记录</h3><span class="hint" id="he-weight-hint"></span></div>
+      <div class="chart" id="he-weight"></div>
+    </div>
+  </section>
+
+  <!-- ============ 训练分析 ============ -->
+  <section class="tab" id="tab-training">
+    <div class="grid g4" id="tr-kpi" style="margin-bottom:16px"></div>
+
+    <div class="grid g2" style="margin-bottom:16px">
+      <div class="card">
+        <div class="card-head"><h3>训练负荷 · 月度</h3><span class="hint">来自 Garmin activityTrainingLoad</span></div>
+        <div class="chart" id="tr-load"></div>
+      </div>
+      <div class="card">
+        <div class="card-head"><h3>心率区间分布（全部活动）</h3><span class="hint">按每次活动自身最大心率的百分比</span></div>
+        <div class="zonebar" id="tr-zones"></div>
+        <div class="zonelegend" id="tr-zones-lg"></div>
+        <div class="hint" style="margin-top:14px">区间越高代表训练强度越大。Z1–Z2 为有氧基础，Z4–Z5 为高强度。</div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-bottom:16px">
+      <div class="card-head">
+        <div><h3>训练负荷 vs 静息心率</h3><span class="hint">负荷过高而恢复不足时，静息心率往往抬升</span></div>
+      </div>
+      <div class="chart" id="tr-load-rhr"></div>
+      <div class="legend" id="tr-load-rhr-lg"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-head">
+        <div><h3>活动列表</h3><span class="hint">点击任意一行查看详情</span></div>
+        <div style="display:flex; gap:8px; flex-wrap:wrap">
+          <select id="tr-type"></select>
+          <select id="tr-year"></select>
+          <select id="tr-sort">
+            <option value="date_desc">时间 ↓</option>
+            <option value="date_asc">时间 ↑</option>
+            <option value="dist_desc">距离 ↓</option>
+            <option value="dur_desc">时长 ↓</option>
+            <option value="hr_desc">平均心率 ↓</option>
+            <option value="load_desc">训练负荷 ↓</option>
+          </select>
+        </div>
+      </div>
+      <div class="scroll"><table id="tr-table"></table></div>
+    </div>
+  </section>
+
+  <!-- ============ 活动详情 ============ -->
+  <section class="tab" id="tab-activity">
+    <div class="card" style="margin-bottom:16px">
+      <div class="card-head">
+        <div><h3>选择活动</h3><span class="hint">共 <b id="ac-count">0</b> 次</span></div>
+        <div style="display:flex; gap:8px; flex-wrap:wrap">
+          <input type="search" id="ac-search" placeholder="搜索名称…" style="width:150px">
+          <select id="ac-type"></select>
+          <select id="ac-year"></select>
+        </div>
+      </div>
+      <div class="scroll" style="max-height:220px"><table id="ac-table"></table></div>
+    </div>
+
+    <div class="card" id="ac-empty">
+      <div class="empty" style="padding:46px">
+        <div style="font-size:15px;color:#e6edf6;margin-bottom:10px">↑ 从上方列表里点任意一次活动</div>
+        <div>展开后会显示：心率／配速曲线、海拔剖面、功率、跑步动力学、<b style="color:#ff7a3d">GPS 轨迹</b>、分段数据和本次最佳成绩</div>
+      </div>
+    </div>
+
+    <div id="ac-detail" style="display:none">
+      <div class="card" style="margin-bottom:16px">
+        <div class="card-head">
+          <div>
+            <h3 id="ac-title">—</h3>
+            <span class="hint" id="ac-subtitle"></span>
+          </div>
+        </div>
+        <div class="grid g6" id="ac-kpi"></div>
+      </div>
+
+      <div class="grid g2" style="margin-bottom:16px">
+        <div class="card">
+          <div class="card-head"><h3>心率 · 配速</h3><span class="hint">配速轴已反转（越高越快）</span></div>
+          <div class="chart" id="ac-hr-pace"></div>
+          <div class="legend" id="ac-hr-pace-lg"></div>
+        </div>
+        <div class="card">
+          <div class="card-head"><h3>海拔剖面</h3></div>
+          <div class="chart" id="ac-alt"></div>
+        </div>
+      </div>
+
+      <div class="grid g2" style="margin-bottom:16px">
+        <div class="card" id="ac-power-card">
+          <div class="card-head"><h3>功率</h3><span class="hint">跑步功率（瓦）</span></div>
+          <div class="chart" id="ac-power"></div>
+        </div>
+        <div class="card" id="ac-dyn-card">
+          <div class="card-head"><h3>跑步动力学</h3><span class="hint">垂直振幅 / 触地时间 / 步幅</span></div>
+          <div class="chart" id="ac-dyn"></div>
+          <div class="legend" id="ac-dyn-lg"></div>
+        </div>
+      </div>
+
+      <div class="grid g-2-1">
+        <div class="card">
+          <div class="card-head"><h3>GPS 轨迹</h3></div>
+          <div id="map"></div>
+          <div id="map-fallback" style="display:none"></div>
+        </div>
+        <div class="card">
+          <div class="card-head"><h3>本次数据</h3></div>
+          <div id="ac-stats"></div>
+          <div style="margin-top:14px">
+            <h3 style="margin-bottom:8px">心率区间</h3>
+            <div class="zonebar" id="ac-zones"></div>
+            <div class="zonelegend" id="ac-zones-lg"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid g2" style="margin-top:16px">
+        <div class="card">
+          <div class="card-head"><h3>分段数据</h3><span class="hint" id="ac-laps-hint"></span></div>
+          <div class="scroll" style="max-height:340px"><table id="ac-laps"></table></div>
+        </div>
+        <div class="card">
+          <div class="card-head"><h3>本次最佳成绩</h3><span class="hint">滑动窗口计算</span></div>
+          <div id="ac-efforts"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ PB ============ -->
+  <section class="tab" id="tab-pb">
+    <div class="card" style="margin-bottom:16px">
+      <div class="card-head"><div><h3>个人最佳（跑步）</h3><span class="hint">由 560 个 FIT 原始文件逐秒滑动窗口计算，仅统计跑步类活动</span></div></div>
+      <div class="grid g3" id="pb-cards"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-head">
+        <div><h3>各距离成绩演进</h3><span class="hint">每次活动中的最好成绩，越低越好</span></div>
+        <div class="chips" id="pb-picker"></div>
+      </div>
+      <div class="chart" id="pb-chart"></div>
+    </div>
+  </section>
+
+  <div class="foot" id="foot"></div>
+</div>
+
+<div class="tip" id="tip"></div>
+<div id="errbar"></div>
+
+<script src="assets/app.js?v=3"></script>
+</body>
+</html>
