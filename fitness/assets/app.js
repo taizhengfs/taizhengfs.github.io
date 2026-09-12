@@ -307,11 +307,20 @@ async function load() {
       fetch('data/health.json').then(r => r.json()),
     ]);
     STATE.core = core; STATE.health = health;
+
+    // 每日简报为可选数据，缺失时不阻断整页
+    let insight = null;
+    try {
+      const res = await fetch('data/insight.json');
+      if (res.ok) insight = await res.json();
+    } catch (_) { /* 忽略：尚未生成简报 */ }
+    STATE.insight = insight;
+
     $('#loading').style.display = 'none';
     $('#hdr-sub').textContent =
-      `${core.range.start} — ${core.range.end} · ${core.range.n} 次活动 · ${health.range.days} 天生理数据 · 源自 560 个 FIT 原始文件`;
+      `${core.range.start} — ${core.range.end} · ${core.range.n} 次活动 · ${health.range.days} 天生理数据 · 源自 ${core.range.n} 个 FIT 原始文件`;
     $('#foot').innerHTML = `数据生成于 ${new Date(core.generatedAt).toLocaleString('zh-CN')} · 重新解析： <code>python3 scripts/parse_fit.py && python3 scripts/split_data.py</code>`;
-    renderOverview(); renderHealth(); renderTraining(); renderActivityTab(); renderPB();
+    renderBriefing(); renderOverview(); renderHealth(); renderTraining(); renderActivityTab(); renderPB();
     const h = location.hash.replace('#', '');
     if (h && $('#tab-' + h)) { switchTab(h); if (h === 'activity') ensureActivitySelected(); }
   } catch (e) {
@@ -329,6 +338,124 @@ async function load() {
 
 const RUN_CN = ['跑步', '越野跑', '跑步机', '场地跑'];
 const isRun = a => RUN_CN.includes(a.sportCn);
+
+/* ============================ 每日简报 ============================ */
+const BR_LEVEL = {
+  good: { c: C.accent2, t: '良好' },
+  info: { c: C.dim, t: '提示' },
+  warn: { c: C.pace, t: '留意' },
+  bad: { c: C.hr, t: '警示' },
+};
+
+function renderBriefing() {
+  const I = STATE.insight;
+  if (!I) {
+    $('#br-kpi').innerHTML = '';
+    $('#br-src').textContent = '—';
+    $('#br-narrative').textContent = '尚未生成每日简报。请在项目目录执行 python3 scripts/build_insight.py 后刷新页面。';
+    $('#br-findings').innerHTML = '';
+    $('#br-week').innerHTML = '';
+    $('#br-week-range').textContent = '—';
+    $('#br-workouts').innerHTML = '';
+    return;
+  }
+
+  const t = I.today || {};
+  const n0 = v => (isNum(v) ? v.toFixed(0) : '—');
+  const int = v => (isNum(v) ? Math.round(v).toLocaleString() : '—');
+
+  // ---- KPI ----
+  $('#br-kpi').innerHTML = [
+    { l: '昨晚睡眠', v: isNum(t.sleepH) ? t.sleepH.toFixed(2) : '—', u: 'h', s: `月均 ${t.sleep30 ?? '—'} h · 深睡 ${t.deepH ?? '—'} h` },
+    { l: '睡眠评分', v: t.sleepScore ?? '—', u: '分', s: `7 日均 ${t.score7 ?? '—'} 分` },
+    { l: '静息心率', v: t.rhr ?? '—', u: 'bpm', s: `月均 ${t.rhr30 ?? '—'} bpm` },
+    { l: '今日步数', v: int(t.steps), u: '步', s: `月均 ${int(t.steps30)} 步` },
+  ].map(k => `<div class="card kpi"><div class="label">${k.l}</div>` +
+    `<div class="value">${k.v}<span class="unit">${k.u}</span></div>` +
+    `<div class="delta flat">${k.s}</div></div>`).join('');
+
+  // ---- 文案 ----
+  const srcMap = { rule: '规则引擎自动生成' };
+  const src = I.narrativeSource || 'rule';
+  $('#br-src').textContent =
+    `截至 ${I.asOf} · ${srcMap[src] || (String(src).startsWith('llm:') ? 'AI 生成（' + String(src).slice(4) + '）' : src)}`;
+  $('#br-narrative').textContent = I.narrative || '—';
+
+  // ---- 需要关注 ----
+  $('#br-findings').innerHTML = (I.findings || []).map(f => {
+    const m = BR_LEVEL[f.level] || BR_LEVEL.info;
+    return `<div style="border-left:3px solid ${m.c};padding:10px 0 10px 12px;margin-bottom:10px">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+        <span style="font-size:11px;padding:1px 7px;border-radius:20px;background:${m.c}22;color:${m.c}">${m.t}</span>
+        <b style="font-size:13.5px">${f.title}</b>
+      </div>
+      <div style="font-size:12.5px;color:#97a3b6;line-height:1.65">${f.text}</div>
+    </div>`;
+  }).join('') || '<div style="color:#647084;font-size:13px">暂无异常提示，各项指标均在正常范围。</div>';
+
+  // ---- 近 7 天 vs 上周 ----
+  const w = I.week || {}, cur = w.cur || {}, prev = w.prev || {}, d = w.delta || {};
+  if (w.range) $('#br-week-range').textContent = `${w.range[0]} — ${w.range[1]}`;
+
+  // goodUp=false 表示「数值上升是坏事」（如静息心率）
+  const GOOD = C.z[2], BAD = C.hr;
+  const arrow = (v, digits, unit, goodUp = true) => {
+    if (!isNum(v)) return '<span style="color:#647084">—</span>';
+    const flat = Math.abs(v) < (digits ? 0.05 : 0.5);
+    const up = v > 0;
+    const col = flat ? '#647084' : (up === goodUp ? GOOD : BAD);
+    return `<span style="color:${col};font-variant-numeric:tabular-nums">${up ? '▲' : '▼'} ${Math.abs(v).toFixed(digits)}${unit || ''}</span>`;
+  };
+  const rows = [
+    ['平均睡眠', (cur.sleepAvg ?? '—') + ' h', (prev.sleepAvg ?? '—') + ' h', arrow(d.sleepAvg, 2, ' h')],
+    ['睡眠评分', cur.scoreAvg ?? '—', prev.scoreAvg ?? '—', arrow(d.scoreAvg, 1, '')],
+    ['静息心率', (cur.rhrAvg ?? '—') + ' bpm', (prev.rhrAvg ?? '—') + ' bpm', arrow(d.rhrAvg, 1, '', false)],
+    ['平均步数', int(cur.stepsAvg), int(prev.stepsAvg), arrow(d.stepsAvg, 0, '')],
+    ['活跃天数', (cur.activeDays ?? '—') + ' 天', (prev.activeDays ?? '—') + ' 天', ''],
+  ];
+  let html = '<table class="tbl" style="width:100%;font-size:12.5px"><thead><tr>' +
+    '<th style="text-align:left">指标</th><th style="text-align:right">近 7 天</th>' +
+    '<th style="text-align:right">前 7 天</th><th style="text-align:right">变化</th></tr></thead><tbody>';
+  rows.forEach(r => {
+    html += `<tr><td style="color:#97a3b6">${r[0]}</td><td style="text-align:right;font-variant-numeric:tabular-nums"><b>${r[1]}</b></td>` +
+      `<td style="text-align:right;color:#97a3b6;font-variant-numeric:tabular-nums">${r[2]}</td>` +
+      `<td style="text-align:right">${r[3]}</td></tr>`;
+  });
+  html += `<tr><td style="color:#97a3b6">训练次数</td><td style="text-align:right" colspan="3">` +
+    `<b>${w.workoutCount || 0}</b> 次 · ${w.totalKm || 0} km · ${n0(w.totalMin)} 分钟 · ${n0(w.totalCal)} kcal</td></tr>`;
+  $('#br-week').innerHTML = html + '</tbody></table>';
+
+  // ---- 近 14 天走势 ----
+  const S = I.series || [];
+  if (S.length) {
+    lineChart($('#br-series'), {
+      height: 240, x: S.map(s => s.date.slice(5).replace('-', '/')),
+      series: [
+        { name: '睡眠时长 h', color: C.sleep, data: S.map(s => s.sleepH), width: 2, dot: true },
+        { name: '静息心率 bpm', color: C.hr, data: S.map(s => s.rhr), width: 2, dot: true, axis: 'y2' },
+      ],
+      yFmt: v => v.toFixed(1), y2Fmt: v => v.toFixed(0),
+      tip: i => `<div class="t">${S[i].date}</div>` +
+        `<div class="r"><span>睡眠</span><b>${S[i].sleepH ?? '—'} h / ${S[i].sleepScore ?? '—'} 分</b></div>` +
+        `<div class="r"><span>静息心率</span><b>${S[i].rhr ?? '—'} bpm</b></div>` +
+        `<div class="r"><span>步数</span><b>${S[i].steps != null ? Math.round(S[i].steps).toLocaleString() : '—'}</b></div>`,
+    });
+    legend($('#br-series-lg'), [{ name: '睡眠时长 h', color: C.sleep }, { name: '静息心率 bpm', color: C.hr }]);
+  }
+
+  // ---- 近期运动 ----
+  const ws = w.workouts || [];
+  $('#br-workouts').innerHTML = ws.length
+    ? ws.map(a => `<div style="display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid #1b212c">
+        <span style="min-width:82px;font-size:12px;color:#97a3b6;font-variant-numeric:tabular-nums">${a.date}</span>
+        <span style="min-width:52px;font-size:11.5px;padding:1px 7px;border-radius:20px;background:${C.accent}22;color:${C.accent}">${a.sportCn}</span>
+        <span style="flex:1;font-size:12.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${a.name || ''}</span>
+        <span style="font-size:12.5px;font-variant-numeric:tabular-nums"><b>${a.distKm ?? '—'}</b> km</span>
+        <span style="width:52px;text-align:right;font-size:12px;color:#97a3b6">${n0(a.durMin)}′</span>
+        <span style="width:60px;text-align:right;font-size:12px;color:#97a3b6">${a.avgHR ?? '—'} bpm</span>
+      </div>`).join('')
+    : `<div style="color:#647084;font-size:13px">近 7 天没有训练记录${isNum(I.restDays) ? `，最近一次运动在 ${I.restDays} 天前` : ''}。</div>`;
+}
 
 /* ============================ 概览 ============================ */
 function renderOverview() {

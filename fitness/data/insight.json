@@ -1,0 +1,217 @@
+{
+ "generatedAt": "2026-09-12T20:42:33",
+ "asOf": "2026-09-12",
+ "today": {
+  "date": "2026-09-12",
+  "rhr": 49,
+  "rhr7": 49.1,
+  "rhr30": 50.6,
+  "steps": 3143,
+  "steps7": 6288.0,
+  "steps30": 5648.0,
+  "sleepH": 6.28,
+  "sleepScore": 74,
+  "deepH": 1.83,
+  "lightH": 3.4,
+  "remH": 1.05,
+  "awakeH": 0.13,
+  "sleep7": 6.6,
+  "sleep30": 6.7,
+  "score7": 73.6,
+  "weight": null,
+  "deepPct": 29.1
+ },
+ "yesterday": {
+  "date": "2026-09-11",
+  "rhr": 48,
+  "rhr7": 49.4,
+  "rhr30": 50.5,
+  "steps": 2830,
+  "steps7": 6264.0,
+  "steps30": 5699.0,
+  "sleepH": 8.35,
+  "sleepScore": 85,
+  "deepH": 1.45,
+  "lightH": 5.18,
+  "remH": 1.72,
+  "awakeH": null,
+  "sleep7": 6.6,
+  "sleep30": 6.7,
+  "score7": 68.9,
+  "weight": null,
+  "deepPct": 17.4
+ },
+ "week": {
+  "range": [
+   "2026-09-06",
+   "2026-09-12"
+  ],
+  "cur": {
+   "sleepAvg": 6.58,
+   "scoreAvg": 73.6,
+   "rhrAvg": 49.1,
+   "stepsAvg": 6288.0,
+   "activeDays": 6
+  },
+  "prev": {
+   "sleepAvg": 6.43,
+   "scoreAvg": 66.6,
+   "rhrAvg": 49.6,
+   "stepsAvg": 4706.0,
+   "activeDays": 6
+  },
+  "delta": {
+   "sleepAvg": 0.15,
+   "rhrAvg": -0.5,
+   "stepsAvg": 1582.0,
+   "scoreAvg": 7.0
+  },
+  "workouts": [
+   {
+    "id": "638676793",
+    "date": "2026-09-12",
+    "sportCn": "骑行",
+    "name": "杭州市 骑行",
+    "distKm": 9.79,
+    "durMin": 53.0,
+    "cal": 214.0,
+    "avgHR": 102.0,
+    "load": 10.6
+   }
+  ],
+  "workoutCount": 1,
+  "totalKm": 9.79,
+  "totalMin": 53.0,
+  "totalCal": 214.0
+ },
+ "series": [
+  {
+   "date": "2026-08-30",
+   "sleepH": 7.3,
+   "sleepScore": 60,
+   "rhr": 48,
+   "steps": 6260
+  },
+  {
+   "date": "2026-08-31",
+   "sleepH": 5.78,
+   "sleepScore": 72,
+   "rhr": 50,
+   "steps": 4652
+  },
+  {
+   "date": "2026-09-01",
+   "sleepH": 4.87,
+   "sleepScore": 58,
+   "rhr": 50,
+   "steps": 3779
+  },
+  {
+   "date": "2026-09-02",
+   "sleepH": 8.19,
+   "sleepScore": 94,
+   "rhr": 48,
+   "steps": 4703
+  },
+  {
+   "date": "2026-09-03",
+   "sleepH": 6.95,
+   "sleepScore": 76,
+   "rhr": 48,
+   "steps": 5389
+  },
+  {
+   "date": "2026-09-04",
+   "sleepH": 5.83,
+   "sleepScore": 65,
+   "rhr": 52,
+   "steps": 5181
+  },
+  {
+   "date": "2026-09-05",
+   "sleepH": 6.12,
+   "sleepScore": 41,
+   "rhr": 51,
+   "steps": 2979
+  },
+  {
+   "date": "2026-09-06",
+   "sleepH": 6.75,
+   "sleepScore": 78,
+   "rhr": 49,
+   "steps": 15227
+  },
+  {
+   "date": "2026-09-07",
+   "sleepH": 8.02,
+   "sleepScore": 83,
+   "rhr": 50,
+   "steps": 6960
+  },
+  {
+   "date": "2026-09-08",
+   "sleepH": 4.38,
+   "sleepScore": 59,
+   "rhr": 51,
+   "steps": 5360
+  },
+  {
+   "date": "2026-09-09",
+   "sleepH": 6.68,
+   "sleepScore": 79,
+   "rhr": 47,
+   "steps": 6326
+  },
+  {
+   "date": "2026-09-10",
+   "sleepH": 5.58,
+   "sleepScore": 57,
+   "rhr": 50,
+   "steps": 4167
+  },
+  {
+   "date": "2026-09-11",
+   "sleepH": 8.35,
+   "sleepScore": 85,
+   "rhr": 48,
+   "steps": 2830
+  },
+  {
+   "date": "2026-09-12",
+   "sleepH": 6.28,
+   "sleepScore": 74,
+   "rhr": 49,
+   "steps": 3143
+  }
+ ],
+ "restDays": 0,
+ "findings": [
+  {
+   "level": "good",
+   "title": "静息心率平稳",
+   "text": "今日 49 bpm，与月均 50.6 bpm 基本持平。"
+  },
+  {
+   "level": "warn",
+   "title": "睡眠不足",
+   "text": "昨晚只睡了 6.28 小时，低于近 30 天均值 6.7 小时。长期低于 6.5 小时会明显推高静息心率、降低训练效果。"
+  },
+  {
+   "level": "good",
+   "title": "深睡充足",
+   "text": "深睡占比 29.1%，身体修复质量好。"
+  },
+  {
+   "level": "warn",
+   "title": "活动量偏低",
+   "text": "今日 3,143 步，仅为月均 5,648 步的 56%。"
+  },
+  {
+   "level": "good",
+   "title": "今天有运动",
+   "text": "今天已完成训练，注意做好拉伸与补水。"
+  }
+ ],
+ "narrative": "昨晚睡了 6.28 小时、睡眠评分 74 分、其中深睡 1.83 小时、静息心率 49 bpm、走了 3,143 步。近 7 天共 1 次训练，累计 9.79 公里 / 53 分钟，最近一次是 2026-09-12 的骑行（9.79 公里）。需要留意的是：睡眠不足——昨晚只睡了 6.28 小时，低于近 30 天均值 6.7 小时。长期低于 6.5 小时会明显推高静息心率、降低训练效果；活动量偏低——今日 3,143 步，仅为月均 5,648 步的 56%。做得好的地方：静息心率平稳、深睡充足、今天有运动。",
+ "narrativeSource": "rule"
+}
