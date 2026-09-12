@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-<title>Garmin 数据实验室</title>
+<title>方盛的数据实验室</title>
 <link rel="stylesheet" href="assets/style.css?v=3">
 <script>
   // 腾讯地图：仅在密钥代理已被运行时注入时（本地 WorkBuddy 环境）才加载底图。
@@ -25,7 +25,8 @@
   <header>
     <div class="brand">
       <span class="dot"></span>
-      <h1>Garmin 数据实验室</h1>
+      <h1>方盛的数据实验室</h1>
+      <span class="tagline">跑过的每一步，都算数</span>
       <span class="sub" id="hdr-sub">加载中…</span>
     </div>
     <nav class="tabs" id="tabs">
@@ -49,6 +50,17 @@
         <div><h3>今天怎么说</h3><span class="hint" id="br-src">—</span></div>
       </div>
       <div class="note" id="br-narrative">—</div>
+      <div class="rule-note" id="br-rule-wrap" style="display:none">
+        <div class="rule-note-label">规则引擎版本</div>
+        <div class="rule-note-text" id="br-rule-narrative"></div>
+      </div>
+    </div>
+
+    <div class="card ai-card" id="br-advice-card" style="margin-bottom:16px;display:none">
+      <div class="card-head">
+        <div><h3>接下来怎么做</h3><span class="hint" id="br-advice-src">—</span></div>
+      </div>
+      <div class="ai-advice" id="br-advice"></div>
     </div>
 
     <div class="grid g-2-1" style="margin-bottom:16px">
@@ -177,7 +189,7 @@
 
     <div class="grid g2" style="margin-bottom:16px">
       <div class="card">
-        <div class="card-head"><h3>训练负荷 · 月度</h3><span class="hint">来自 Garmin activityTrainingLoad</span></div>
+        <div class="card-head"><h3>训练负荷 · 月度</h3><span class="hint">来自腕表 activityTrainingLoad</span></div>
         <div class="chart" id="tr-load"></div>
       </div>
       <div class="card">

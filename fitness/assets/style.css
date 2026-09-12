@@ -58,6 +58,15 @@ header {
   font-weight: 650;
 }
 .brand .sub { color: var(--fg-mute); font-size: 13px; }
+.brand .tagline {
+  color: var(--accent);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  padding-left: 10px;
+  margin-left: 2px;
+  border-left: 1px solid var(--line);
+}
 .brand .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); display: inline-block; }
 
 nav.tabs {
@@ -252,6 +261,44 @@ select:focus, input:focus { border-color: #3b4757; }
 
 #map { width: 100%; height: 320px; border-radius: 10px; background: var(--card-2); }
 .map-fallback { display: flex; align-items: center; justify-content: center; }
+
+/* ---------- 每日简报：AI 区块 ---------- */
+.ai-card {
+  border-color: color-mix(in srgb, var(--accent) 45%, var(--line));
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--accent) 7%, transparent), transparent 60%),
+    var(--card);
+}
+.ai-advice { display: flex; flex-direction: column; gap: 9px; }
+.ai-line {
+  position: relative;
+  padding-left: 18px;
+  font-size: 13.5px;
+  line-height: 1.75;
+  color: #c7d0de;
+}
+.ai-line::before {
+  content: '';
+  position: absolute;
+  left: 3px;
+  top: 9px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+}
+.rule-note {
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px dashed var(--line);
+}
+.rule-note-label {
+  font-size: 11px;
+  color: var(--fg-mute);
+  letter-spacing: 0.4px;
+  margin-bottom: 5px;
+}
+.rule-note-text { font-size: 12.5px; line-height: 1.7; color: #7f8b9e; }
 
 .foot { color: var(--fg-mute); font-size: 12px; margin-top: 30px; text-align: center; }
 

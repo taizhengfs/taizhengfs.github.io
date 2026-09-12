@@ -1,4 +1,4 @@
-/* Garmin 数据实验室 —— 纯前端，无构建步骤 */
+/* 方盛的数据实验室 —— 纯前端，无构建步骤 */
 'use strict';
 
 const $ = (s, r = document) => r.querySelector(s);
@@ -22,7 +22,7 @@ function fatal(where, err) {
 }
 addEventListener('error', e => fatal('window.error', e.error || e.message));
 addEventListener('unhandledrejection', e => fatal('未捕获的 Promise 异常', e.reason));
-console.log('[garmin-fit-lab] app.js ' + APP_VERSION + ' 已加载');
+console.log('[fangsheng-fit-lab] app.js ' + APP_VERSION + ' 已加载');
 
 /* ============================ 工具 ============================ */
 const nf = (v, d = 0) => (v === null || v === undefined || !isFinite(v)) ? '—' : Number(v).toFixed(d);
@@ -319,7 +319,13 @@ async function load() {
     $('#loading').style.display = 'none';
     $('#hdr-sub').textContent =
       `${core.range.start} — ${core.range.end} · ${core.range.n} 次活动 · ${health.range.days} 天生理数据 · 源自 ${core.range.n} 个 FIT 原始文件`;
-    $('#foot').innerHTML = `数据生成于 ${new Date(core.generatedAt).toLocaleString('zh-CN')} · 重新解析： <code>python3 scripts/parse_fit.py && python3 scripts/split_data.py</code>`;
+    const gen = new Date(core.generatedAt).toLocaleString('zh-CN');
+    const aiTag = !insight ? '' : (insight.narrativeSource && insight.narrativeSource !== 'rule')
+      ? ` · 今日解读：<b style="color:var(--accent)">AI（${insight.narrativeSource}）</b>`
+      : ' · 今日解读：规则引擎';
+    $('#foot').innerHTML =
+      `<div style="margin-bottom:6px">方盛 · 腕上设备自动同步 · ${core.range.n} 次活动 / ${health.range.days} 天生理数据${aiTag}</div>` +
+      `<div style="opacity:.75">数据生成于 ${gen} · 重新解析：<code>python3 scripts/parse_fit.py &amp;&amp; python3 scripts/split_data.py</code></div>`;
     renderBriefing(); renderOverview(); renderHealth(); renderTraining(); renderActivityTab(); renderPB();
     const h = location.hash.replace('#', '');
     if (h && $('#tab-' + h)) { switchTab(h); if (h === 'activity') ensureActivitySelected(); }
@@ -330,7 +336,7 @@ async function load() {
         <b style="color:#ff6b6b">数据加载失败</b><br><br>
         浏览器禁止 <code>file://</code> 下的本地数据读取。请在项目目录启动一个静态服务器：<br><br>
         <code style="background:#151a23;padding:8px 12px;border-radius:8px;display:block">
-        cd /Users/warden/Developer/garmin/fit-lab<br>python3 -m http.server 8848
+        cd /Users/warden/garmin/fit-lab<br>python3 -m http.server 8848
         </code><br>然后访问 <code>http://localhost:8848</code><br><br>
         <span style="color:#647084">${e.message}</span></div>`;
   }
@@ -353,6 +359,8 @@ function renderBriefing() {
     $('#br-kpi').innerHTML = '';
     $('#br-src').textContent = '—';
     $('#br-narrative').textContent = '尚未生成每日简报。请在项目目录执行 python3 scripts/build_insight.py 后刷新页面。';
+    $('#br-rule-wrap').style.display = 'none';
+    $('#br-advice-card').style.display = 'none';
     $('#br-findings').innerHTML = '';
     $('#br-week').innerHTML = '';
     $('#br-week-range').textContent = '—';
@@ -374,12 +382,42 @@ function renderBriefing() {
     `<div class="value">${k.v}<span class="unit">${k.u}</span></div>` +
     `<div class="delta flat">${k.s}</div></div>`).join('');
 
-  // ---- 文案 ----
+  // ---- 文案（AI 优先，规则引擎兜底）----
   const srcMap = { rule: '规则引擎自动生成' };
   const src = I.narrativeSource || 'rule';
-  $('#br-src').textContent =
-    `截至 ${I.asOf} · ${srcMap[src] || (String(src).startsWith('llm:') ? 'AI 生成（' + String(src).slice(4) + '）' : src)}`;
-  $('#br-narrative').textContent = I.narrative || '—';
+  const hasAI = !!I.aiNarrative;
+  const descSrc = s =>
+    srcMap[s] || (String(s).startsWith('llm:') ? 'AI 生成（' + String(s).slice(4) + '）' : s);
+
+  if (hasAI) {
+    $('#br-src').innerHTML =
+      `截至 ${I.asOf} · <b style="color:var(--accent)">${I.aiModel || 'AI'} 生成</b>` +
+      (I.aiAt ? ` · ${new Date(I.aiAt).toLocaleString('zh-CN')}` : '');
+    $('#br-narrative').textContent = I.aiNarrative;
+    if (I.narrative) {
+      $('#br-rule-wrap').style.display = '';
+      $('#br-rule-narrative').textContent = I.narrative;
+    }
+  } else {
+    $('#br-src').textContent = `截至 ${I.asOf} · ${descSrc(src)}`;
+    $('#br-narrative').textContent = I.narrative || '—';
+    $('#br-rule-wrap').style.display = 'none';
+  }
+
+  // ---- AI 建议卡 ----
+  if (I.aiAdvice) {
+    $('#br-advice-card').style.display = '';
+    $('#br-advice-src').textContent =
+      (I.aiModel || 'AI') + ' 基于近 30 天数据给出' + (I.aiAt ? ` · ${new Date(I.aiAt).toLocaleString('zh-CN')}` : '');
+    $('#br-advice').innerHTML = String(I.aiAdvice)
+      .split('\n')
+      .map(s => s.trim())
+      .filter(Boolean)
+      .map(s => `<div class="ai-line">${s.replace(/^[-•*]\s*/, '')}</div>`)
+      .join('');
+  } else {
+    $('#br-advice-card').style.display = 'none';
+  }
 
   // ---- 需要关注 ----
   $('#br-findings').innerHTML = (I.findings || []).map(f => {
@@ -776,7 +814,7 @@ function renderTraining() {
   const totCal = acts.reduce((s, a) => s + (a.cal || 0), 0);
   const withPower = acts.filter(a => a.avgPower).length;
   const kpi = [
-    { l: '累计训练负荷', v: Math.round(totLoad).toLocaleString(), u: '', s: 'Garmin Training Load' },
+    { l: '累计训练负荷', v: Math.round(totLoad).toLocaleString(), u: '', s: '腕表 Training Load' },
     { l: '累计消耗', v: Math.round(totCal).toLocaleString(), u: 'kcal', s: `≈ ${(totCal / 7700).toFixed(1)} kg 脂肪` },
     { l: '有功率数据', v: withPower, u: '次', s: '主要来自跑步' },
     { l: '最高心率记录', v: core.hrMaxObserved, u: 'bpm', s: '全部活动中的观测峰值' },
