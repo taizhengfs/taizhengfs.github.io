@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-09-13T22:00:35",
+ "generatedAt": "2026-09-13T22:59:19",
  "asOf": "2026-09-13",
  "today": {
   "date": "2026-09-13",
@@ -215,8 +215,1574 @@
    "level": "info",
    "title": "已休息 1 天",
    "text": "间隔合理，恢复中。"
+  },
+  {
+   "level": "warn",
+   "title": "训练量偏少",
+   "text": "负荷比 0.23，低于 0.8——近一个月练得太少，已积累的有氧基础正在流失。每周加 1–2 次低强度有氧即可回升。"
+  },
+  {
+   "level": "good",
+   "title": "HRV 处于基线内",
+   "text": "昨夜 HRV 61 ms，在本人的平衡区间内，周均 62 ms，恢复状态稳定。"
+  },
+  {
+   "level": "good",
+   "title": "训练准备度 96 分 · 巅峰状态",
+   "text": "腕表综合睡眠、HRV、压力与近期负荷给出的判断，可直接决定今天该练还是该歇。"
   }
  ],
- "narrative": "昨晚睡了 8.22 小时、睡眠评分 90 分、其中深睡 1.77 小时、静息心率 48 bpm、走了 7,819 步。近 7 天共 1 次训练，累计 9.79 公里 / 53 分钟，最近一次是 2026-09-12 的骑行（9.79 公里）。做得好的地方：静息心率偏低、睡眠充足、睡眠质量优秀。",
- "narrativeSource": "rule"
+ "training": {
+  "coverage": {
+   "total": 561,
+   "withTe": 561
+  },
+  "avg": 2.22,
+  "dist": [
+   {
+    "label": "无明显效果",
+    "color": "#2b3442",
+    "lo": 0.0,
+    "hi": 1.0,
+    "count": 173
+   },
+   {
+    "label": "轻微效果",
+    "color": "#4c6ef5",
+    "lo": 1.0,
+    "hi": 2.0,
+    "count": 73
+   },
+   {
+    "label": "保持体能",
+    "color": "#22b8cf",
+    "lo": 2.0,
+    "hi": 3.0,
+    "count": 107
+   },
+   {
+    "label": "提升有氧",
+    "color": "#51cf66",
+    "lo": 3.0,
+    "hi": 4.0,
+    "count": 119
+   },
+   {
+    "label": "显著提升",
+    "color": "#fab005",
+    "lo": 4.0,
+    "hi": 4.99,
+    "count": 59
+   },
+   {
+    "label": "过度负荷",
+    "color": "#ff6b6b",
+    "lo": 4.99,
+    "hi": 99.0,
+    "count": 30
+   }
+  ],
+  "monthly": [
+   {
+    "key": "2025-09",
+    "n": 6,
+    "avg": 2.82
+   },
+   {
+    "key": "2025-10",
+    "n": 8,
+    "avg": 3.15
+   },
+   {
+    "key": "2025-11",
+    "n": 9,
+    "avg": 3.6
+   },
+   {
+    "key": "2025-12",
+    "n": 1,
+    "avg": 0.5
+   },
+   {
+    "key": "2026-01",
+    "n": 2,
+    "avg": 2.55
+   },
+   {
+    "key": "2026-02",
+    "n": 5,
+    "avg": 3.46
+   },
+   {
+    "key": "2026-03",
+    "n": 8,
+    "avg": 2.44
+   },
+   {
+    "key": "2026-04",
+    "n": 5,
+    "avg": 2.68
+   },
+   {
+    "key": "2026-05",
+    "n": 5,
+    "avg": 3.08
+   },
+   {
+    "key": "2026-06",
+    "n": 4,
+    "avg": 1.95
+   },
+   {
+    "key": "2026-08",
+    "n": 1,
+    "avg": 2.5
+   },
+   {
+    "key": "2026-09",
+    "n": 2,
+    "avg": 2.35
+   }
+  ],
+  "bySport": [
+   {
+    "sport": "徒步",
+    "n": 27,
+    "avg": 2.11
+   },
+   {
+    "sport": "跑步",
+    "n": 21,
+    "avg": 4.07
+   },
+   {
+    "sport": "骑行",
+    "n": 5,
+    "avg": 1.98
+   },
+   {
+    "sport": "越野跑",
+    "n": 1,
+    "avg": 4.0
+   }
+  ],
+  "window28": {
+   "count": 3,
+   "aerobic": 7.2,
+   "anaerobic": 1.4
+  }
+ },
+ "load": {
+  "range": [
+   "2026-06-16",
+   "2026-09-13"
+  ],
+  "acute": 1.5,
+  "chronic": 6.6,
+  "ratio": 0.23,
+  "load7": 10.6,
+  "load28": 185.8,
+  "label": "负荷偏低，体能可能在流失",
+  "level": "warn",
+  "sweet": [
+   0.8,
+   1.3
+  ],
+  "series": [
+   {
+    "date": "2026-06-16",
+    "load": 0,
+    "acute": 10.5,
+    "chronic": 6.9,
+    "ratio": 1.54
+   },
+   {
+    "date": "2026-06-17",
+    "load": 0,
+    "acute": 10.5,
+    "chronic": 6.9,
+    "ratio": 1.54
+   },
+   {
+    "date": "2026-06-18",
+    "load": 0,
+    "acute": 10.5,
+    "chronic": 6.9,
+    "ratio": 1.54
+   },
+   {
+    "date": "2026-06-19",
+    "load": 0,
+    "acute": 10.5,
+    "chronic": 6.9,
+    "ratio": 1.54
+   },
+   {
+    "date": "2026-06-20",
+    "load": 0,
+    "acute": 10.5,
+    "chronic": 5.2,
+    "ratio": 2.02
+   },
+   {
+    "date": "2026-06-21",
+    "load": 0,
+    "acute": 0.0,
+    "chronic": 5.2,
+    "ratio": 0.0
+   },
+   {
+    "date": "2026-06-22",
+    "load": 0,
+    "acute": 0.0,
+    "chronic": 5.2,
+    "ratio": 0.0
+   },
+   {
+    "date": "2026-06-23",
+    "load": 0,
+    "acute": 0.0,
+    "chronic": 5.2,
+    "ratio": 0.0
+   },
+   {
+    "date": "2026-06-24",
+    "load": 0,
+    "acute": 0.0,
+    "chronic": 5.2,
+    "ratio": 0.0
+   },
+   {
+    "date": "2026-06-25",
+    "load": 0,
+    "acute": 0.0,
+    "chronic": 5.2,
+    "ratio": 0.0
+   },
+   {
+    "date": "2026-06-26",
+    "load": 0,
+    "acute": 0.0,
+    "chronic": 5.2,
+    "ratio": 0.0
+   },
+   {
+    "date": "2026-06-27",
+    "load": 33.7,
+    "acute": 4.8,
+    "chronic": 4.6,
+    "ratio": 1.05
+   },
+   {
+    "date": "2026-06-28",
+    "load": 0,
+    "acute": 4.8,
+    "chronic": 4.6,
+    "ratio": 1.05
+   },
+   {
+    "date": "2026-06-29",
+    "load": 0,
+    "acute": 4.8,
+    "chronic": 4.6,
+    "ratio": 1.05
+   },
+   {
+    "date": "2026-06-30",
+    "load": 0,
+    "acute": 4.8,
+    "chronic": 4.6,
+    "ratio": 1.05
+   },
+   {
+    "date": "2026-07-01",
+    "load": 0,
+    "acute": 4.8,
+    "chronic": 4.6,
+    "ratio": 1.05
+   },
+   {
+    "date": "2026-07-02",
+    "load": 0,
+    "acute": 4.8,
+    "chronic": 4.6,
+    "ratio": 1.05
+   },
+   {
+    "date": "2026-07-03",
+    "load": 0,
+    "acute": 4.8,
+    "chronic": 4.6,
+    "ratio": 1.05
+   },
+   {
+    "date": "2026-07-04",
+    "load": 0,
+    "acute": 0.0,
+    "chronic": 4.6,
+    "ratio": 0.0
+   },
+   {
+    "date": "2026-07-05",
+    "load": 0,
+    "acute": 0.0,
+    "chronic": 3.8,
+    "ratio": 0.0
+   },
+   {
+    "date": "2026-07-06",
+    "load": 0,
+    "acute": 0.0,
+    "chronic": 3.8,
+    "ratio": 0.0
+   },
+   {
+    "date": "2026-07-07",
+    "load": 0,
+    "acute": 0.0,
+    "chronic": 3.8,
+    "ratio": 0.0
+   },
+   {
+    "date": "2026-07-08",
+    "load": 0,
+    "acute": 0.0,
+    "chronic": 3.8,
+    "ratio": 0.0
+   },
+   {
+    "date": "2026-07-09",
+    "load": 0,
+    "acute": 0.0,
+    "chronic": 3.8,
+    "ratio": 0.0
+   },
+   {
+    "date": "2026-07-10",
+    "load": 0,
+    "acute": 0.0,
+    "chronic": 3.8,
+    "ratio": 0.0
+   },
+   {
+    "date": "2026-07-11",
+    "load": 0,
+    "acute": 0.0,
+    "chronic": 3.8,
+    "ratio": 0.0
+   },
+   {
+    "date": "2026-07-12",
+    "load": 0,
+    "acute": 0.0,
+    "chronic": 1.2,
+    "ratio": 0.0
+   },
+   {
+    "date": "2026-07-13",
+    "load": 0,
+    "acute": 0.0,
+    "chronic": 1.2,
+    "ratio": 0.0
+   },
+   {
+    "date": "2026-07-14",
+    "load": 0,
+    "acute": 0.0,
+    "chronic": 1.2,
+    "ratio": 0.0
+   },
+   {
+    "date": "2026-07-15",
+    "load": 0,
+    "acute": 0.0,
+    "chronic": 1.2,
+    "ratio": 0.0
+   },
+   {
+    "date": "2026-07-16",
+    "load": 0,
+    "acute": 0.0,
+    "chronic": 1.2,
+    "ratio": 0.0
+   },
+   {
+    "date": "2026-07-17",
+    "load": 0,
+    "acute": 0.0,
+    "chronic": 1.2,
+    "ratio": 0.0
+   },
+   {
+    "date": "2026-07-18",
+    "load": 0,
+    "acute": 0.0,
+    "chronic": 1.2,
+    "ratio": 0.0
+   },
+   {
+    "date": "2026-07-19",
+    "load": 0,
+    "acute": 0.0,
+    "chronic": 1.2,
+    "ratio": 0.0
+   },
+   {
+    "date": "2026-07-20",
+    "load": 0,
+    "acute": 0.0,
+    "chronic": 1.2,
+    "ratio": 0.0
+   },
+   {
+    "date": "2026-07-21",
+    "load": 0,
+    "acute": 0.0,
+    "chronic": 1.2,
+    "ratio": 0.0
+   },
+   {
+    "date": "2026-07-22",
+    "load": 0,
+    "acute": 0.0,
+    "chronic": 1.2,
+    "ratio": 0.0
+   },
+   {
+    "date": "2026-07-23",
+    "load": 0,
+    "acute": 0.0,
+    "chronic": 1.2,
+    "ratio": 0.0
+   },
+   {
+    "date": "2026-07-24",
+    "load": 0,
+    "acute": 0.0,
+    "chronic": 1.2,
+    "ratio": 0.0
+   },
+   {
+    "date": "2026-07-25",
+    "load": 0,
+    "acute": 0.0,
+    "chronic": 0.0,
+    "ratio": null
+   },
+   {
+    "date": "2026-07-26",
+    "load": 0,
+    "acute": 0.0,
+    "chronic": 0.0,
+    "ratio": null
+   },
+   {
+    "date": "2026-07-27",
+    "load": 0,
+    "acute": 0.0,
+    "chronic": 0.0,
+    "ratio": null
+   },
+   {
+    "date": "2026-07-28",
+    "load": 0,
+    "acute": 0.0,
+    "chronic": 0.0,
+    "ratio": null
+   },
+   {
+    "date": "2026-07-29",
+    "load": 0,
+    "acute": 0.0,
+    "chronic": 0.0,
+    "ratio": null
+   },
+   {
+    "date": "2026-07-30",
+    "load": 0,
+    "acute": 0.0,
+    "chronic": 0.0,
+    "ratio": null
+   },
+   {
+    "date": "2026-07-31",
+    "load": 0,
+    "acute": 0.0,
+    "chronic": 0.0,
+    "ratio": null
+   },
+   {
+    "date": "2026-08-01",
+    "load": 0,
+    "acute": 0.0,
+    "chronic": 0.0,
+    "ratio": null
+   },
+   {
+    "date": "2026-08-02",
+    "load": 0,
+    "acute": 0.0,
+    "chronic": 0.0,
+    "ratio": null
+   },
+   {
+    "date": "2026-08-03",
+    "load": 0,
+    "acute": 0.0,
+    "chronic": 0.0,
+    "ratio": null
+   },
+   {
+    "date": "2026-08-04",
+    "load": 0,
+    "acute": 0.0,
+    "chronic": 0.0,
+    "ratio": null
+   },
+   {
+    "date": "2026-08-05",
+    "load": 0,
+    "acute": 0.0,
+    "chronic": 0.0,
+    "ratio": null
+   },
+   {
+    "date": "2026-08-06",
+    "load": 0,
+    "acute": 0.0,
+    "chronic": 0.0,
+    "ratio": null
+   },
+   {
+    "date": "2026-08-07",
+    "load": 0,
+    "acute": 0.0,
+    "chronic": 0.0,
+    "ratio": null
+   },
+   {
+    "date": "2026-08-08",
+    "load": 0,
+    "acute": 0.0,
+    "chronic": 0.0,
+    "ratio": null
+   },
+   {
+    "date": "2026-08-09",
+    "load": 0,
+    "acute": 0.0,
+    "chronic": 0.0,
+    "ratio": null
+   },
+   {
+    "date": "2026-08-10",
+    "load": 0,
+    "acute": 0.0,
+    "chronic": 0.0,
+    "ratio": null
+   },
+   {
+    "date": "2026-08-11",
+    "load": 0,
+    "acute": 0.0,
+    "chronic": 0.0,
+    "ratio": null
+   },
+   {
+    "date": "2026-08-12",
+    "load": 0,
+    "acute": 0.0,
+    "chronic": 0.0,
+    "ratio": null
+   },
+   {
+    "date": "2026-08-13",
+    "load": 0,
+    "acute": 0.0,
+    "chronic": 0.0,
+    "ratio": null
+   },
+   {
+    "date": "2026-08-14",
+    "load": 0,
+    "acute": 0.0,
+    "chronic": 0.0,
+    "ratio": null
+   },
+   {
+    "date": "2026-08-15",
+    "load": 0,
+    "acute": 0.0,
+    "chronic": 0.0,
+    "ratio": null
+   },
+   {
+    "date": "2026-08-16",
+    "load": 0,
+    "acute": 0.0,
+    "chronic": 0.0,
+    "ratio": null
+   },
+   {
+    "date": "2026-08-17",
+    "load": 0,
+    "acute": 0.0,
+    "chronic": 0.0,
+    "ratio": null
+   },
+   {
+    "date": "2026-08-18",
+    "load": 0,
+    "acute": 0.0,
+    "chronic": 0.0,
+    "ratio": null
+   },
+   {
+    "date": "2026-08-19",
+    "load": 0,
+    "acute": 0.0,
+    "chronic": 0.0,
+    "ratio": null
+   },
+   {
+    "date": "2026-08-20",
+    "load": 0,
+    "acute": 0.0,
+    "chronic": 0.0,
+    "ratio": null
+   },
+   {
+    "date": "2026-08-21",
+    "load": 0,
+    "acute": 0.0,
+    "chronic": 0.0,
+    "ratio": null
+   },
+   {
+    "date": "2026-08-22",
+    "load": 51.5,
+    "acute": 7.4,
+    "chronic": 1.8,
+    "ratio": 4.0
+   },
+   {
+    "date": "2026-08-23",
+    "load": 0,
+    "acute": 7.4,
+    "chronic": 1.8,
+    "ratio": 4.0
+   },
+   {
+    "date": "2026-08-24",
+    "load": 0,
+    "acute": 7.4,
+    "chronic": 1.8,
+    "ratio": 4.0
+   },
+   {
+    "date": "2026-08-25",
+    "load": 0,
+    "acute": 7.4,
+    "chronic": 1.8,
+    "ratio": 4.0
+   },
+   {
+    "date": "2026-08-26",
+    "load": 0,
+    "acute": 7.4,
+    "chronic": 1.8,
+    "ratio": 4.0
+   },
+   {
+    "date": "2026-08-27",
+    "load": 0,
+    "acute": 7.4,
+    "chronic": 1.8,
+    "ratio": 4.0
+   },
+   {
+    "date": "2026-08-28",
+    "load": 0,
+    "acute": 7.4,
+    "chronic": 1.8,
+    "ratio": 4.0
+   },
+   {
+    "date": "2026-08-29",
+    "load": 0,
+    "acute": 0.0,
+    "chronic": 1.8,
+    "ratio": 0.0
+   },
+   {
+    "date": "2026-08-30",
+    "load": 0,
+    "acute": 0.0,
+    "chronic": 1.8,
+    "ratio": 0.0
+   },
+   {
+    "date": "2026-08-31",
+    "load": 0,
+    "acute": 0.0,
+    "chronic": 1.8,
+    "ratio": 0.0
+   },
+   {
+    "date": "2026-09-01",
+    "load": 0,
+    "acute": 0.0,
+    "chronic": 1.8,
+    "ratio": 0.0
+   },
+   {
+    "date": "2026-09-02",
+    "load": 0,
+    "acute": 0.0,
+    "chronic": 1.8,
+    "ratio": 0.0
+   },
+   {
+    "date": "2026-09-03",
+    "load": 0,
+    "acute": 0.0,
+    "chronic": 1.8,
+    "ratio": 0.0
+   },
+   {
+    "date": "2026-09-04",
+    "load": 0,
+    "acute": 0.0,
+    "chronic": 1.8,
+    "ratio": 0.0
+   },
+   {
+    "date": "2026-09-05",
+    "load": 123.7,
+    "acute": 17.7,
+    "chronic": 6.3,
+    "ratio": 2.82
+   },
+   {
+    "date": "2026-09-06",
+    "load": 0,
+    "acute": 17.7,
+    "chronic": 6.3,
+    "ratio": 2.82
+   },
+   {
+    "date": "2026-09-07",
+    "load": 0,
+    "acute": 17.7,
+    "chronic": 6.3,
+    "ratio": 2.82
+   },
+   {
+    "date": "2026-09-08",
+    "load": 0,
+    "acute": 17.7,
+    "chronic": 6.3,
+    "ratio": 2.82
+   },
+   {
+    "date": "2026-09-09",
+    "load": 0,
+    "acute": 17.7,
+    "chronic": 6.3,
+    "ratio": 2.82
+   },
+   {
+    "date": "2026-09-10",
+    "load": 0,
+    "acute": 17.7,
+    "chronic": 6.3,
+    "ratio": 2.82
+   },
+   {
+    "date": "2026-09-11",
+    "load": 0,
+    "acute": 17.7,
+    "chronic": 6.3,
+    "ratio": 2.82
+   },
+   {
+    "date": "2026-09-12",
+    "load": 10.6,
+    "acute": 1.5,
+    "chronic": 6.6,
+    "ratio": 0.23
+   },
+   {
+    "date": "2026-09-13",
+    "load": 0,
+    "acute": 1.5,
+    "chronic": 6.6,
+    "ratio": 0.23
+   }
+  ]
+ },
+ "readiness": {
+  "score": 88,
+  "level": "excellent",
+  "label": "状态极佳",
+  "comps": [
+   {
+    "key": "sleep",
+    "label": "睡眠",
+    "score": 90.0,
+    "weight": 0.3,
+    "value": "90 分",
+    "hint": "睡了 8.22 小时",
+    "effective": 29.0
+   },
+   {
+    "key": "duration",
+    "label": "睡眠时长",
+    "score": 100.0,
+    "weight": 0.1,
+    "value": "8.22 h",
+    "hint": "目标 7.5 小时",
+    "effective": 10.0
+   },
+   {
+    "key": "rhr",
+    "label": "静息心率",
+    "score": 96.0,
+    "weight": 0.2,
+    "value": "48 bpm",
+    "hint": "月均 50.5，偏离 -2",
+    "effective": 19.0
+   },
+   {
+    "key": "hrv",
+    "label": "HRV 心率变异",
+    "score": 82.0,
+    "weight": 0.25,
+    "value": "61 ms",
+    "hint": "基线区间 58–69 ms",
+    "effective": 24.0
+   },
+   {
+    "key": "battery",
+    "label": "身体电量",
+    "score": 93.0,
+    "weight": 0.05,
+    "value": "79",
+    "hint": "昨夜回充 79，白天消耗 76",
+    "effective": 5.0
+   },
+   {
+    "key": "load",
+    "label": "负荷平衡",
+    "score": 72.0,
+    "weight": 0.15,
+    "value": "ACWR 0.23",
+    "hint": "负荷偏低，体能可能在流失",
+    "effective": 14.0
+   }
+  ],
+  "missing": []
+ },
+ "wellness": {
+  "available": true,
+  "range": {
+   "start": "2026-06-16",
+   "end": "2026-09-13",
+   "days": 90
+  },
+  "daily": [
+   {
+    "date": "2026-08-15",
+    "hrvNight": 57,
+    "hrvWeekly": 60,
+    "hrvStatus": "BALANCED",
+    "hrvLow": 58,
+    "hrvUpper": 68,
+    "readinessScore": 76,
+    "readinessLevel": "HIGH",
+    "readinessFeedback": "WELL_RECOVERED",
+    "acuteLoad": 0,
+    "bbCharged": 71,
+    "bbDrained": 73,
+    "bbMin": 5,
+    "bbMax": 77,
+    "respSleep": 16.0,
+    "spo2SleepAvg": null,
+    "respAwake": 15.0,
+    "respLow": 8.0,
+    "respHigh": 23.0,
+    "spo2Lowest": null
+   },
+   {
+    "date": "2026-08-16",
+    "hrvNight": 56,
+    "hrvWeekly": 59,
+    "hrvStatus": "BALANCED",
+    "hrvLow": 58,
+    "hrvUpper": 68,
+    "readinessScore": 73,
+    "readinessLevel": "MODERATE",
+    "readinessFeedback": "GOOD_SLEEP_HISTORY",
+    "acuteLoad": 0,
+    "bbCharged": 61,
+    "bbDrained": 68,
+    "bbMin": 5,
+    "bbMax": 73,
+    "respSleep": 17.0,
+    "spo2SleepAvg": null,
+    "respAwake": 14.0,
+    "respLow": 6.0,
+    "respHigh": 23.0,
+    "spo2Lowest": null
+   },
+   {
+    "date": "2026-08-17",
+    "hrvNight": 56,
+    "hrvWeekly": 58,
+    "hrvStatus": "UNBALANCED",
+    "hrvLow": 59,
+    "hrvUpper": 68,
+    "readinessScore": 68,
+    "readinessLevel": "MODERATE",
+    "readinessFeedback": "LISTEN_TO_YOUR_BODY",
+    "acuteLoad": 0,
+    "bbCharged": 76,
+    "bbDrained": 75,
+    "bbMin": 5,
+    "bbMax": 76,
+    "respSleep": 16.0,
+    "spo2SleepAvg": null,
+    "respAwake": 14.0,
+    "respLow": 7.0,
+    "respHigh": 22.0,
+    "spo2Lowest": null
+   },
+   {
+    "date": "2026-08-18",
+    "hrvNight": 58,
+    "hrvWeekly": 58,
+    "hrvStatus": "BALANCED",
+    "hrvLow": 58,
+    "hrvUpper": 68,
+    "readinessScore": 76,
+    "readinessLevel": "HIGH",
+    "readinessFeedback": "WELL_RECOVERED",
+    "acuteLoad": 0,
+    "bbCharged": 74,
+    "bbDrained": 74,
+    "bbMin": 5,
+    "bbMax": 78,
+    "respSleep": 16.0,
+    "spo2SleepAvg": null,
+    "respAwake": 15.0,
+    "respLow": 7.0,
+    "respHigh": 22.0,
+    "spo2Lowest": null
+   },
+   {
+    "date": "2026-08-19",
+    "hrvNight": 53,
+    "hrvWeekly": 57,
+    "hrvStatus": "UNBALANCED",
+    "hrvLow": 58,
+    "hrvUpper": 68,
+    "readinessScore": 76,
+    "readinessLevel": "HIGH",
+    "readinessFeedback": "LISTEN_TO_YOUR_BODY",
+    "acuteLoad": 0,
+    "bbCharged": 84,
+    "bbDrained": 74,
+    "bbMin": 5,
+    "bbMax": 79,
+    "respSleep": 16.0,
+    "spo2SleepAvg": null,
+    "respAwake": 14.0,
+    "respLow": 7.0,
+    "respHigh": 23.0,
+    "spo2Lowest": null
+   },
+   {
+    "date": "2026-08-20",
+    "hrvNight": 51,
+    "hrvWeekly": 56,
+    "hrvStatus": "LOW",
+    "hrvLow": 58,
+    "hrvUpper": 68,
+    "readinessScore": 61,
+    "readinessLevel": "MODERATE",
+    "readinessFeedback": "LISTEN_TO_YOUR_BODY",
+    "acuteLoad": 0,
+    "bbCharged": 71,
+    "bbDrained": 62,
+    "bbMin": 10,
+    "bbMax": 70,
+    "respSleep": 17.0,
+    "spo2SleepAvg": null,
+    "respAwake": 15.0,
+    "respLow": 7.0,
+    "respHigh": 24.0,
+    "spo2Lowest": null
+   },
+   {
+    "date": "2026-08-21",
+    "hrvNight": 62,
+    "hrvWeekly": 56,
+    "hrvStatus": "UNBALANCED",
+    "hrvLow": 58,
+    "hrvUpper": 68,
+    "readinessScore": 71,
+    "readinessLevel": "MODERATE",
+    "readinessFeedback": "LISTEN_TO_YOUR_BODY",
+    "acuteLoad": 0,
+    "bbCharged": 74,
+    "bbDrained": 86,
+    "bbMin": 14,
+    "bbMax": 100,
+    "respSleep": 16.0,
+    "spo2SleepAvg": null,
+    "respAwake": 14.0,
+    "respLow": 7.0,
+    "respHigh": 23.0,
+    "spo2Lowest": null
+   },
+   {
+    "date": "2026-08-22",
+    "hrvNight": 66,
+    "hrvWeekly": 57,
+    "hrvStatus": "UNBALANCED",
+    "hrvLow": 58,
+    "hrvUpper": 68,
+    "readinessScore": 62,
+    "readinessLevel": "MODERATE",
+    "readinessFeedback": "LISTEN_TO_YOUR_BODY",
+    "acuteLoad": 66,
+    "bbCharged": 82,
+    "bbDrained": 86,
+    "bbMin": 7,
+    "bbMax": 92,
+    "respSleep": 16.0,
+    "spo2SleepAvg": null,
+    "respAwake": 14.0,
+    "respLow": 8.0,
+    "respHigh": 23.0,
+    "spo2Lowest": null
+   },
+   {
+    "date": "2026-08-23",
+    "hrvNight": 64,
+    "hrvWeekly": 58,
+    "hrvStatus": "BALANCED",
+    "hrvLow": 58,
+    "hrvUpper": 68,
+    "readinessScore": 75,
+    "readinessLevel": "HIGH",
+    "readinessFeedback": "EXCELLENT_RECOVERY",
+    "acuteLoad": 59,
+    "bbCharged": 69,
+    "bbDrained": 68,
+    "bbMin": 5,
+    "bbMax": 73,
+    "respSleep": 16.0,
+    "spo2SleepAvg": null,
+    "respAwake": 15.0,
+    "respLow": 7.0,
+    "respHigh": 22.0,
+    "spo2Lowest": null
+   },
+   {
+    "date": "2026-08-24",
+    "hrvNight": 71,
+    "hrvWeekly": 60,
+    "hrvStatus": "BALANCED",
+    "hrvLow": 58,
+    "hrvUpper": 67,
+    "readinessScore": 94,
+    "readinessLevel": "HIGH",
+    "readinessFeedback": "WELL_RECOVERED",
+    "acuteLoad": 52,
+    "bbCharged": 90,
+    "bbDrained": 89,
+    "bbMin": 9,
+    "bbMax": 96,
+    "respSleep": 15.0,
+    "spo2SleepAvg": null,
+    "respAwake": 15.0,
+    "respLow": 8.0,
+    "respHigh": 24.0,
+    "spo2Lowest": null
+   },
+   {
+    "date": "2026-08-25",
+    "hrvNight": 60,
+    "hrvWeekly": 61,
+    "hrvStatus": "BALANCED",
+    "hrvLow": 58,
+    "hrvUpper": 67,
+    "readinessScore": 77,
+    "readinessLevel": "HIGH",
+    "readinessFeedback": "WELL_RECOVERED",
+    "acuteLoad": 46,
+    "bbCharged": 69,
+    "bbDrained": 76,
+    "bbMin": 5,
+    "bbMax": 79,
+    "respSleep": 16.0,
+    "spo2SleepAvg": null,
+    "respAwake": 14.0,
+    "respLow": 8.0,
+    "respHigh": 24.0,
+    "spo2Lowest": null
+   },
+   {
+    "date": "2026-08-26",
+    "hrvNight": 66,
+    "hrvWeekly": 63,
+    "hrvStatus": "BALANCED",
+    "hrvLow": 58,
+    "hrvUpper": 67,
+    "readinessScore": 85,
+    "readinessLevel": "HIGH",
+    "readinessFeedback": "WELL_RECOVERED",
+    "acuteLoad": 39,
+    "bbCharged": 87,
+    "bbDrained": 86,
+    "bbMin": 5,
+    "bbMax": 92,
+    "respSleep": 15.0,
+    "spo2SleepAvg": null,
+    "respAwake": 14.0,
+    "respLow": 6.0,
+    "respHigh": 24.0,
+    "spo2Lowest": null
+   },
+   {
+    "date": "2026-08-27",
+    "hrvNight": 60,
+    "hrvWeekly": 64,
+    "hrvStatus": "BALANCED",
+    "hrvLow": 57,
+    "hrvUpper": 67,
+    "readinessScore": 87,
+    "readinessLevel": "HIGH",
+    "readinessFeedback": "WELL_RECOVERED",
+    "acuteLoad": 33,
+    "bbCharged": 91,
+    "bbDrained": 84,
+    "bbMin": 5,
+    "bbMax": 87,
+    "respSleep": 16.0,
+    "spo2SleepAvg": null,
+    "respAwake": 14.0,
+    "respLow": 6.0,
+    "respHigh": 23.0,
+    "spo2Lowest": null
+   },
+   {
+    "date": "2026-08-28",
+    "hrvNight": 57,
+    "hrvWeekly": 63,
+    "hrvStatus": "BALANCED",
+    "hrvLow": 57,
+    "hrvUpper": 67,
+    "readinessScore": 73,
+    "readinessLevel": "MODERATE",
+    "readinessFeedback": "GOOD_SLEEP_HISTORY",
+    "acuteLoad": 26,
+    "bbCharged": 60,
+    "bbDrained": 63,
+    "bbMin": 9,
+    "bbMax": 69,
+    "respSleep": 17.0,
+    "spo2SleepAvg": null,
+    "respAwake": 14.0,
+    "respLow": 6.0,
+    "respHigh": 23.0,
+    "spo2Lowest": null
+   },
+   {
+    "date": "2026-08-29",
+    "hrvNight": 63,
+    "hrvWeekly": 63,
+    "hrvStatus": "BALANCED",
+    "hrvLow": 58,
+    "hrvUpper": 67,
+    "readinessScore": 61,
+    "readinessLevel": "MODERATE",
+    "readinessFeedback": "FOCUS_ON_ENERGY_LEVELS",
+    "acuteLoad": 20,
+    "bbCharged": 83,
+    "bbDrained": 88,
+    "bbMin": 5,
+    "bbMax": 93,
+    "respSleep": 15.0,
+    "spo2SleepAvg": null,
+    "respAwake": 14.0,
+    "respLow": 8.0,
+    "respHigh": 21.0,
+    "spo2Lowest": null
+   },
+   {
+    "date": "2026-08-30",
+    "hrvNight": 73,
+    "hrvWeekly": 64,
+    "hrvStatus": "BALANCED",
+    "hrvLow": 58,
+    "hrvUpper": 67,
+    "readinessScore": 56,
+    "readinessLevel": "MODERATE",
+    "readinessFeedback": "GOOD_RECOVERY",
+    "acuteLoad": 13,
+    "bbCharged": 90,
+    "bbDrained": 81,
+    "bbMin": 7,
+    "bbMax": 94,
+    "respSleep": 15.0,
+    "spo2SleepAvg": null,
+    "respAwake": 14.0,
+    "respLow": 8.0,
+    "respHigh": 23.0,
+    "spo2Lowest": null
+   },
+   {
+    "date": "2026-08-31",
+    "hrvNight": 75,
+    "hrvWeekly": 64,
+    "hrvStatus": "BALANCED",
+    "hrvLow": 58,
+    "hrvUpper": 68,
+    "readinessScore": 62,
+    "readinessLevel": "MODERATE",
+    "readinessFeedback": "GOOD_RECOVERY",
+    "acuteLoad": 7,
+    "bbCharged": 88,
+    "bbDrained": 87,
+    "bbMin": 8,
+    "bbMax": 95,
+    "respSleep": 15.0,
+    "spo2SleepAvg": null,
+    "respAwake": 14.0,
+    "respLow": 8.0,
+    "respHigh": 22.0,
+    "spo2Lowest": null
+   },
+   {
+    "date": "2026-09-01",
+    "hrvNight": 67,
+    "hrvWeekly": 65,
+    "hrvStatus": "BALANCED",
+    "hrvLow": 58,
+    "hrvUpper": 68,
+    "readinessScore": 50,
+    "readinessLevel": "MODERATE",
+    "readinessFeedback": "FOCUS_ON_ENERGY_LEVELS",
+    "acuteLoad": 0,
+    "bbCharged": 79,
+    "bbDrained": 79,
+    "bbMin": 5,
+    "bbMax": 82,
+    "respSleep": 15.0,
+    "spo2SleepAvg": null,
+    "respAwake": 14.0,
+    "respLow": 7.0,
+    "respHigh": 23.0,
+    "spo2Lowest": null
+   },
+   {
+    "date": "2026-09-02",
+    "hrvNight": 64,
+    "hrvWeekly": 65,
+    "hrvStatus": "BALANCED",
+    "hrvLow": 58,
+    "hrvUpper": 68,
+    "readinessScore": 83,
+    "readinessLevel": "HIGH",
+    "readinessFeedback": "RESTED_AND_READY",
+    "acuteLoad": 0,
+    "bbCharged": 85,
+    "bbDrained": 87,
+    "bbMin": 14,
+    "bbMax": 100,
+    "respSleep": 15.0,
+    "spo2SleepAvg": null,
+    "respAwake": 14.0,
+    "respLow": 7.0,
+    "respHigh": 23.0,
+    "spo2Lowest": null
+   },
+   {
+    "date": "2026-09-03",
+    "hrvNight": 66,
+    "hrvWeekly": 66,
+    "hrvStatus": "BALANCED",
+    "hrvLow": 58,
+    "hrvUpper": 68,
+    "readinessScore": 79,
+    "readinessLevel": "HIGH",
+    "readinessFeedback": "EXCELLENT_RECOVERY",
+    "acuteLoad": 0,
+    "bbCharged": 82,
+    "bbDrained": 89,
+    "bbMin": 6,
+    "bbMax": 95,
+    "respSleep": 16.0,
+    "spo2SleepAvg": null,
+    "respAwake": 14.0,
+    "respLow": 7.0,
+    "respHigh": 23.0,
+    "spo2Lowest": null
+   },
+   {
+    "date": "2026-09-04",
+    "hrvNight": 57,
+    "hrvWeekly": 66,
+    "hrvStatus": "BALANCED",
+    "hrvLow": 58,
+    "hrvUpper": 68,
+    "readinessScore": 68,
+    "readinessLevel": "MODERATE",
+    "readinessFeedback": "GOOD_SLEEP_HISTORY",
+    "acuteLoad": 0,
+    "bbCharged": 55,
+    "bbDrained": 59,
+    "bbMin": 5,
+    "bbMax": 64,
+    "respSleep": 16.0,
+    "spo2SleepAvg": null,
+    "respAwake": 15.0,
+    "respLow": 7.0,
+    "respHigh": 23.0,
+    "spo2Lowest": null
+   },
+   {
+    "date": "2026-09-05",
+    "hrvNight": 54,
+    "hrvWeekly": 65,
+    "hrvStatus": "BALANCED",
+    "hrvLow": 58,
+    "hrvUpper": 68,
+    "readinessScore": 38,
+    "readinessLevel": "LOW",
+    "readinessFeedback": "FIND_TIME_TO_RELAX",
+    "acuteLoad": 0,
+    "bbCharged": 64,
+    "bbDrained": 52,
+    "bbMin": 5,
+    "bbMax": 50,
+    "respSleep": 17.0,
+    "spo2SleepAvg": null,
+    "respAwake": 16.0,
+    "respLow": 7.0,
+    "respHigh": 23.0,
+    "spo2Lowest": null
+   },
+   {
+    "date": "2026-09-06",
+    "hrvNight": 59,
+    "hrvWeekly": 63,
+    "hrvStatus": "BALANCED",
+    "hrvLow": 58,
+    "hrvUpper": 68,
+    "readinessScore": 50,
+    "readinessLevel": "MODERATE",
+    "readinessFeedback": "GOOD_RECOVERY",
+    "acuteLoad": 157,
+    "bbCharged": 67,
+    "bbDrained": 80,
+    "bbMin": 5,
+    "bbMax": 83,
+    "respSleep": 16.0,
+    "spo2SleepAvg": null,
+    "respAwake": 15.0,
+    "respLow": 8.0,
+    "respHigh": 23.0,
+    "spo2Lowest": null
+   },
+   {
+    "date": "2026-09-07",
+    "hrvNight": 67,
+    "hrvWeekly": 62,
+    "hrvStatus": "BALANCED",
+    "hrvLow": 58,
+    "hrvUpper": 69,
+    "readinessScore": 57,
+    "readinessLevel": "MODERATE",
+    "readinessFeedback": "WELL_RESTED",
+    "acuteLoad": 142,
+    "bbCharged": 78,
+    "bbDrained": 78,
+    "bbMin": 5,
+    "bbMax": 83,
+    "respSleep": 16.0,
+    "spo2SleepAvg": null,
+    "respAwake": 14.0,
+    "respLow": 6.0,
+    "respHigh": 22.0,
+    "spo2Lowest": null
+   },
+   {
+    "date": "2026-09-08",
+    "hrvNight": 63,
+    "hrvWeekly": 61,
+    "hrvStatus": "BALANCED",
+    "hrvLow": 58,
+    "hrvUpper": 69,
+    "readinessScore": 54,
+    "readinessLevel": "MODERATE",
+    "readinessFeedback": "FOCUS_ON_ENERGY_LEVELS",
+    "acuteLoad": 126,
+    "bbCharged": 60,
+    "bbDrained": 60,
+    "bbMin": 5,
+    "bbMax": 65,
+    "respSleep": 16.0,
+    "spo2SleepAvg": null,
+    "respAwake": 14.0,
+    "respLow": 7.0,
+    "respHigh": 22.0,
+    "spo2Lowest": null
+   },
+   {
+    "date": "2026-09-09",
+    "hrvNight": 65,
+    "hrvWeekly": 61,
+    "hrvStatus": "BALANCED",
+    "hrvLow": 58,
+    "hrvUpper": 69,
+    "readinessScore": 68,
+    "readinessLevel": "MODERATE",
+    "readinessFeedback": "BALANCE_STRESS_AND_RECOVERY",
+    "acuteLoad": 110,
+    "bbCharged": 89,
+    "bbDrained": 89,
+    "bbMin": 5,
+    "bbMax": 93,
+    "respSleep": 16.0,
+    "spo2SleepAvg": null,
+    "respAwake": 14.0,
+    "respLow": 7.0,
+    "respHigh": 22.0,
+    "spo2Lowest": null
+   },
+   {
+    "date": "2026-09-10",
+    "hrvNight": 58,
+    "hrvWeekly": 60,
+    "hrvStatus": "BALANCED",
+    "hrvLow": 58,
+    "hrvUpper": 69,
+    "readinessScore": 52,
+    "readinessLevel": "MODERATE",
+    "readinessFeedback": "FOCUS_ON_ENERGY_LEVELS",
+    "acuteLoad": 94,
+    "bbCharged": 71,
+    "bbDrained": 63,
+    "bbMin": 5,
+    "bbMax": 66,
+    "respSleep": 16.0,
+    "spo2SleepAvg": null,
+    "respAwake": 14.0,
+    "respLow": 7.0,
+    "respHigh": 21.0,
+    "spo2Lowest": null
+   },
+   {
+    "date": "2026-09-11",
+    "hrvNight": 61,
+    "hrvWeekly": 61,
+    "hrvStatus": "BALANCED",
+    "hrvLow": 58,
+    "hrvUpper": 69,
+    "readinessScore": 78,
+    "readinessLevel": "HIGH",
+    "readinessFeedback": "WELL_RECOVERED",
+    "acuteLoad": 79,
+    "bbCharged": 82,
+    "bbDrained": 84,
+    "bbMin": 11,
+    "bbMax": 95,
+    "respSleep": 16.0,
+    "spo2SleepAvg": null,
+    "respAwake": 14.0,
+    "respLow": 5.0,
+    "respHigh": 23.0,
+    "spo2Lowest": null
+   },
+   {
+    "date": "2026-09-12",
+    "hrvNight": 61,
+    "hrvWeekly": 62,
+    "hrvStatus": "BALANCED",
+    "hrvLow": 58,
+    "hrvUpper": 69,
+    "readinessScore": 86,
+    "readinessLevel": "HIGH",
+    "readinessFeedback": "ENERGIZING_NAP",
+    "acuteLoad": 76,
+    "bbCharged": 77,
+    "bbDrained": 87,
+    "bbMin": 12,
+    "bbMax": 93,
+    "respSleep": 16.0,
+    "spo2SleepAvg": null,
+    "respAwake": 15.0,
+    "respLow": 7.0,
+    "respHigh": 24.0,
+    "spo2Lowest": null
+   },
+   {
+    "date": "2026-09-13",
+    "hrvNight": 61,
+    "hrvWeekly": 62,
+    "hrvStatus": "BALANCED",
+    "hrvLow": 58,
+    "hrvUpper": 69,
+    "readinessScore": 96,
+    "readinessLevel": "PRIME",
+    "readinessFeedback": "READY_FOR_ACTION",
+    "acuteLoad": 59,
+    "bbCharged": 79,
+    "bbDrained": 76,
+    "bbMin": 19,
+    "bbMax": 96,
+    "respSleep": 16.0,
+    "spo2SleepAvg": null,
+    "respAwake": 14.0,
+    "respLow": 8.0,
+    "respHigh": 21.0,
+    "spo2Lowest": null
+   }
+  ],
+  "latest": {
+   "vo2max": 54.0,
+   "vo2maxDate": "2026-09-06",
+   "loadAerobicLow": 171.0,
+   "loadAnaerobic": 0.0,
+   "loadTargetLow": 211,
+   "loadTargetHigh": 473,
+   "loadFeedback": "BELOW_TARGETS",
+   "deviceName": "Warden's 7X",
+   "fitnessAge": 27.0,
+   "realAge": 33,
+   "fitnessAgeAchievable": 27.0,
+   "bmiValue": 19.5,
+   "enduranceScore": 5807,
+   "enduranceClass": 3,
+   "enduranceNext": 5800,
+   "hillScore": 27,
+   "hillClass": 2,
+   "race": {
+    "date": "2026-09-13",
+    "5k": 1408,
+    "10k": 2964,
+    "half": 6612,
+    "full": 15476
+   }
+  }
+ },
+ "narrative": "昨晚睡了 8.22 小时、睡眠评分 90 分、其中深睡 1.77 小时、静息心率 48 bpm、走了 7,819 步。近 7 天共 1 次训练，累计 9.79 公里 / 53 分钟，最近一次是 2026-09-12 的骑行（9.79 公里）。需要留意的是：训练量偏少——负荷比 0.23，低于 0.8——近一个月练得太少，已积累的有氧基础正在流失。每周加 1–2 次低强度有氧即可回升。做得好的地方：静息心率偏低、睡眠充足、睡眠质量优秀。",
+ "narrativeSource": "rule",
+ "aiNarrative": "昨晚睡了 8.22 小时、睡眠评分 90 分，深睡 1.77 小时、REM 2.18 小时，是本周质量最好的一晚；静息心率 48 bpm，比近 30 天均值低 2 拍。今早 HRV 61 ms 稳稳落在个人基线区间（58–69 ms）内，周均 62 ms，说明自主神经恢复到位。腕表的官方训练准备度给到 96 分「巅峰状态」，综合状态分 88 分——身体今天是充好电的状态。反差在训练一侧：近 7 天只有 1 次骑行（9.79 km / 53 分钟，训练效果仅 1.0，基本是活动筋骨），急性负荷日均降到 1.5、慢性 6.6，负荷比 0.23，远低于 0.8–1.3 的最佳区间；本月累积负荷 171，也没够上腕表建议的 211–473 维持区间。VO2 Max 54、体能年龄 27 岁（实际 33 岁）、耐力分 5807 这些长期积累还在，但目前是在吃老本——再歇下去会慢慢还回去。今天走了 7,819 步，日常活动量达标，唯独缺一次真正有强度的训练。",
+ "aiAdvice": "今天是 96 分的巅峰准备度，别浪费：上一次有强度的训练已经很久之前，建议今晚补一次 35–45 分钟的慢跑或骑行，目标心率 135–150 bpm（Z3 区间），把训练效果打到 3.0 以上——低于 2.0 基本不刺激有氧系统。\n本周安排两次有氧就够（今天一次、周中一次），先把月负荷从 171 拉回 211 的维持线以上；负荷比 0.23 说明身体完全吃得消，不用怕练过头。\n本周睡眠均值才 6.79 小时，昨晚证明你能睡满 8 小时，建议维持 23:30 前入睡，先让周均站上 7 小时再谈训练质量。\n步数维持在 5,000 以上，这是除训练外唯一还在支撑体能年龄的日常项；实在没练的日子至少走到 6,000 步。\n有空看一眼「训练效果分布」：561 次活动里有 246 次训练效果低于 2.0，这批活动才是你真正能提升的地方——量不算少，缺的只是每次都往上顶一顶。",
+ "aiModel": "WorkBuddy AI",
+ "aiAt": "2026-09-13T22:59:19"
 }

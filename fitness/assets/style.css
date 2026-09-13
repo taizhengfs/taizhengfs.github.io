@@ -304,6 +304,42 @@ select:focus, input:focus { border-color: #3b4757; }
 
 .loader { padding: 60px; text-align: center; color: var(--fg-mute); }
 
+/* ---------- 今日状态 / 体能档案 / 负荷比 ---------- */
+.rd-body { display: flex; align-items: center; gap: 22px; flex-wrap: wrap; }
+.rd-ring { flex: none; width: 136px; }
+.rd-ring svg { display: block; width: 100%; }
+.rd-comps { flex: 1; min-width: 250px; }
+.rc-row { margin-bottom: 9px; }
+.rc-head { display: flex; justify-content: space-between; font-size: 12.5px; margin-bottom: 3px; }
+.rc-head .k { color: var(--fg-dim); }
+.rc-head .v { font-variant-numeric: tabular-nums; }
+.rc-head .w { color: var(--fg-mute); font-size: 11px; margin-left: 6px; }
+.rc-bar { height: 7px; background: var(--card-2); border-radius: 4px; overflow: hidden; }
+.rc-bar i { display: block; height: 100%; border-radius: 4px; }
+.rc-hint { font-size: 11.5px; color: var(--fg-mute); margin-top: 2px; }
+
+.acwr-top { display: flex; gap: 22px; flex-wrap: wrap; margin-bottom: 12px; }
+.acwr-top .big { font-size: 30px; font-weight: 660; line-height: 1.1; font-variant-numeric: tabular-nums; }
+.acwr-top .col .l { font-size: 11.5px; color: var(--fg-mute); text-transform: uppercase; letter-spacing: 0.6px; }
+.acwr-top .col .s { font-size: 12px; color: var(--fg-dim); margin-top: 2px; }
+.acwr-badge {
+  display: inline-block; padding: 3px 10px; border-radius: 999px;
+  font-size: 12px; font-weight: 600; margin-top: 4px;
+}
+
+.wl-extra { margin-top: 12px; font-size: 12.5px; color: var(--fg-dim); line-height: 1.8; }
+.wl-extra b { color: var(--fg); }
+
+.place-row {
+  display: flex; align-items: center; gap: 12px; padding: 8px 0;
+  border-bottom: 1px solid var(--line-soft); font-size: 13px;
+}
+.place-row:last-child { border-bottom: none; }
+.place-row .rank { width: 22px; color: var(--fg-mute); font-variant-numeric: tabular-nums; flex: none; }
+.place-row .nm { flex: 1; color: var(--fg); }
+.place-row .nm span { color: var(--fg-mute); font-size: 11.5px; margin-left: 8px; }
+.place-row .met { color: var(--fg-dim); font-variant-numeric: tabular-nums; font-size: 12.5px; }
+
 /* ---------- 全局错误横幅 ---------- */
 #errbar:empty { display: none; }
 #errbar {

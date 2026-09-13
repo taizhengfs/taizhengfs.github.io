@@ -365,6 +365,7 @@ function renderBriefing() {
     $('#br-week').innerHTML = '';
     $('#br-week-range').textContent = '—';
     $('#br-workouts').innerHTML = '';
+    renderReadiness(null); renderBriefingAcwr(null); renderWellness(null);
     return;
   }
 
@@ -493,6 +494,360 @@ function renderBriefing() {
         <span style="width:60px;text-align:right;font-size:12px;color:#97a3b6">${a.avgHR ?? '—'} bpm</span>
       </div>`).join('')
     : `<div style="color:#647084;font-size:13px">近 7 天没有训练记录${isNum(I.restDays) ? `，最近一次运动在 ${I.restDays} 天前` : ''}。</div>`;
+
+  renderReadiness(I);
+  renderBriefingAcwr(I);
+  renderWellness(I);
+}
+
+/* ============================ 训练效果 / 负荷比 / 状态分 ============================ */
+const TE_LABELS = ['无明显效果', '轻微效果', '保持体能', '提升有氧', '显著提升', '过度负荷'];
+const TE_BOUNDS = [0, 1, 2, 3, 4, 4.99, 99];
+const TE_COLORS = ['#2b3442', '#4c6ef5', '#22b8cf', '#51cf66', '#fab005', '#ff6b6b'];
+const RD_COLOR = { excellent: C.accent2, good: C.z[2], warn: C.pace, bad: C.hr };
+
+function teIdx(te) {
+  for (let i = 0; i < 6; i++) if (te >= TE_BOUNDS[i] && te < TE_BOUNDS[i + 1]) return i;
+  return 5;
+}
+
+/** 环状分数盘 */
+function donutRing(node, score, color, label) {
+  const S = 136, r = 52, c = S / 2, sw = 12;
+  const cir = 2 * Math.PI * r;
+  const pct = Math.max(0, Math.min(100, score)) / 100;
+  node.innerHTML = `<svg viewBox="0 0 ${S} ${S}">
+    <circle cx="${c}" cy="${c}" r="${r}" fill="none" stroke="#242c39" stroke-width="${sw}"/>
+    <circle cx="${c}" cy="${c}" r="${r}" fill="none" stroke="${color}" stroke-width="${sw}"
+      stroke-linecap="round" stroke-dasharray="${cir.toFixed(1)}"
+      stroke-dashoffset="${(cir * (1 - pct)).toFixed(1)}" transform="rotate(-90 ${c} ${c})"/>
+    <text x="${c}" y="${c + 4}" text-anchor="middle" font-size="34" font-weight="660" fill="#e6edf6">${score}</text>
+    <text x="${c}" y="${c + 22}" text-anchor="middle" font-size="11.5" fill="#647084">${label || '分'}</text>
+  </svg>`;
+}
+
+/** 由活动明细算 ACWR 序列（急性 7 天 / 慢性 28 天日均负荷） */
+function acwrSeries(days = 90) {
+  const acts = STATE.core.activities || [];
+  const loads = {};
+  acts.forEach(a => { if (a.date && a.load) loads[a.date] = (loads[a.date] || 0) + a.load; });
+  if (!Object.keys(loads).length) return [];
+  const last = acts.reduce((m, a) => (!m || a.date > m ? a.date : m), null);
+  const end = new Date(last + 'T00:00:00');
+  const total = days + 27;
+  const rows = [];
+  for (let i = 0; i < total; i++) {
+    const d = new Date(end.getTime() - (total - 1 - i) * 86400000);
+    const iso = d.toISOString().slice(0, 10);
+    let s7 = 0, s28 = 0;
+    for (let j = 0; j < 7; j++) s7 += loads[dateShift(iso, -j)] || 0;
+    for (let j = 0; j < 28; j++) s28 += loads[dateShift(iso, -j)] || 0;
+    rows.push({
+      date: iso, load: r1(loads[iso] || 0),
+      acute: r1(s7 / 7), chronic: r1(s28 / 28),
+      ratio: s28 / 28 > 0.05 ? r2(s7 / s28) : null,
+    });
+  }
+  return rows.slice(27);
+}
+const dateShift = (iso, deltaDays) =>
+  new Date(new Date(iso + 'T00:00:00').getTime() + deltaDays * 86400000).toISOString().slice(0, 10);
+const r1 = v => Math.round(v * 10) / 10;
+const r2 = v => Math.round(v * 100) / 100;
+
+/** ACWR 折线：带 0.8–1.3 最佳区间、1.3–1.5 警戒、>1.5 危险三条底色带 */
+function drawAcwr(node, rows, opt = {}) {
+  if (!rows.length) { node.innerHTML = '<div class="empty">无训练负荷数据</div>'; return; }
+  const W = node.clientWidth || 600, H = opt.height || 230;
+  const pad = { t: 12, r: 14, b: 26, l: 40 };
+  const iw = W - pad.l - pad.r, ih = H - pad.t - pad.b;
+  const n = rows.length;
+  const vals = rows.map(x => x.ratio).filter(isNum);
+  const yMax = Math.max(2.0, Math.min(5, (vals.length ? Math.max(...vals) : 1.3) * 1.15));
+  const X = i => pad.l + (n <= 1 ? iw / 2 : (i / (n - 1)) * iw);
+  const Y = v => pad.t + ih - (v / yMax) * ih;
+  const band = (lo, hi, fill) => {
+    const y1 = Y(Math.min(hi, yMax)), y2 = Y(lo);
+    return `<rect x="${pad.l}" y="${y1.toFixed(1)}" width="${iw}" height="${(y2 - y1).toFixed(1)}" fill="${fill}"/>`;
+  };
+  let s = `<svg viewBox="0 0 ${W} ${H}" height="${H}">`;
+  s += band(0.8, 1.3, 'rgba(81,207,102,0.10)');
+  s += band(1.3, 1.5, 'rgba(250,176,5,0.09)');
+  if (yMax > 1.5) s += band(1.5, yMax, 'rgba(255,107,107,0.09)');
+  for (let v = 0.5; v <= yMax; v += 0.5) {
+    const yy = Y(v);
+    if (yy < pad.t - 1) continue;
+    s += `<line x1="${pad.l}" y1="${yy.toFixed(1)}" x2="${W - pad.r}" y2="${yy.toFixed(1)}" stroke="#242c39"/>`;
+    s += `<text x="${pad.l - 8}" y="${(yy + 4).toFixed(1)}" fill="#647084" font-size="10.5" text-anchor="end">${v.toFixed(1)}</text>`;
+  }
+  let d = '', started = false;
+  rows.forEach((row, i) => {
+    const v = row.ratio;
+    if (!isNum(v)) { started = false; return; }
+    d += `${started ? 'L' : 'M'}${X(i).toFixed(1)},${Y(v).toFixed(1)}`;
+    started = true;
+  });
+  s += `<path d="${d}" fill="none" stroke="${C.accent}" stroke-width="2.2" stroke-linejoin="round"/>`;
+  const step = Math.max(1, Math.floor(n / (opt.xTicks || 6)));
+  for (let i = 0; i < n; i += step) s += `<text x="${X(i).toFixed(1)}" y="${H - 7}" fill="#647084" font-size="10.5" text-anchor="middle">${shortDate(rows[i].date)}</text>`;
+  rows.forEach((row, i) => {
+    const bw = iw / n;
+    s += `<rect x="${(X(i) - bw / 2).toFixed(1)}" y="${pad.t}" width="${bw.toFixed(1)}" height="${ih}" fill="transparent">
+      <title>${row.date}\n负荷比 ${row.ratio ?? '—'}\n急性 7 日均 ${row.acute}\n慢性 28 日均 ${row.chronic}\n当日负荷 ${row.load}</title></rect>`;
+  });
+  s += '</svg>';
+  node.innerHTML = s;
+}
+
+/* ---------------------------- 简报页：今日状态 ---------------------------- */
+function renderReadiness(I) {
+  const rd = I && I.readiness;
+  if (!rd) {
+    $('#rd-sub').textContent = '需先运行 scripts/build_insight.py';
+    $('#rd-ring').innerHTML = '<svg viewBox="0 0 136 136"><circle cx="68" cy="68" r="52" fill="none" stroke="#242c39" stroke-width="12"/></svg>';
+    $('#rd-comps').innerHTML = '<div class="empty">暂无数据</div>';
+    $('#rd-official').textContent = '';
+    return;
+  }
+  donutRing($('#rd-ring'), rd.score, RD_COLOR[rd.level] || C.accent2, rd.label);
+  $('#rd-sub').textContent = `截至 ${I.asOf} · ${rd.comps.length} 项加权 · ${rd.label}`;
+
+  $('#rd-comps').innerHTML = rd.comps.map(c => {
+    const col = RD_COLOR[c.score >= 85 ? 'excellent' : c.score >= 70 ? 'good' : c.score >= 55 ? 'warn' : 'bad'];
+    return `<div class="rc-row">
+      <div class="rc-head">
+        <span class="k">${c.label}<span class="w">权重 ${Math.round(c.effective || c.weight * 100)}%</span></span>
+        <span class="v">${c.value} · ${Math.round(c.score)} 分</span>
+      </div>
+      <div class="rc-bar"><i style="width:${Math.round(c.score)}%;background:${col}"></i></div>
+      ${c.hint ? `<div class="rc-hint">${c.hint}</div>` : ''}
+    </div>`;
+  }).join('');
+
+  const wd = (I.wellness && I.wellness.daily || []).slice(-1)[0];
+  const bits = [];
+  if (wd && wd.readinessScore != null) {
+    const cn = { PRIME: '巅峰状态', HIGH: '状态很好', MODERATE: '状态一般', LOW: '状态偏低', POOR: '状态很差' }[wd.readinessLevel] || wd.readinessLevel;
+    bits.push(`腕表官方训练准备度 <b>${wd.readinessScore} 分 · ${cn}</b>`);
+  }
+  if (wd && wd.hrvNight != null) bits.push(`昨夜 HRV <b>${wd.hrvNight} ms</b>（周均 ${wd.hrvWeekly ?? '—'}，${wd.hrvStatus === 'BALANCED' ? '基线内' : '偏离基线'}）`);
+  if (wd && wd.bbCharged != null) bits.push(`身体电量回充 <b>${wd.bbCharged}</b> / 消耗 ${wd.bbDrained ?? '—'}`);
+  if (rd.missing && rd.missing.length) bits.push(`缺失维度：${rd.missing.join('、')}（已自动把权重摊给其余项）`);
+  $('#rd-official').innerHTML = bits.join(' · ');
+}
+
+/* ---------------------------- 简报页：负荷平衡 ---------------------------- */
+function renderBriefingAcwr(I) {
+  const L = I && I.load;
+  if (!L || !L.ratio) {
+    $('#acwr-sub').textContent = '—';
+    $('#acwr-top').innerHTML = '';
+    $('#br-acwr').innerHTML = '<div class="empty">无训练负荷数据</div>';
+    $('#acwr-note').textContent = '';
+    return;
+  }
+  const col = L.level === 'good' ? C.z[2] : L.level === 'warn' ? C.pace : L.level === 'bad' ? C.hr : C.dim;
+  $('#acwr-sub').textContent = `${L.range ? L.range[0] + ' — ' + L.range[1] : ''}`;
+  $('#acwr-top').innerHTML = `
+    <div class="col">
+      <div class="l">ACWR</div>
+      <div class="big" style="color:${col}">${L.ratio.toFixed(2)}</div>
+      <span class="acwr-badge" style="background:${col}22;color:${col}">${L.label}</span>
+    </div>
+    <div class="col"><div class="l">急性 7 日均</div><div class="s" style="font-size:20px;color:var(--fg)">${L.acute}</div>
+      <div class="s">近 7 天累计 ${Math.round(L.load7)}</div></div>
+    <div class="col"><div class="l">慢性 28 日均</div><div class="s" style="font-size:20px;color:var(--fg)">${L.chronic}</div>
+      <div class="s">近 28 天累计 ${Math.round(L.load28)}</div></div>`;
+  drawAcwr($('#br-acwr'), (L.series || []).slice(-45), { height: 190, xTicks: 5 });
+  $('#acwr-note').textContent = '比值 = 近 7 天日均负荷 ÷ 近 28 天日均负荷。0.8–1.3 是既能进步又不易受伤的区间。';
+}
+
+/* ---------------------------- 简报页：体能档案 ---------------------------- */
+function renderWellness(I) {
+  const W = I && I.wellness;
+  if (!W || !W.available || !W.latest) { $('#wl-card').style.display = 'none'; return; }
+  $('#wl-card').style.display = '';
+  const L = W.latest;
+  const d = (W.daily || []).slice(-1)[0] || {};
+  const raceLbl = sec => {
+    if (!isNum(sec)) return '—';
+    const h = Math.floor(sec / 3600), m = Math.floor(sec % 3600 / 60), s = Math.round(sec % 60);
+    return h ? `${h}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}` : `${m}:${String(s).padStart(2, '0')}`;
+  };
+  const kpis = [
+    { l: 'VO2 Max', v: L.vo2max ?? '—', u: 'ml/kg/min', s: L.vo2maxDate ? `最近测算 ${L.vo2maxDate}` : '腕表估值' },
+    { l: '体能年龄', v: L.fitnessAge ?? '—', u: '岁', s: L.realAge ? `实际年龄 ${L.realAge} 岁 · 年轻 ${(L.realAge - L.fitnessAge).toFixed(1)} 岁` : '' },
+    { l: '耐力分', v: L.enduranceScore ?? '—', u: '', s: L.enduranceNext ? `下一档门槛 ${L.enduranceNext}` : '' },
+    { l: '爬坡分', v: L.hillScore ?? '—', u: '', s: L.hillClass != null ? `腕表评级档位 ${L.hillClass}` : '' },
+  ];
+  $('#wl-grid').innerHTML = kpis.map(k =>
+    `<div class="card kpi"><div class="label">${k.l}</div><div class="value">${k.v}<span class="unit">${k.u}</span></div>` +
+    `<div class="delta flat">${k.s || '—'}</div></div>`).join('');
+
+  const extra = [];
+  if (L.race) extra.push(`<b>竞赛预测</b>：5 km ${raceLbl(L.race['5k'])} · 10 km ${raceLbl(L.race['10k'])} · 半马 ${raceLbl(L.race.half)} · 全马 ${raceLbl(L.race.full)}`);
+  if (isNum(L.loadAerobicLow)) {
+    const t = [L.loadTargetLow, L.loadTargetHigh].filter(isNum);
+    const pct = (L.loadTargetHigh && L.loadTargetHigh > 0) ? Math.round(L.loadAerobicLow / L.loadTargetHigh * 100) : null;
+    extra.push(`<b>本月负荷</b>：${L.loadAerobicLow}（目标区间 ${t.join('–')}）<b>${pct != null ? ` · 完成度 ${pct}%` : ''}</b>`
+      + (L.loadFeedback === 'BELOW_TARGETS' ? '，低于维持水平，掉体能中' : ''));
+  }
+  if (d.respSleep != null) extra.push(`<b>睡眠呼吸</b>：${d.respSleep} 次/分（全天 ${d.respLow ?? '—'}–${d.respHigh ?? '—'}）`);
+  if (d.spo2SleepAvg != null) extra.push(`<b>睡眠血氧</b>：均值 ${d.spo2SleepAvg}% · 最低 ${d.spo2Lowest ?? '—'}%`);
+  if (isNum(L.bmiValue)) extra.push(`BMI ${L.bmiValue}（${L.sampledLabel || '最新体测'}）`);
+  if (L.deviceName) extra.push(`数据源：${L.deviceName}`);
+  $('#wl-extra').innerHTML = extra.join('<br>');
+  $('#wl-sub').textContent = W.range ? `数据区间 ${W.range.start} — ${W.range.end}（${W.range.days} 天）` : '腕表长期积累的体能类指标';
+}
+
+/* ---------------------------- 训练页：训练效果 + 负荷比 + 场地 ---------------------------- */
+function renderTrainingExtras() {
+  const acts = STATE.core.activities || [];
+  const withTe = acts.filter(a => a.te != null);
+  $('#te-sub').textContent = `${withTe.length} / ${acts.length} 次活动有记录 · 均值 ${withTe.length ? (withTe.reduce((s, a) => s + a.te, 0) / withTe.length).toFixed(2) : '—'}`;
+
+  // 分布
+  const counts = new Array(6).fill(0);
+  withTe.forEach(a => counts[teIdx(a.te)]++);
+  const maxC = Math.max(...counts, 1);
+  $('#te-dist').innerHTML = TE_LABELS.map((name, i) =>
+    `<div class="bar-row"><span class="n">${name}</span>
+      <span class="b"><i style="width:${(counts[i] / maxC * 100).toFixed(1)}%;background:${TE_COLORS[i]}"></i></span>
+      <span class="v">${counts[i]} 次</span></div>`).join('');
+  $('#te-dist-lg').innerHTML = TE_LABELS.map((n, i) =>
+    `<span><i style="background:${TE_COLORS[i]}"></i>${n} ${(counts[i] / Math.max(1, withTe.length) * 100).toFixed(0)}%</span>`).join('');
+
+  // 月度均值
+  const byMonth = {};
+  withTe.forEach(a => { const m = (a.date || '').slice(0, 7); if (m) (byMonth[m] = byMonth[m] || []).push(a.te); });
+  const months = Object.keys(byMonth).sort().slice(-12);
+  lineChart($('#te-month'), {
+    height: 230, x: months.map(monthLabel), xTicks: 8,
+    yDomain: [0, 5],
+    series: [{
+      name: '月度平均训练效果', color: C.accent, data: months.map(m => Math.round(byMonth[m].reduce((s, v) => s + v, 0) / byMonth[m].length * 100) / 100), width: 2, dot: true, fill: true,
+    }],
+    yFmt: v => v.toFixed(0),
+    tip: i => `<div class="t">${months[i]}</div><div class="r"><span>平均 TE</span><b>${(byMonth[months[i]].reduce((s, v) => s + v, 0) / byMonth[months[i]].length).toFixed(2)}</b></div>` +
+      `<div class="r"><span>活动次数</span><b>${byMonth[months[i]].length}</b></div>`,
+  });
+  legend($('#te-month-lg'), [{ name: '月度平均训练效果（虚线以上才算练到）', color: C.accent }]);
+
+  // 分项（近 12 个月）
+  const ago = new Date(STATE.core.range.end.slice(0, 10) + 'T00:00:00');
+  ago.setFullYear(ago.getFullYear() - 1);
+  const agoIso = ago.toISOString().slice(0, 10);
+  const bySport = {};
+  withTe.forEach(a => { if (a.date >= agoIso) (bySport[a.sportCn || a.sport] = bySport[a.sportCn || a.sport] || []).push(a.te); });
+  const sports = Object.entries(bySport).map(([s, v]) => ({ s, n: v.length, avg: v.reduce((x, y) => x + y, 0) / v.length }))
+    .sort((a, b) => b.n - a.n).slice(0, 6);
+  const sMax = Math.max(...sports.map(x => x.avg), 1);
+  $('#te-sport').innerHTML = sports.map(x => {
+    const ti = teIdx(x.avg);
+    return `<div class="bar-row"><span class="n">${x.s}</span>
+      <span class="b"><i style="width:${(x.avg / sMax * 100).toFixed(1)}%;background:${TE_COLORS[ti]}"></i></span>
+      <span class="v">均值 ${x.avg.toFixed(2)}</span></div>`;
+  }).join('') + `<div class="hint" style="margin-top:8px">统计近一年（${agoIso} 起）</div>`;
+
+  // ACWR 全序列
+  const rows = acwrSeries(90);
+  drawAcwr($('#acwr-series'), rows, { height: 250, xTicks: 8 });
+  const cur = rows[rows.length - 1] || {};
+  legend($('#acwr-series-lg'), [
+    { name: `负荷比（当前 ${cur.ratio ?? '—'}）`, color: C.accent },
+    { name: '0.8–1.3 最佳区间', color: 'rgba(81,207,102,0.45)' },
+    { name: '>1.5 重伤风险', color: 'rgba(255,107,107,0.45)' },
+  ]);
+
+  // 场地聚类
+  renderPlaces(acts);
+}
+
+/** 按起点经纬度做 ~5km 聚类，找出常去的场地 */
+function renderPlaces(acts) {
+  const pts = acts.filter(a => isNum(a.startLat) && isNum(a.startLon));
+  if (!pts.length) { $('#tr-places').innerHTML = '<div class="empty">活动缺少起点坐标</div>'; return; }
+  const clusters = [];
+  pts.forEach(a => {
+    let hit = null;
+    for (const c of clusters) {
+      if (haversineM([c.lat, c.lon], [a.startLat, a.startLon]) < 5000) { hit = c; break; }
+    }
+    if (!hit) { hit = { lat: a.startLat, lon: a.startLon, items: [] }; clusters.push(hit); }
+    hit.items.push(a);
+    hit.lat = (hit.lat * (hit.items.length - 1) + a.startLat) / hit.items.length;
+    hit.lon = (hit.lon * (hit.items.length - 1) + a.startLon) / hit.items.length;
+    hit.km = (hit.km || 0) + (a.distKm || 0);
+    hit.last = (!hit.last || a.date > hit.last) ? a.date : hit.last;
+  });
+  clusters.sort((a, b) => (b.items.length - a.items.length) || (b.km - a.km));
+  const top = clusters.slice(0, 8);
+  $('#tr-places').innerHTML = top.map((c, i) => {
+    const names = {};
+    c.items.forEach(a => { if (a.location) names[a.location] = (names[a.location] || 0) + 1; });
+    const name = Object.entries(names).sort((a, b) => b[1] - a[1])[0]?.[0]
+      || `未命名地点 ${c.lat.toFixed(2)}, ${c.lon.toFixed(2)}`;
+    const km = c.items.reduce((s, a) => s + (a.distKm || 0), 0);
+    const sports = {};
+    c.items.forEach(a => { sports[a.sportCn] = (sports[a.sportCn] || 0) + 1; });
+    const mainSport = Object.entries(sports).sort((a, b) => b[1] - a[1])[0][0];
+    return `<div class="place-row">
+      <span class="rank">${i + 1}</span>
+      <span class="nm">${name}<span>${mainSport} · 最近 ${c.last} · ${c.lat.toFixed(3)}, ${c.lon.toFixed(3)}</span></span>
+      <span class="met">${c.items.length} 次</span>
+      <span class="met" style="width:86px;text-align:right">${km.toFixed(1)} km</span>
+    </div>`;
+  }).join('') +
+    `<div class="hint" style="margin-top:10px">共 ${clusters.length} 个场地簇（${pts.length} 次活动有起点坐标），按到访次数排序。</div>`;
+}
+
+/** 健康趋势页：HRV / 训练准备度 / 身体电量（来自 Garmin 每日恢复指标） */
+const HRV_METRICS = {
+  hrv: {
+    name: 'HRV', color: C.accent2, unit: 'ms', y2: false,
+    keys: ['hrvNight', 'hrvWeekly'],
+    vals: d => [d.hrvNight, d.hrvWeekly],
+    series: [{ name: '昨夜 HRV', color: C.accent2, key: 'hrvNight' }, { name: '周均 HRV', color: '#7b8cff', key: 'hrvWeekly', dash: '4 3' }],
+    tip: d => `<div class="r"><span>状态</span><b>${d.hrvStatus || '—'}</b></div>`,
+  },
+  readiness: {
+    name: '训练准备度', color: C.accent, unit: '分', y2: false,
+    vals: d => [d.readinessScore],
+    series: [{ name: '训练准备度', color: C.accent, key: 'readinessScore' }],
+    tip: d => `<div class="r"><span>等级</span><b>${d.readinessLevel || '—'}</b></div>` +
+      (d.readinessFeedback ? `<div class="r"><span>腕表建议</span><b>${d.readinessFeedback}</b></div>` : ''),
+  },
+  battery: {
+    name: '身体电量', color: C.weight, unit: '', y2: false,
+    vals: d => [d.bbCharged, d.bbDrained],
+    series: [{ name: '夜间回充', color: C.weight, key: 'bbCharged' }, { name: '白天消耗', color: C.steps, key: 'bbDrained' }],
+    tip: d => `<div class="r"><span>区间</span><b>${d.bbMin ?? '—'} – ${d.bbMax ?? '—'}</b></div>`,
+  },
+};
+function renderHealthHrv() {
+  const wl = STATE.insight && STATE.insight.wellness;
+  const daily = (wl && wl.daily) || [];
+  if (!daily.length) { $('#he-hrv-card').style.display = 'none'; return; }
+  $('#he-hrv-card').style.display = '';
+  const key = STATE.hrvMetric || 'hrv';
+  const M = HRV_METRICS[key];
+  $('#he-hrv-sub').textContent = `${daily[0].date} — ${daily[daily.length - 1].date} · 共 ${daily.length} 天`;
+  $('#he-hrv-metric').innerHTML = Object.entries(HRV_METRICS).map(([k, v]) =>
+    `<button class="chip ${k === key ? 'on' : ''}" data-m="${k}">${v.name}</button>`).join('');
+  $$('#he-hrv-metric .chip').forEach(b => b.onclick = () => { STATE.hrvMetric = b.dataset.m; renderHealthHrv(); });
+
+  lineChart($('#he-hrv'), {
+    height: 240, x: daily.map(d => shortDate(d.date)), xTicks: 7,
+    series: M.series.map(s => ({
+      name: s.name, color: s.color, dash: s.dash, width: 2, dot: false,
+      data: daily.map(d => d[s.key] ?? null),
+    })),
+    yFmt: v => v.toFixed(0),
+    tip: i => `<div class="t">${daily[i].date}</div>` +
+      M.series.map(s => `<div class="r"><span>${s.name}</span><b>${daily[i][s.key] ?? '—'}</b></div>`).join('') +
+      (M.tip(daily[i]) || ''),
+  });
+  legend($('#he-hrv-lg'), M.series.map(s => ({ name: s.name, color: s.color })));
 }
 
 /* ============================ 概览 ============================ */
@@ -805,6 +1160,8 @@ function renderHealth() {
         <div class="r"><span>体脂</span><b>${w[i].fat ?? '—'}%</b></div>`,
     });
   } else $('#he-weight').innerHTML = '<div class="empty">无体重数据</div>';
+
+  renderHealthHrv();
 }
 
 /* ============================ 训练分析 ============================ */
@@ -860,6 +1217,8 @@ function renderTraining() {
   const draw = () => renderActTable($('#tr-table'), 'tr');
   $('#tr-type').onchange = draw; $('#tr-year').onchange = draw; $('#tr-sort').onchange = draw;
   draw();
+
+  renderTrainingExtras();
 }
 
 /** 训练负荷（柱） + 静息心率（线）组合图 */
@@ -921,6 +1280,7 @@ function filteredActs(prefix) {
     dur_desc: (p, q) => (q.durSec || 0) - (p.durSec || 0),
     hr_desc: (p, q) => (q.avgHR || 0) - (p.avgHR || 0),
     load_desc: (p, q) => (q.load || 0) - (p.load || 0),
+    te_desc: (p, q) => (q.te || 0) - (p.te || 0),
   }[s];
   return a.sort(cmp);
 }
@@ -928,9 +1288,10 @@ function filteredActs(prefix) {
 function renderActTable(node, prefix) {
   const a = filteredActs(prefix);
   const head = `<thead><tr><th>日期</th><th>类型</th><th>名称</th><th>距离</th><th>时长</th><th>配速</th>
-    <th>均心率</th><th>最大心率</th><th>功率</th><th>爬升</th><th>负荷</th><th>VO2</th></tr></thead>`;
+    <th>均心率</th><th>最大心率</th><th>训练效果</th><th>功率</th><th>爬升</th><th>负荷</th><th>VO2</th></tr></thead>`;
   const body = a.map(x => {
     const pace = x.distKm ? (x.durSec / 60) / x.distKm : null;
+    const ti = x.te != null ? teIdx(x.te) : -1;
     return `<tr class="click" data-id="${x.id}">
       <td>${x.date}</td>
       <td>${x.sportCn}</td>
@@ -940,12 +1301,13 @@ function renderActTable(node, prefix) {
       <td>${x.distKm && x.durSec ? fmtPace(pace) : '—'}</td>
       <td>${x.avgHR ?? '—'}</td>
       <td>${x.maxHR ?? '—'}</td>
+      <td style="color:${ti >= 0 ? TE_COLORS[ti] : 'inherit'}">${x.te ?? '—'}</td>
       <td>${x.avgPower ?? '—'}</td>
       <td>${x.ascent ?? '—'} m</td>
       <td>${Math.round(x.load || 0) || '—'}</td>
       <td>${x.vo2 ?? '—'}</td></tr>`;
   }).join('');
-  node.innerHTML = head + `<tbody>${body || '<tr><td colspan="12" class="empty">无匹配活动</td></tr>'}</tbody>`;
+  node.innerHTML = head + `<tbody>${body || '<tr><td colspan="13" class="empty">无匹配活动</td></tr>'}</tbody>`;
   $$('#' + node.id + ' tbody tr').forEach(tr => {
     tr.onclick = () => { if (tr.dataset.id) openActivity(tr.dataset.id); };
   });
@@ -1081,11 +1443,14 @@ function renderActivity(a, st) {
     ['移动时长', fmtDur(a.durSec)], ['总用时', fmtDur(a.elapsedSec)],
     ['卡路里', a.cal ? a.cal + ' kcal' : '—'],
     ['训练负荷', a.load ? Math.round(a.load) : '—'],
+    ['训练效果 TE', a.te != null ? `${a.te} · ${TE_LABELS[teIdx(a.te)]}` : '—'],
     ['有氧/无氧效应', (a.aerobic ?? '—') + ' / ' + (a.anaerobic ?? '—')],
     ['VO2 Max', a.vo2 ?? '—'],
     ['平均功率', a.avgPower ? a.avgPower + ' W' : '—'],
     ['标准化功率', a.np ? a.np + ' W' : '—'],
-    ['最大功率', a.maxPower ? a.maxPower + ' W' : '—'],
+    ['功率分布', a.pwStats
+      ? `p50 ${Math.round(a.pwStats.p50)} / p95 ${Math.round(a.pwStats.p95)} W · ${Math.round(a.pwStats.min)}–${Math.round(a.pwStats.max)} W`
+      : '—'],
     ['平均步频', a.avgCad ? a.avgCad + ' spm' : '—'],
     ['垂直振幅', a.vo ? a.vo + ' mm' : '—'],
     ['垂直比', a.vr ? a.vr + '%' : '—'],
