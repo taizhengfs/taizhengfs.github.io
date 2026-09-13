@@ -1,25 +1,25 @@
 {
- "generatedAt": "2026-09-13T07:00:51",
+ "generatedAt": "2026-09-13T08:10:58",
  "asOf": "2026-09-13",
  "today": {
   "date": "2026-09-13",
   "rhr": 48,
   "rhr7": 49.0,
   "rhr30": 50.5,
-  "steps": 11,
-  "steps7": 4132.0,
-  "steps30": 5451.0,
-  "sleepH": null,
-  "sleepScore": null,
-  "deepH": null,
-  "lightH": null,
-  "remH": null,
-  "awakeH": null,
-  "sleep7": 6.6,
+  "steps": 41,
+  "steps7": 4136.0,
+  "steps30": 5452.0,
+  "sleepH": 8.22,
+  "sleepScore": 90,
+  "deepH": 1.77,
+  "lightH": 4.27,
+  "remH": 2.18,
+  "awakeH": 0.18,
+  "sleep7": 6.8,
   "sleep30": 6.7,
-  "score7": 73.6,
+  "score7": 75.3,
   "weight": null,
-  "deepPct": null
+  "deepPct": 21.5
  },
  "yesterday": {
   "date": "2026-09-12",
@@ -47,10 +47,10 @@
    "2026-09-13"
   ],
   "cur": {
-   "sleepAvg": 6.55,
-   "scoreAvg": 72.8,
+   "sleepAvg": 6.79,
+   "scoreAvg": 75.3,
    "rhrAvg": 49.0,
-   "stepsAvg": 4132.0,
+   "stepsAvg": 4136.0,
    "activeDays": 5
   },
   "prev": {
@@ -61,10 +61,10 @@
    "activeDays": 6
   },
   "delta": {
-   "sleepAvg": 0.19,
+   "sleepAvg": 0.43,
    "rhrAvg": -0.7,
-   "stepsAvg": -1855.0,
-   "scoreAvg": 3.7
+   "stepsAvg": -1851.0,
+   "scoreAvg": 6.2
   },
   "workouts": [
    {
@@ -178,10 +178,10 @@
   },
   {
    "date": "2026-09-13",
-   "sleepH": null,
-   "sleepScore": null,
+   "sleepH": 8.22,
+   "sleepScore": 90,
    "rhr": 48,
-   "steps": 11
+   "steps": 41
   }
  ],
  "restDays": 1,
@@ -192,9 +192,24 @@
    "text": "今日静息心率 48 bpm，比近 30 天均值低 2 拍，说明心血管恢复状态不错。"
   },
   {
+   "level": "good",
+   "title": "睡眠充足",
+   "text": "昨晚睡了 8.22 小时，高于月均 6.7 小时。"
+  },
+  {
+   "level": "good",
+   "title": "睡眠质量优秀",
+   "text": "睡眠评分 90 分，属于高质量睡眠。"
+  },
+  {
+   "level": "good",
+   "title": "深睡充足",
+   "text": "深睡占比 21.5%，身体修复质量好。"
+  },
+  {
    "level": "warn",
    "title": "活动量偏低",
-   "text": "今日 11 步，仅为月均 5,451 步的 0%。"
+   "text": "今日 41 步，仅为月均 5,452 步的 1%。"
   },
   {
    "level": "info",
@@ -202,6 +217,6 @@
    "text": "间隔合理，恢复中。"
   }
  ],
- "narrative": "静息心率 48 bpm、走了 11 步。近 7 天共 1 次训练，累计 9.79 公里 / 53 分钟，最近一次是 2026-09-12 的骑行（9.79 公里）。需要留意的是：活动量偏低——今日 11 步，仅为月均 5,451 步的 0%。做得好的地方：静息心率偏低。",
+ "narrative": "昨晚睡了 8.22 小时、睡眠评分 90 分、其中深睡 1.77 小时、静息心率 48 bpm、走了 41 步。近 7 天共 1 次训练，累计 9.79 公里 / 53 分钟，最近一次是 2026-09-12 的骑行（9.79 公里）。需要留意的是：活动量偏低——今日 41 步，仅为月均 5,452 步的 1%。做得好的地方：静息心率偏低、睡眠充足、睡眠质量优秀。",
  "narrativeSource": "rule"
 }
