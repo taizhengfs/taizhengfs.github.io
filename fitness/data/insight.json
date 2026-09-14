@@ -1,14 +1,34 @@
 {
- "generatedAt": "2026-09-14T22:00:37",
- "asOf": "2026-09-14",
+ "generatedAt": "2026-09-15T07:00:42",
+ "asOf": "2026-09-15",
  "today": {
+  "date": "2026-09-15",
+  "rhr": 48,
+  "rhr7": 48.4,
+  "rhr30": 50.3,
+  "steps": null,
+  "steps7": 5264.0,
+  "steps30": 5599.0,
+  "sleepH": 5.62,
+  "sleepScore": 69,
+  "deepH": 1.18,
+  "lightH": 3.57,
+  "remH": 0.87,
+  "awakeH": 0.43,
+  "sleep7": 6.8,
+  "sleep30": 6.7,
+  "score7": 75.9,
+  "weight": null,
+  "deepPct": 21.0
+ },
+ "yesterday": {
   "date": "2026-09-14",
   "rhr": 49,
   "rhr7": 48.9,
   "rhr30": 50.4,
-  "steps": 4883,
-  "steps7": 4977.0,
-  "steps30": 5532.0,
+  "steps": 6895,
+  "steps7": 5264.0,
+  "steps30": 5599.0,
   "sleepH": 6.95,
   "sleepScore": 77,
   "deepH": 1.82,
@@ -21,50 +41,30 @@
   "weight": null,
   "deepPct": 26.2
  },
- "yesterday": {
-  "date": "2026-09-13",
-  "rhr": 48,
-  "rhr7": 49.0,
-  "rhr30": 50.5,
-  "steps": 8000,
-  "steps7": 5273.0,
-  "steps30": 5717.0,
-  "sleepH": 8.22,
-  "sleepScore": 90,
-  "deepH": 1.77,
-  "lightH": 4.27,
-  "remH": 2.18,
-  "awakeH": 0.18,
-  "sleep7": 6.8,
-  "sleep30": 6.7,
-  "score7": 75.3,
-  "weight": null,
-  "deepPct": 21.5
- },
  "week": {
   "range": [
-   "2026-09-08",
-   "2026-09-14"
+   "2026-09-09",
+   "2026-09-15"
   ],
   "cur": {
-   "sleepAvg": 6.63,
-   "scoreAvg": 74.4,
-   "rhrAvg": 48.9,
-   "stepsAvg": 4977.0,
-   "activeDays": 6
+   "sleepAvg": 6.81,
+   "scoreAvg": 75.9,
+   "rhrAvg": 48.4,
+   "stepsAvg": 5248.0,
+   "activeDays": 5
   },
   "prev": {
-   "sleepAvg": 6.68,
-   "scoreAvg": 70.7,
-   "rhrAvg": 49.7,
-   "stepsAvg": 6317.0,
+   "sleepAvg": 6.61,
+   "scoreAvg": 70.9,
+   "rhrAvg": 49.9,
+   "stepsAvg": 6543.0,
    "activeDays": 6
   },
   "delta": {
-   "sleepAvg": -0.05,
-   "rhrAvg": -0.8,
-   "stepsAvg": -1340.0,
-   "scoreAvg": 3.7
+   "sleepAvg": 0.2,
+   "rhrAvg": -1.5,
+   "stepsAvg": -1295.0,
+   "scoreAvg": 5.0
   },
   "workouts": [
    {
@@ -85,13 +85,6 @@
   "totalCal": 214.0
  },
  "series": [
-  {
-   "date": "2026-09-01",
-   "sleepH": 4.87,
-   "sleepScore": 58,
-   "rhr": 50,
-   "steps": 3779
-  },
   {
    "date": "2026-09-02",
    "sleepH": 8.19,
@@ -181,30 +174,37 @@
    "sleepH": 6.95,
    "sleepScore": 77,
    "rhr": 49,
-   "steps": 4883
+   "steps": 6895
+  },
+  {
+   "date": "2026-09-15",
+   "sleepH": 5.62,
+   "sleepScore": 69,
+   "rhr": 48,
+   "steps": null
   }
  ],
- "restDays": 2,
+ "restDays": 3,
  "findings": [
   {
    "level": "good",
-   "title": "静息心率平稳",
-   "text": "今日 49 bpm，与月均 50.4 bpm 基本持平。"
+   "title": "静息心率偏低",
+   "text": "今日静息心率 48 bpm，比近 30 天均值低 2 拍，说明心血管恢复状态不错。"
   },
   {
-   "level": "info",
-   "title": "睡眠时长一般",
-   "text": "昨晚 6.95 小时，略低于月均 6.8 小时。"
+   "level": "warn",
+   "title": "睡眠不足",
+   "text": "昨晚只睡了 5.62 小时，低于近 30 天均值 6.7 小时。长期低于 6.5 小时会明显推高静息心率、降低训练效果。"
   },
   {
    "level": "good",
    "title": "深睡充足",
-   "text": "深睡占比 26.2%，身体修复质量好。"
+   "text": "深睡占比 21.0%，身体修复质量好。"
   },
   {
-   "level": "info",
-   "title": "已休息 2 天",
-   "text": "间隔合理，恢复中。"
+   "level": "warn",
+   "title": "已 3 天没运动",
+   "text": "接近一周未训练，心肺刺激开始衰减，建议安排一次中低强度有氧。"
   },
   {
    "level": "warn",
@@ -214,11 +214,11 @@
   {
    "level": "good",
    "title": "HRV 处于基线内",
-   "text": "昨夜 HRV 63 ms，在本人的平衡区间内，周均 62 ms，恢复状态稳定。"
+   "text": "昨夜 HRV 71 ms，在本人的平衡区间内，周均 63 ms，恢复状态稳定。"
   },
   {
    "level": "good",
-   "title": "训练准备度 85 分 · 状态很好",
+   "title": "训练准备度 79 分 · 状态很好",
    "text": "腕表综合睡眠、HRV、压力与近期负荷给出的判断，可直接决定今天该练还是该歇。"
   }
  ],
@@ -342,8 +342,8 @@
    },
    {
     "sport": "跑步",
-    "n": 21,
-    "avg": 4.07
+    "n": 20,
+    "avg": 4.09
    },
    {
     "sport": "骑行",
@@ -364,8 +364,8 @@
  },
  "load": {
   "range": [
-   "2026-06-17",
-   "2026-09-14"
+   "2026-06-18",
+   "2026-09-15"
   ],
   "acute": 1.5,
   "chronic": 6.6,
@@ -379,13 +379,6 @@
    1.3
   ],
   "series": [
-   {
-    "date": "2026-06-17",
-    "load": 0,
-    "acute": 10.5,
-    "chronic": 6.9,
-    "ratio": 1.54
-   },
    {
     "date": "2026-06-18",
     "load": 0,
@@ -1008,57 +1001,64 @@
     "acute": 1.5,
     "chronic": 6.6,
     "ratio": 0.23
+   },
+   {
+    "date": "2026-09-15",
+    "load": 0,
+    "acute": 1.5,
+    "chronic": 6.6,
+    "ratio": 0.23
    }
   ]
  },
  "readiness": {
-  "score": 83,
+  "score": 82,
   "level": "good",
   "label": "状态良好",
   "comps": [
    {
     "key": "sleep",
     "label": "睡眠",
-    "score": 77.0,
+    "score": 69.0,
     "weight": 0.3,
-    "value": "77 分",
-    "hint": "睡了 6.95 小时",
+    "value": "69 分",
+    "hint": "睡了 5.62 小时",
     "effective": 29.0
    },
    {
     "key": "duration",
     "label": "睡眠时长",
-    "score": 85.0,
+    "score": 56.0,
     "weight": 0.1,
-    "value": "6.95 h",
+    "value": "5.62 h",
     "hint": "目标 7.5 小时",
     "effective": 10.0
    },
    {
     "key": "rhr",
     "label": "静息心率",
-    "score": 98.0,
+    "score": 97.0,
     "weight": 0.2,
-    "value": "49 bpm",
-    "hint": "月均 50.4，偏离 -1",
+    "value": "48 bpm",
+    "hint": "月均 50.3，偏离 -2",
     "effective": 19.0
    },
    {
     "key": "hrv",
     "label": "HRV 心率变异",
-    "score": 86.0,
+    "score": 100.0,
     "weight": 0.25,
-    "value": "63 ms",
+    "value": "71 ms",
     "hint": "基线区间 58–69 ms",
     "effective": 24.0
    },
    {
     "key": "battery",
     "label": "身体电量",
-    "score": 82.0,
+    "score": 89.0,
     "weight": 0.05,
-    "value": "70",
-    "hint": "昨夜回充 70，白天消耗 72",
+    "value": "76",
+    "hint": "昨夜回充 76，白天消耗 —",
     "effective": 5.0
    },
    {
@@ -1077,32 +1077,10 @@
   "available": true,
   "range": {
    "start": "2026-06-16",
-   "end": "2026-09-14",
-   "days": 91
+   "end": "2026-09-15",
+   "days": 92
   },
   "daily": [
-   {
-    "date": "2026-08-16",
-    "hrvNight": 56,
-    "hrvWeekly": 59,
-    "hrvStatus": "BALANCED",
-    "hrvLow": 58,
-    "hrvUpper": 68,
-    "readinessScore": 73,
-    "readinessLevel": "MODERATE",
-    "readinessFeedback": "GOOD_SLEEP_HISTORY",
-    "acuteLoad": 0,
-    "bbCharged": 61,
-    "bbDrained": 68,
-    "bbMin": 5,
-    "bbMax": 73,
-    "respSleep": 17.0,
-    "spo2SleepAvg": null,
-    "respAwake": 14.0,
-    "respLow": 6.0,
-    "respHigh": 23.0,
-    "spo2Lowest": null
-   },
    {
     "date": "2026-08-17",
     "hrvNight": 56,
@@ -1731,14 +1709,36 @@
     "readinessFeedback": "EXCELLENT_RECOVERY",
     "acuteLoad": 42,
     "bbCharged": 70,
-    "bbDrained": 72,
-    "bbMin": 16,
+    "bbDrained": 83,
+    "bbMin": 5,
     "bbMax": 88,
+    "respSleep": 16.0,
+    "spo2SleepAvg": null,
+    "respAwake": 14.0,
+    "respLow": 7.0,
+    "respHigh": 23.0,
+    "spo2Lowest": null
+   },
+   {
+    "date": "2026-09-15",
+    "hrvNight": 71,
+    "hrvWeekly": 63,
+    "hrvStatus": "BALANCED",
+    "hrvLow": 58,
+    "hrvUpper": 69,
+    "readinessScore": 79,
+    "readinessLevel": "HIGH",
+    "readinessFeedback": "WELL_RECOVERED",
+    "acuteLoad": 25,
+    "bbCharged": 76,
+    "bbDrained": 0,
+    "bbMin": 5,
+    "bbMax": 81,
     "respSleep": 16.0,
     "spo2SleepAvg": null,
     "respAwake": 15.0,
     "respLow": 8.0,
-    "respHigh": 23.0,
+    "respHigh": 22.0,
     "spo2Lowest": null
    }
   ],
@@ -1755,20 +1755,20 @@
    "realAge": 33,
    "fitnessAgeAchievable": 27.0,
    "bmiValue": 19.5,
-   "enduranceScore": 5804,
+   "enduranceScore": 5801,
    "enduranceClass": 3,
    "enduranceNext": 5800,
    "hillScore": 27,
    "hillClass": 2,
    "race": {
-    "date": "2026-09-14",
-    "5k": 1408,
-    "10k": 2966,
-    "half": 6618,
-    "full": 15486
+    "date": "2026-09-15",
+    "5k": 1409,
+    "10k": 2968,
+    "half": 6624,
+    "full": 15496
    }
   }
  },
- "narrative": "昨晚睡了 6.95 小时、睡眠评分 77 分、其中深睡 1.82 小时、静息心率 49 bpm、走了 4,883 步。近 7 天共 1 次训练，累计 9.79 公里 / 53 分钟，最近一次是 2026-09-12 的骑行（9.79 公里）。需要留意的是：训练量偏少——负荷比 0.23，低于 0.8——近一个月练得太少，已积累的有氧基础正在流失。每周加 1–2 次低强度有氧即可回升。做得好的地方：静息心率平稳、深睡充足、HRV 处于基线内。",
+ "narrative": "昨晚睡了 5.62 小时、睡眠评分 69 分、其中深睡 1.18 小时、静息心率 48 bpm。近 7 天共 1 次训练，累计 9.79 公里 / 53 分钟，最近一次是 2026-09-12 的骑行（9.79 公里）。需要留意的是：睡眠不足——昨晚只睡了 5.62 小时，低于近 30 天均值 6.7 小时。长期低于 6.5 小时会明显推高静息心率、降低训练效果；已 3 天没运动——接近一周未训练，心肺刺激开始衰减，建议安排一次中低强度有氧。做得好的地方：静息心率偏低、深睡充足、HRV 处于基线内。",
  "narrativeSource": "rule"
 }
