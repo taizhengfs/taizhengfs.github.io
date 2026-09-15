@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#5f8f72">
+<meta name="description" content="俄尔则俄父子两天一夜徒步：装备、衣物、食物、安全、托运清单与完整行程攻略。">
+<link rel="icon" href="/img/favicon-3.ico">
+<title>俄尔则俄父子徒步准备清单 - Warden's Life</title>
+<style>
+  :root{
+    --forest:#315d46;
+    --leaf:#5f8f72;
+    --leaf-dark:#47765a;
+    --mint:#dfeee4;
+    --mist:#f3f8f4;
+    --paper:#fffefb;
+    --ink:#26372e;
+    --muted:#6f7f76;
+    --line:#dce8df;
+    --sun:#e2b85d;
+    --danger:#b45c50;
+    --shadow:0 18px 50px rgba(49,93,70,.10);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    min-height:100vh;color:var(--ink);line-height:1.65;
+    font-family:"PingFang SC","Microsoft YaHei","Helvetica Neue",Arial,sans-serif;
+    background:
+      radial-gradient(circle at 8% 4%,rgba(154,194,168,.28),transparent 25rem),
+      linear-gradient(180deg,#edf6ef 0,#f7faf7 32rem,#f4f7f3 100%);
+  }
+  button,input{font:inherit}
+  button{border:0;cursor:pointer}
+  a{color:inherit}
+  .wrap{width:min(1060px,calc(100% - 32px));margin:0 auto;padding:20px 0 64px}
+  .toolbar{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:14px}
+  .home-link,.sync-status{
+    display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border:1px solid rgba(95,143,114,.14);
+    border-radius:999px;background:rgba(255,255,255,.68);color:var(--forest);font-size:12px;text-decoration:none;
+    backdrop-filter:blur(8px)
+  }
+  .home-link{font-weight:700}
+  .sync-dot{width:7px;height:7px;border-radius:50%;background:var(--sun)}
+  .sync-status.success .sync-dot{background:#4f9568}
+  .sync-status.error .sync-dot{background:var(--danger)}
+  .sync-status.pending .sync-dot{animation:pulse 1s infinite alternate}
+  @keyframes pulse{to{opacity:.3;transform:scale(.7)}}
+
+  .hero{
+    position:relative;overflow:hidden;padding:58px 52px 46px;border-radius:30px;color:#fff;
+    background:linear-gradient(135deg,#274f3a 0%,#4e7f61 62%,#7da58a 100%);box-shadow:var(--shadow)
+  }
+  .hero::before,.hero::after{content:"";position:absolute;border-radius:50%;border:1px solid rgba(255,255,255,.13)}
+  .hero::before{width:380px;height:380px;right:-105px;top:-220px}
+  .hero::after{width:240px;height:240px;right:35px;bottom:-170px}
+  .eyebrow{font-size:12px;letter-spacing:.18em;font-weight:700;opacity:.78}
+  .hero h1{position:relative;margin-top:10px;font-size:clamp(31px,6vw,54px);line-height:1.1;letter-spacing:.03em}
+  .hero-copy{max-width:620px;margin-top:15px;font-size:15px;opacity:.88}
+  .hero-meta{display:flex;flex-wrap:wrap;gap:9px;margin-top:24px}
+  .hero-meta span{padding:7px 12px;border:1px solid rgba(255,255,255,.22);border-radius:999px;background:rgba(255,255,255,.09);font-size:12px}
+  .hero-actions{position:relative;display:flex;flex-wrap:wrap;gap:10px;margin-top:28px}
+  .btn{padding:10px 15px;border-radius:11px;font-weight:700;font-size:13px;transition:.2s ease}
+  .btn-light{background:#fff;color:var(--forest)}
+  .btn-ghost{color:#fff;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.25)}
+  .btn:hover{transform:translateY(-1px)}
+
+  .summary{display:grid;grid-template-columns:1.15fr repeat(3,1fr);gap:12px;margin-top:16px}
+  .summary-card{padding:18px 19px;border:1px solid rgba(95,143,114,.13);border-radius:18px;background:rgba(255,255,255,.78);box-shadow:0 8px 28px rgba(49,93,70,.05)}
+  .summary-card.primary{background:var(--forest);color:#fff}
+  .summary-label{font-size:11px;color:var(--muted);letter-spacing:.06em}
+  .primary .summary-label{color:rgba(255,255,255,.7)}
+  .summary-value{margin-top:4px;font-size:24px;line-height:1.2;font-weight:800}
+  .summary-note{margin-top:4px;font-size:11px;color:var(--muted)}
+  .primary .summary-note{color:rgba(255,255,255,.62)}
+  .progress-track{height:7px;margin-top:12px;overflow:hidden;border-radius:999px;background:rgba(255,255,255,.18)}
+  .progress-fill{height:100%;width:0;border-radius:inherit;background:#cbe6d3;transition:width .35s ease}
+
+  .notice{display:flex;gap:13px;margin-top:16px;padding:17px 19px;border:1px solid #ead9a9;border-radius:16px;background:#fffaf0;color:#6f5b2c}
+  .notice strong{display:block;font-size:13px;margin-bottom:2px}
+  .notice p{font-size:12px}
+
+  .tabs{position:sticky;top:0;z-index:20;display:flex;gap:6px;margin:22px 0 0;padding:8px;border:1px solid rgba(95,143,114,.13);border-radius:16px;background:rgba(246,250,247,.91);box-shadow:0 9px 25px rgba(49,93,70,.07);backdrop-filter:blur(13px)}
+  .tab{flex:1;padding:10px;border-radius:10px;background:transparent;color:var(--muted);font-size:13px;font-weight:700}
+  .tab.active{background:var(--forest);color:#fff}
+  .panel{display:none}
+  .panel.active{display:block}
+
+  .filterbar{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:18px 0 6px}
+  .filter{padding:7px 12px;border:1px solid var(--line);border-radius:999px;background:#fff;color:var(--muted);font-size:12px}
+  .filter.active{border-color:var(--leaf);background:var(--mint);color:var(--forest);font-weight:700}
+  .filter-spacer{flex:1}
+  .quiet-btn{padding:7px 11px;border-radius:9px;background:transparent;color:var(--muted);font-size:12px}
+  .quiet-btn:hover{background:var(--mint);color:var(--forest)}
+
+  .category{margin-top:16px;border:1px solid rgba(95,143,114,.13);border-radius:21px;background:var(--paper);box-shadow:0 8px 28px rgba(49,93,70,.055);overflow:hidden}
+  .category-head{display:flex;align-items:center;gap:13px;padding:19px 21px;border-bottom:1px solid var(--line)}
+  .category-icon{display:grid;place-items:center;width:40px;height:40px;flex:0 0 40px;border-radius:12px;background:var(--mint);font-size:20px}
+  .category-title{font-size:17px;line-height:1.3}
+  .category-sub{font-size:11px;color:var(--muted);margin-top:2px}
+  .category-count{margin-left:auto;color:var(--leaf-dark);font-size:12px;font-weight:700}
+  .items{padding:5px 15px 10px}
+  .item{display:grid;grid-template-columns:30px minmax(0,1fr) auto;gap:12px;align-items:start;padding:14px 8px;border-top:1px dashed var(--line);cursor:pointer;user-select:none}
+  .item:first-child{border-top:0}
+  .item:hover{background:var(--mist)}
+  .item[hidden]{display:none}
+  .check{position:relative;width:23px;height:23px;margin-top:1px;border:2px solid #86aa92;border-radius:7px;background:#fff;transition:.2s}
+  .item.done .check{border-color:var(--leaf);background:var(--leaf)}
+  .item.done .check::after{content:"✓";position:absolute;inset:-2px 0 0;display:grid;place-items:center;color:#fff;font-size:14px;font-weight:800}
+  .item-name{font-size:14px;font-weight:700}
+  .item.done .item-name{text-decoration:line-through;color:#9aa59e}
+  .item-tip{margin-top:3px;color:var(--muted);font-size:12px;line-height:1.55}
+  .meta{display:flex;justify-content:flex-end;flex-wrap:wrap;gap:5px;max-width:250px}
+  .chip{padding:3px 7px;border-radius:6px;background:#eef4ef;color:#597062;font-size:10px;white-space:nowrap}
+  .chip.warn{background:#fff5dd;color:#826520}
+  .chip.kid{background:#edf4ff;color:#547095}
+  .chip.dad{background:#f2effa;color:#665e83}
+  .empty{display:none;padding:36px;text-align:center;color:var(--muted);font-size:13px}
+
+  .guide-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:18px}
+  .guide-card{padding:24px;border:1px solid rgba(95,143,114,.13);border-radius:21px;background:var(--paper);box-shadow:0 8px 28px rgba(49,93,70,.05)}
+  .guide-card.wide{grid-column:1/-1}
+  .guide-kicker{color:var(--leaf-dark);font-size:11px;font-weight:800;letter-spacing:.12em}
+  .guide-card h2{margin-top:6px;font-size:20px}
+  .guide-card h3{margin-top:17px;font-size:14px}
+  .guide-card p,.guide-card li{font-size:13px;color:#56685e}
+  .guide-card p{margin-top:9px}
+  .guide-card ul,.guide-card ol{margin:9px 0 0 19px}
+  .guide-card li+li{margin-top:6px}
+  .route{margin-top:17px;padding-left:18px;border-left:2px solid #b8d2c0}
+  .route-step{position:relative;padding:0 0 20px 13px}
+  .route-step:last-child{padding-bottom:0}
+  .route-step::before{content:"";position:absolute;left:-23px;top:6px;width:8px;height:8px;border:3px solid var(--paper);border-radius:50%;background:var(--leaf);box-shadow:0 0 0 1px #8eb59a}
+  .route-time{color:var(--leaf-dark);font-size:11px;font-weight:800}
+  .route-step strong{display:block;margin-top:1px;font-size:14px}
+  .route-step p{margin-top:3px;font-size:12px}
+  .red-flag{margin-top:14px;padding:15px;border-left:3px solid var(--danger);border-radius:8px;background:#fff5f3}
+  .red-flag strong{color:#87453d;font-size:13px}
+  .decision{width:100%;margin-top:14px;border-collapse:collapse;font-size:12px}
+  .decision th,.decision td{padding:10px 9px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+  .decision th{color:var(--forest);background:#f2f7f3}
+  .callout{margin-top:14px;padding:14px 16px;border-radius:12px;background:var(--mint);color:var(--forest);font-size:12px;font-weight:600}
+
+  .share-modal{position:fixed;inset:0;z-index:50;display:grid;place-items:center;padding:20px;background:rgba(28,48,36,.5);backdrop-filter:blur(5px);opacity:0;visibility:hidden;transition:.2s}
+  .share-modal.show{opacity:1;visibility:visible}
+  .modal-card{width:min(430px,100%);padding:24px;border-radius:20px;background:#fff;box-shadow:0 24px 70px rgba(0,0,0,.23)}
+  .modal-card h2{font-size:19px}
+  .modal-card p{margin-top:5px;color:var(--muted);font-size:12px}
+  .share-link{width:100%;margin-top:16px;padding:12px;border:1px solid var(--line);border-radius:10px;background:var(--mist);color:var(--forest);font-size:11px;outline:none}
+  .modal-actions{display:flex;gap:9px;margin-top:13px}
+  .modal-actions button{flex:1;padding:10px;border-radius:10px;font-weight:700}
+  .copy-btn{background:var(--forest);color:#fff}
+  .close-btn{background:var(--mint);color:var(--forest)}
+  .toast{position:fixed;left:50%;bottom:24px;z-index:70;transform:translate(-50%,70px);opacity:0;padding:10px 16px;border-radius:11px;background:#203d2d;color:#fff;font-size:12px;box-shadow:0 12px 34px rgba(0,0,0,.2);transition:.25s}
+  .toast.show{opacity:1;transform:translate(-50%,0)}
+  footer{margin-top:26px;text-align:center;color:#829087;font-size:11px}
+
+  @media(max-width:780px){
+    .hero{padding:42px 27px 34px}.summary{grid-template-columns:1fr 1fr}.guide-grid{grid-template-columns:1fr}.guide-card.wide{grid-column:auto}
+    .item{grid-template-columns:28px 1fr}.meta{grid-column:2;justify-content:flex-start;max-width:none;margin-top:-5px}
+  }
+  @media(max-width:520px){
+    .wrap{width:min(100% - 20px,1060px);padding-top:12px}.toolbar{align-items:flex-start}.sync-status{max-width:180px;text-align:right}
+    .hero{border-radius:22px}.hero-copy{font-size:13px}.summary{gap:8px}.summary-card{padding:14px}.summary-value{font-size:20px}
+    .tabs{overflow:auto}.tab{min-width:88px}.filter-spacer{display:none}.category-head{padding:16px}.items{padding:4px 8px 8px}
+    .guide-card{padding:20px}.decision{display:block;overflow-x:auto;white-space:nowrap}
+  }
+  @media print{
+    body{background:#fff}.wrap{width:100%;padding:0}.toolbar,.hero-actions,.tabs,.filterbar,.sync-status,.share-modal,.toast{display:none!important}
+    .hero{padding:24px;border-radius:0;box-shadow:none}.panel{display:block!important}.category,.guide-card,.summary-card{box-shadow:none;break-inside:avoid}
+    #guide-panel{margin-top:24px}.item[hidden]{display:grid}.item.done{opacity:.55}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="toolbar">
+    <a class="home-link" href="/tools/">← 返回工具箱</a>
+    <div id="sync-status" class="sync-status pending" aria-live="polite"><span class="sync-dot"></span><span id="sync-text">正在连接云端…</span></div>
+  </div>
+
+  <header class="hero">
+    <div class="eyebrow">FATHER &amp; SON · 2 DAYS / 1 NIGHT</div>
+    <h1>俄尔则俄徒步准备</h1>
+    <p class="hero-copy">父子两天一夜轻装方案。把保暖、睡眠和撤退能力放在第一位，也给捡水晶留一点孩子会喜欢的期待。</p>
+    <div class="hero-meta"><span>⛰ 高海拔露营</span><span>🌲 魔幻森林</span><span>💧 墨海 · 红海</span><span>💎 地表找水晶</span></div>
+    <div class="hero-actions">
+      <button class="btn btn-light" type="button" onclick="switchPanel('checklist')">开始整理</button>
+      <button class="btn btn-ghost" type="button" onclick="refreshData()">↻ 刷新</button>
+      <button class="btn btn-ghost" type="button" onclick="showShareModal()">↗ 分享</button>
+      <button class="btn btn-ghost" type="button" onclick="window.print()">打印 / PDF</button>
+    </div>
+  </header>
+
+  <section class="summary" aria-label="准备概况">
+    <div class="summary-card primary">
+      <div class="summary-label">准备进度</div><div class="summary-value" id="progress-value">0%</div>
+      <div class="progress-track"><div id="progress-fill" class="progress-fill"></div></div>
+      <div class="summary-note"><span id="done-count">0</span> / <span id="total-count">0</span> 项</div>
+    </div>
+    <div class="summary-card"><div class="summary-label">待准备预算</div><div class="summary-value" id="budget-value">¥0</div><div class="summary-note">按未勾选项目估算</div></div>
+    <div class="summary-card"><div class="summary-label">全部参考总重</div><div class="summary-value" id="weight-value">0 kg</div><div class="summary-note">父子合计，含穿着、起步水和可选项</div></div>
+    <div class="summary-card"><div class="summary-label">建议负重</div><div class="summary-value">10–12 kg</div><div class="summary-note">爸爸 · 孩子不超过 3 kg</div></div>
+  </section>
+
+  <aside class="notice"><div>△</div><div><strong>这不是普通亲子郊游</strong><p>路线起步海拔高、天气变化快。孩子出现持续头痛、恶心、步态不稳、异常嗜睡或呼吸困难时，停止上升并尽快下撤；不要用止痛药掩盖症状继续冲点。</p></div></aside>
+
+  <nav class="tabs" aria-label="页面内容">
+    <button class="tab active" data-panel="checklist" type="button">准备清单</button>
+    <button class="tab" data-panel="guide" type="button">行程攻略</button>
+    <button class="tab" data-panel="safety" type="button">安全与托运</button>
+  </nav>
+
+  <main>
+    <section id="checklist-panel" class="panel active">
+      <div class="filterbar">
+        <button class="filter active" data-filter="all" type="button">全部</button>
+        <button class="filter" data-filter="pending" type="button">待准备</button>
+        <button class="filter" data-filter="done" type="button">已准备</button>
+        <button class="filter" data-filter="kid" type="button">孩子</button>
+        <button class="filter" data-filter="cabin" type="button">随身上机</button>
+        <button class="filter" data-filter="checkin" type="button">建议托运</button>
+        <span class="filter-spacer"></span>
+        <button class="quiet-btn" type="button" onclick="resetChecklist()">清空勾选</button>
+      </div>
+      <div id="checklist-root"></div>
+      <div id="empty-state" class="empty">这个筛选条件下没有项目。</div>
+    </section>
+
+    <section id="guide-panel" class="panel">
+      <div class="guide-grid">
+        <article class="guide-card wide">
+          <div class="guide-kicker">ROUTE PLAN</div><h2>D0 + 两天一夜建议节奏</h2>
+          <div class="route">
+            <div class="route-step"><div class="route-time">D-2 至 D0 · 海拔适应</div><strong>尽量先在中等海拔住两晚，不直接冲进高海拔</strong><p>如时间不允许，D0 至少留在山下休整，不要抵达后直接进山。正常吃饭、补水、早睡；和向导当面确认营地海拔、最高点、天气、信号、撤退路线、公共装备与车接驳。感冒、发热、腹泻或明显头痛则取消进山。</p></div>
+            <div class="route-step"><div class="route-time">D1 · 建议 08:00 前后出发</div><strong>起点 → 魔幻森林 → 墨海附近营地</strong><p>第一小时刻意放慢，每 45–60 分钟补一次水和小食，短休 5–10 分钟。目标 15:00–16:00 前到营地；到达后立刻换掉潮湿贴身层、穿羽绒服、吃热食。</p></div>
+            <div class="route-step"><div class="route-time">D2 · 先评估，再出发</div><strong>墨海 → 红海 / 水晶区域 → 下撤</strong><p>只有在孩子无明显头痛恶心、精神正常且能吃早餐时继续。只捡地表裸露的小块水晶，不敲岩层、不离开向导和主路线；无论是否找到，都给下撤留足时间。</p></div>
+          </div>
+        </article>
+
+        <article class="guide-card">
+          <div class="guide-kicker">PACE &amp; CHILD</div><h2>孩子的节奏</h2>
+          <ul>
+            <li>孩子只背水、零食、抓绒或薄外套，目标 2–3 kg 内。</li>
+            <li>用“走到下一棵树 / 下一个缓坡”拆小目标，不用终点施压。</li>
+            <li>每次休息顺便问：头疼吗？恶心吗？冷不冷？还能吃东西吗？</li>
+            <li>停止行走就马上加保暖层；不要等他说冷才穿。</li>
+            <li>全程让孩子走在爸爸或向导视线内，不单独钻林找水晶。</li>
+          </ul>
+          <div class="callout">速度标准：大人觉得“慢得有点烦”，通常才接近孩子在高海拔的合适节奏。</div>
+        </article>
+
+        <article class="guide-card">
+          <div class="guide-kicker">CAMP ROUTINE</div><h2>到营地后的顺序</h2>
+          <ol>
+            <li>先穿保暖层，再搭帐篷；孩子不要站着等到冷。</li>
+            <li>铺好地布、充气垫与睡袋，检查潮湿和漏气。</li>
+            <li>换干袜和干燥贴身层，湿衣隔离收纳。</li>
+            <li>烧水、吃含碳水的热食，小口持续喝水。</li>
+            <li>头灯、鞋、雨衣、撤退包放在伸手可取的位置。</li>
+            <li>夜里复查孩子精神、呼吸与头痛情况。</li>
+          </ol>
+        </article>
+
+        <article class="guide-card">
+          <div class="guide-kicker">FOOD PLAN</div><h2>两天一夜食物模板</h2>
+          <p><strong>D1 早餐：</strong>山下吃饱，以碳水为主，不尝试陌生油腻食物。</p>
+          <p><strong>D1 路餐：</strong>饭团 / 面包、牛肉干、能量棒、坚果、巧克力、小袋水果干，少量多次。</p>
+          <p><strong>D1 晚餐：</strong>方便米饭或面 + 脱水蔬菜 + 汤；先保证能吃下，再谈“户外仪式感”。</p>
+          <p><strong>D2 早餐：</strong>燕麦 / 面包 + 热饮；另留一份应急口粮，不纳入正常计划。</p>
+          <div class="callout">起步各带约 1–1.5 L 水，是否需要滤水器、营地水源是否可靠，必须由向导提前确认。</div>
+        </article>
+
+        <article class="guide-card">
+          <div class="guide-kicker">BEFORE YOU GO</div><h2>出发前 48 小时</h2>
+          <ul>
+            <li>看逐小时降雨、风速、体感温度；不只看“晴 / 雨”图标。</li>
+            <li>把完整路线、向导电话、车牌和预计返回时间发给山下联系人。</li>
+            <li>手机离线地图下载完成，所有设备充满电，电池放内层保温。</li>
+            <li>帐篷在家完整搭一次；睡垫充气过夜查漏；炉头点火测试。</li>
+            <li>新鞋至少穿走两次；修剪脚趾甲，准备热点贴 / 防磨贴。</li>
+            <li>所有睡眠和保暖用品分别放防水内袋，不依赖背包防雨罩。</li>
+          </ul>
+        </article>
+      </div>
+    </section>
+
+    <section id="safety-panel" class="panel">
+      <div class="guide-grid">
+        <article class="guide-card wide">
+          <div class="guide-kicker">GO / NO-GO</div><h2>每天早上的出发判断</h2>
+          <table class="decision">
+            <thead><tr><th>状态</th><th>表现</th><th>行动</th></tr></thead>
+            <tbody>
+              <tr><td>可以继续</td><td>精神、食欲、步态正常；无头痛或仅轻微且不加重</td><td>保持慢节奏，持续观察</td></tr>
+              <tr><td>停止上升</td><td>头痛加重、恶心、明显乏力、无法进食、反应变慢</td><td>告知向导，休息评估；不改善就下撤</td></tr>
+              <tr><td>立即下撤 / 求援</td><td>步态不稳、意识异常、静息呼吸困难、嘴唇发紫、咳粉红泡沫痰</td><td>下降海拔、保暖、吸氧并联系救援</td></tr>
+            </tbody>
+          </table>
+          <div class="red-flag"><strong>核心原则：</strong><p>不要让止痛药、吸氧或“再坚持半小时”成为继续上升的理由。高海拔不适最有效的处理是停止上升；严重或进行性症状必须下撤。</p></div>
+        </article>
+
+        <article class="guide-card">
+          <div class="guide-kicker">CABIN BAG</div><h2>随身上飞机</h2>
+          <ul>
+            <li>身份证件、现金、手机、相机与其他贵重物品</li>
+            <li>充电宝和备用锂电池：必须随身，做好绝缘保护；境内航班还要检查清晰有效的 3C 标识及召回状态</li>
+            <li>常用药、处方证明、一套关键保暖层</li>
+            <li>到达后立刻要用且托运行李丢失会影响出发的物品</li>
+          </ul>
+          <p>航空公司对充电宝容量、标识和件数可能有额外要求，出发前按实际承运航司最新规则核对。</p>
+        </article>
+
+        <article class="guide-card">
+          <div class="guide-kicker">CHECKED BAG</div><h2>托运与禁限带</h2>
+          <ul>
+            <li>登山杖、帐篷地钉、刀具和多功能工具建议托运。</li>
+            <li>气罐不可带上客机，也不能托运；抵达后在当地购买。</li>
+            <li>防晒喷雾、液体和药品按机场与航司规定打包。</li>
+            <li>背包托运要收紧肩带腰带，最好套运输袋，避免传送带勾挂。</li>
+          </ul>
+          <div class="callout">最稳妥方案：大背包与尖锐器材托运；父子各带一个小随身包，装证件、锂电池、药品和关键衣物。</div>
+        </article>
+
+        <article class="guide-card">
+          <div class="guide-kicker">GUIDE BRIEFING</div><h2>向导必须回答的 10 个问题</h2>
+          <ol>
+            <li>准确起点、营地、最高点海拔各是多少？</li><li>两天每天里程、累计爬升与预计用时？</li>
+            <li>当前路况、积水、积雪与夜间最低温？</li><li>孩子不适时最近撤退点和下撤耗时？</li>
+            <li>哪里有稳定水源，是否必须过滤 / 煮沸？</li><li>向导带不带急救包、氧气、对讲机或卫星通信？</li>
+            <li>帐篷、炉头、气罐和炊具由谁提供、谁背？</li><li>是否有额外背夫或备用向导可分担装备？</li>
+            <li>进山许可、保险、接驳车和返程时间如何安排？</li><li>什么天气条件会取消、改线或提前下撤？</li>
+          </ol>
+        </article>
+
+        <article class="guide-card">
+          <div class="guide-kicker">WEIGHT</div><h2>负重怎么分</h2>
+          <p><strong>爸爸：</strong>帐篷 / 公共装备、两人的大部分睡眠系统、食物、急救与备用衣物。起步尽量控制 10–12 kg；若明显超过，优先让向导或背夫分担帐篷和食物。</p>
+          <p><strong>孩子：</strong>约 1 L 水、小食、抓绒 / 薄外套、自己的头灯和哨子，2–3 kg 内。</p>
+          <p><strong>向导：</strong>出发前明确公共帐篷、炉具、燃料、炊具、氧气和应急通信到底由谁提供及携带。</p>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <footer>重量与预算为常见轻量装备的估算值，实际以你的现有装备、向导提供项目和承运航司规定为准。出发前根据天气与向导信息做最终删减。<br>安全信息参考：<a href="https://www.cdc.gov/yellow-book/hcp/environmental-hazards-risks/high-altitude-travel-and-altitude-illness.html" target="_blank" rel="noopener">CDC 高海拔旅行指南</a> · <a href="https://www.caac.gov.cn/XWZX/MHYW/202506/t20250626_227805.html" target="_blank" rel="noopener">中国民航局充电宝规定</a></footer>
+</div>
+
+<div id="share-modal" class="share-modal" onclick="if(event.target===this)closeShareModal()">
+  <div class="modal-card"><h2>分享这份准备清单</h2><p>家人打开链接后，可以查看并更新同一份勾选进度。</p><input id="share-link" class="share-link" type="text" readonly onclick="this.select()"><div class="modal-actions"><button class="copy-btn" type="button" onclick="copyShareLink()">复制链接</button><button class="close-btn" type="button" onclick="closeShareModal()">关闭</button></div></div>
+</div>
+<div id="toast" class="toast" aria-live="polite"></div>
+
+<script>
+  const API_BASE='https://time.taizhendong.com';
+  const BIN_STORAGE_KEY='eerzee_checklist_bin_id';
+  const LOCAL_DATA_PREFIX='eerzee_checklist_data_';
+  const FALLBACK_KEY='eerzee_checklist_offline';
+
+  const categories=[
+    {id:'confirm',icon:'✓',title:'预订与确认',sub:'先把路线、人员与风险信息确认清楚',items:[
+      ['guide','向导与接驳确认','写清集合地点、出发/返回时间、费用与包含项目。',0,0,0,'shared','cabin'],
+      ['route','路线与海拔数据','确认起点、营地、最高点、每日里程和累计爬升。',0,0,0,'shared','cabin'],
+      ['weather','天气与取消条件','出发前 48 小时及当天复核降雨、风速、体感温度。',0,0,0,'shared','cabin'],
+      ['insurance','高风险户外保险 ×2','确认覆盖高海拔徒步和紧急救援。',0,80,240,'shared','cabin'],
+      ['contact','山下紧急联系人','发送路线、向导电话、车牌和预计返回时间。',0,0,0,'shared','cabin'],
+      ['offline-map','离线地图与轨迹','两部手机各保存一份，不只依赖向导手机。',0,0,0,'shared','cabin'],
+      ['cash-id','身份证件与少量现金','证件原件防水收纳，另留电子备份。',100,0,0,'shared','cabin']
+    ]},
+    {id:'sleep',icon:'⌂',title:'睡眠与营地',sub:'孩子的睡袋和防潮垫不做轻量化牺牲',items:[
+      ['tent','可靠双人双层帐篷','抗风防雨，建议 1.6–2.2 kg；先确认向导是否提供。',1900,800,1500,'shared','checkin'],
+      ['groundsheet','帐篷地布','原厂地布或 Tyvek，保持帐底干燥。',150,50,120,'shared','checkin'],
+      ['dad-bag','成人羽绒睡袋','舒适温标约 -5℃至 -10℃，装独立防水袋。',1100,600,1200,'dad','checkin'],
+      ['kid-bag','儿童 / 小码羽绒睡袋','舒适温标约 -5℃，宁可稍暖，不只看极限温标。',850,500,1000,'kid','checkin'],
+      ['dad-pad','爸爸防潮垫','R 值建议 ≥4，出发前充气过夜查漏。',520,300,700,'dad','checkin'],
+      ['kid-pad','孩子防潮垫','R 值建议 ≥4，低温下比厚度更看重隔热值。',480,300,700,'kid','checkin'],
+      ['pillows','充气枕 ×2','可用衣物替代；睡眠敏感则建议带。',160,80,180,'shared','checkin'],
+      ['drybags','防水内袋 / 压缩袋','睡袋、备用衣物各自独立防水。',180,80,180,'shared','checkin']
+    ]},
+    {id:'dad-clothes',icon:'♙',title:'爸爸衣物',sub:'行走层 + 保暖层 + 防护层，避免棉质贴身衣',items:[
+      ['dad-base','速干 / 羊毛贴身层','长袖上衣与长裤，贴身穿着。',420,200,600,'dad','wear'],
+      ['dad-fleece','抓绒衣','行走保暖层，湿了也容易干。',360,180,500,'dad','dadbag'],
+      ['dad-down','轻量羽绒服','停下和营地立刻穿，独立防水包装。',480,400,900,'dad','dadbag'],
+      ['dad-shell','防水冲锋衣','帽兜可靠、真防水，不用一次性雨披替代。',520,400,1000,'dad','wear'],
+      ['dad-rainpants','防雨裤','可直接套在徒步裤外。',300,180,450,'dad','dadbag'],
+      ['dad-pants','速干 / 软壳徒步裤','避免牛仔裤和厚棉裤。',420,200,500,'dad','wear'],
+      ['dad-socks','徒步羊毛袜 ×2','一双行走、一双营地干袜。',140,80,180,'dad','dadbag'],
+      ['dad-accessories','保暖帽 + 脖套 + 手套','薄手套加一副防水保暖手套更稳妥。',260,150,350,'dad','dadbag']
+    ]},
+    {id:'kid-clothes',icon:'♟',title:'孩子衣物',sub:'停下立即加衣，备用衣袜必须保持干燥',items:[
+      ['kid-base','儿童速干 / 羊毛贴身层','一套穿着，一件干燥上衣用于营地。',360,180,500,'kid','wear'],
+      ['kid-fleece','儿童抓绒衣','行走时主要保暖层。',280,120,350,'kid','kidbag'],
+      ['kid-down','儿童羽绒服','营地核心保暖层，稍厚比极致轻量更重要。',420,300,700,'kid','dadbag'],
+      ['kid-shell','儿童硬壳冲锋衣','帽兜能调紧，肩袖活动不受限。',430,300,650,'kid','wear'],
+      ['kid-rainpants','儿童防雨裤','能快速套穿，裤脚不拖地。',220,150,350,'kid','dadbag'],
+      ['kid-pants','儿童徒步裤','速干、膝部活动方便。',300,120,300,'kid','wear'],
+      ['kid-thermal','儿童保暖裤','夜间和低温备用。',200,80,220,'kid','dadbag'],
+      ['kid-socks','儿童徒步袜 ×2','至少保留一双完全干燥的营地袜。',100,60,140,'kid','dadbag'],
+      ['kid-accessories','保暖帽 + 脖套 + 手套 ×2','一副薄手套，一副保暖 / 防水手套。',220,120,300,'kid','kidbag']
+    ]},
+    {id:'carry',icon:'↟',title:'背负、鞋与行走',sub:'鞋必须磨合；孩子的包轻、贴背、容易拿水',items:[
+      ['dad-pack','成人登山包 45–55 L','背负合身，有腰封；公共装备多则选大一档。',1600,500,1200,'dad','checkin'],
+      ['kid-pack','儿童背包 10–15 L','只装水、小食和一件轻保暖层。',420,150,400,'kid','cabin'],
+      ['pack-cover','背包罩 + 内防水袋','背包罩防外部泥水，关键物品仍需内袋。',220,80,180,'shared','checkin'],
+      ['dad-boots','爸爸防水中帮登山鞋','穿已磨合的鞋，湿滑路面抓地优先。',1100,500,1200,'dad','wear'],
+      ['kid-boots','孩子防水中帮登山鞋','优先用已穿合脚的鞋，不在出发前临时换新。',760,350,800,'kid','wear'],
+      ['gaiters','防水雪套 ×2','泥泞、露水和小雨环境很实用。',360,120,320,'shared','checkin'],
+      ['poles','登山杖 2–3 根','爸爸双杖；孩子会用可带一根短杖，建议托运。',650,180,500,'shared','checkin'],
+      ['sandals','轻量营地鞋','可选；若严格控重可不带。',360,50,180,'shared','checkin']
+    ]},
+    {id:'food',icon:'◒',title:'食物、水与炊具',sub:'少量多次进食；燃料气罐抵达后购买',items:[
+      ['water','饮水 1–1.5 L / 人','水源与过滤方式先问向导；途中按需补水。',2400,0,20,'shared','carry'],
+      ['bottles','软水袋 / 水壶','父子各自可独立饮水，总容量约 3 L。',300,80,260,'shared','cabin'],
+      ['filter','滤水器 / 净水片','是否必带取决于向导确认的营地水源。',100,50,300,'shared','checkin'],
+      ['trail-food','两天路餐与行动粮','面包 / 饭团、能量棒、坚果、牛肉干、巧克力。',1500,160,320,'shared','checkin'],
+      ['dinner','D1 热晚餐 + D2 早餐','方便米饭 / 面、汤、燕麦、热饮，选择孩子吃得惯的。',850,100,220,'shared','checkin'],
+      ['emergency-food','独立应急口粮','约 800–1200 kcal，不纳入正常两天菜单。',300,40,100,'shared','checkin'],
+      ['stove','炉头 + 点火器','先确认向导是否提供；出发前试火。',160,150,350,'shared','checkin'],
+      ['fuel','高山气罐','不可上飞机或托运，必须抵达后购买。',380,35,60,'shared','checkin'],
+      ['cookset','轻量锅具 + 餐具','一锅两碗两勺即可，别带玻璃和重餐具。',520,150,500,'shared','checkin'],
+      ['trash','垃圾袋 / 密封袋','带走全部垃圾，也用于隔离湿衣和鞋。',60,10,30,'shared','checkin']
+    ]},
+    {id:'safety',icon:'＋',title:'安全、医疗与卫生',sub:'药品按本人医嘱；氧气不替代及时下撤',items:[
+      ['first-aid','基础急救包','创可贴、无菌敷料、弹性绷带、消毒片、剪刀。',350,100,300,'shared','cabin'],
+      ['personal-meds','个人常用药','处方药、肠胃药、止痛退热药；儿童剂量按医嘱。',180,80,300,'shared','cabin'],
+      ['blister','防磨贴 / 肌贴','在出现水泡前处理热点。',80,30,100,'shared','cabin'],
+      ['oxygen','便携氧气与撤退预案','先确认向导携带；氧气仅作应急支持。',1200,100,300,'shared','checkin'],
+      ['emergency-blanket','应急保温毯 ×2','分别放在父子随身可取的位置。',120,20,60,'shared','cabin'],
+      ['whistles','求生哨 ×2','孩子包肩带固定一只，并提前约定信号。',30,20,50,'shared','cabin'],
+      ['sun','防晒霜 + 润唇膏','高海拔紫外线强，阴天也使用。',150,80,220,'shared','cabin'],
+      ['glasses','太阳镜 ×2','孩子也需要，选择贴合且不易掉落的。',100,150,500,'shared','cabin'],
+      ['hygiene','纸巾 + 湿巾 + 免洗手液','小包装分装，湿巾不要遗留山野。',260,30,80,'shared','checkin'],
+      ['toilet','便携厕所袋 / 铲','按当地规定处理排泄物，远离水源。',120,30,100,'shared','checkin'],
+      ['bug','驱蚊液 / 防蜱用品','森林路段按季节准备，回程检查蜱虫。',100,30,100,'shared','checkin']
+    ]},
+    {id:'electronics',icon:'◉',title:'照明、通信与记录',sub:'低温会加速掉电，电池放内层保温',items:[
+      ['headlamps','头灯 ×2 + 备用电池','父子各一只，不用手机闪光灯替代。',210,120,400,'shared','cabin'],
+      ['phones','手机 ×2','离线地图、路线截图和紧急电话两机备份。',400,0,0,'shared','cabin'],
+      ['powerbank','合规充电宝 10,000–20,000 mAh','境内航班需有清晰有效的 3C 标识且不属于召回批次；标注额定容量，必须随身上机。',360,100,300,'shared','cabin'],
+      ['cables','充电线与短转接线','只带实际需要的接口，放密封袋。',100,20,80,'shared','cabin'],
+      ['camera','相机 / 运动相机','可选；配腕带、防水袋，优先减重。',450,0,1500,'dad','cabin'],
+      ['recorder','录音设备 / 无线麦','可选；想记录亲子对话时带，提前清空存储。',180,0,800,'dad','cabin'],
+      ['comms','对讲机 / 卫星通信','无信号路段由向导提供或租用更合适。',350,0,500,'shared','cabin']
+    ]},
+    {id:'flight',icon:'⌁',title:'出发前装包',sub:'最后一次按运输、天气与负重做减法',items:[
+      ['weigh','整包装秤','爸爸起步 10–12 kg，孩子 2–3 kg 内。',0,0,0,'shared','checkin'],
+      ['sharp-checkin','尖锐物统一托运','登山杖、地钉、刀具、多功能工具不要放随身行李。',0,0,0,'shared','checkin'],
+      ['lithium-cabin','锂电池统一随身','充电宝、相机备用电池做好绝缘，不办理托运。',0,0,0,'shared','cabin'],
+      ['fuel-local','气罐当地购买','气罐不可随身或托运；返程前按规定处理余气罐。',0,0,0,'shared','checkin'],
+      ['pack-bag','托运背包套运输袋','收紧或包住肩带、腰带和外挂绳，避免勾挂。',280,50,150,'shared','checkin'],
+      ['final-dry','睡袋与保暖衣终检','确认完全干燥，并各自装入密封防水内袋。',0,0,0,'shared','checkin']
+    ]}
+  ];
+
+  const allItems=categories.flatMap(category=>category.items.map(item=>({category:category.id,id:item[0],name:item[1],tip:item[2],weight:item[3],min:item[4],max:item[5],owner:item[6],carry:item[7]})));
+  const validItemIds=new Set(allItems.map(item=>item.id));
+  let checkedItems=[];
+  let binId=null;
+  let activeFilter='all';
+  let syncTimer=null,isSyncing=false,needsAnotherSync=false;
+
+  const money=n=>`¥${Math.round(n).toLocaleString('zh-CN')}`;
+  const ownerLabel={kid:'孩子',dad:'爸爸',shared:'共用'};
+  const carryLabel={cabin:'随身上机',checkin:'建议托运',wear:'穿着',dadbag:'爸爸背',kidbag:'孩子背',carry:'途中消耗'};
+  const localDataKey=()=>binId?`${LOCAL_DATA_PREFIX}${binId}`:FALLBACK_KEY;
+
+  function renderChecklist(){
+    const root=document.getElementById('checklist-root');
+    root.innerHTML=categories.map(category=>`<section class="category" data-category="${category.id}"><div class="category-head"><div class="category-icon">${category.icon}</div><div><h2 class="category-title">${category.title}</h2><div class="category-sub">${category.sub}</div></div><div class="category-count" id="count-${category.id}"></div></div><div class="items">${category.items.map(raw=>{const [id,name,tip,weight,min,max,owner,carry]=raw;return `<div class="item" role="checkbox" tabindex="0" aria-checked="false" data-id="${id}" data-owner="${owner}" data-carry="${carry}"><span class="check"></span><span><div class="item-name">${name}</div><div class="item-tip">${tip}</div></span><span class="meta"><span class="chip ${owner==='kid'?'kid':owner==='dad'?'dad':''}">${ownerLabel[owner]}</span><span class="chip">${carryLabel[carry]}</span>${weight?`<span class="chip">${weight>=1000?(weight/1000).toFixed(1)+' kg':weight+' g'}</span>`:''}${max?`<span class="chip warn">${money(min)}–${money(max)}</span>`:''}</span></div>`}).join('')}</div></section>`).join('');
+    root.querySelectorAll('.item').forEach(el=>{el.addEventListener('click',()=>toggleItem(el.dataset.id));el.addEventListener('keydown',event=>{if(event.key==='Enter'||event.key===' '){event.preventDefault();toggleItem(el.dataset.id)}})});
+  }
+
+  function normalizeCheckedItems(value){return Array.isArray(value)?Array.from(new Set(value.filter(id=>validItemIds.has(id)))):[]}
+  function persistLocal(){localStorage.setItem(localDataKey(),JSON.stringify({checkedItems,lastSync:new Date().toISOString()}))}
+  function restoreLocal(){try{const saved=JSON.parse(localStorage.getItem(localDataKey()));checkedItems=normalizeCheckedItems(saved&&saved.checkedItems)}catch(error){checkedItems=[]}}
+  function showToast(message,duration=2400){const el=document.getElementById('toast');el.textContent=message;el.classList.add('show');setTimeout(()=>el.classList.remove('show'),duration)}
+  function updateSyncStatus(status,text){const el=document.getElementById('sync-status');el.className=`sync-status ${status}`;document.getElementById('sync-text').textContent=text}
+
+  function render(){
+    const selected=new Set(checkedItems);
+    document.querySelectorAll('.item').forEach(el=>{const done=selected.has(el.dataset.id);el.classList.toggle('done',done);el.setAttribute('aria-checked',String(done));const visible=activeFilter==='all'||(activeFilter==='done'&&done)||(activeFilter==='pending'&&!done)||(activeFilter==='kid'&&el.dataset.owner==='kid')||(activeFilter==='cabin'&&el.dataset.carry==='cabin')||(activeFilter==='checkin'&&el.dataset.carry==='checkin');el.hidden=!visible});
+    categories.forEach(category=>{const list=category.items;const done=list.filter(item=>selected.has(item[0])).length;document.getElementById(`count-${category.id}`).textContent=`${done} / ${list.length}`;const section=document.querySelector(`[data-category="${category.id}"]`);section.hidden=!section.querySelector('.item:not([hidden])')});
+    const done=selected.size,total=allItems.length,progress=Math.round(done/total*100);
+    document.getElementById('done-count').textContent=done;document.getElementById('total-count').textContent=total;document.getElementById('progress-value').textContent=`${progress}%`;document.getElementById('progress-fill').style.width=`${progress}%`;
+    const pending=allItems.filter(item=>!selected.has(item.id));const min=pending.reduce((sum,item)=>sum+item.min,0),max=pending.reduce((sum,item)=>sum+item.max,0);document.getElementById('budget-value').textContent=min===max?money(min):`${money(min)}–${money(max)}`;
+    const weight=allItems.reduce((sum,item)=>sum+item.weight,0)/1000;document.getElementById('weight-value').textContent=`${weight.toFixed(1)} kg`;
+    document.getElementById('empty-state').style.display=document.querySelectorAll('.item:not([hidden])').length?'none':'block';
+  }
+
+  function toggleItem(id){const set=new Set(checkedItems);set.has(id)?set.delete(id):set.add(id);checkedItems=Array.from(set);render();persistLocal();debouncedSync()}
+  document.querySelectorAll('.filter').forEach(btn=>btn.addEventListener('click',()=>{activeFilter=btn.dataset.filter;document.querySelectorAll('.filter').forEach(el=>el.classList.toggle('active',el===btn));render()}));
+  document.querySelectorAll('.tab').forEach(btn=>btn.addEventListener('click',()=>switchPanel(btn.dataset.panel)));
+  window.switchPanel=name=>{document.querySelectorAll('.tab').forEach(el=>el.classList.toggle('active',el.dataset.panel===name));document.querySelectorAll('.panel').forEach(el=>el.classList.toggle('active',el.id===`${name}-panel`));document.querySelector('.tabs').scrollIntoView({behavior:'smooth',block:'start'})};
+  window.resetChecklist=()=>{if(!checkedItems.length)return;checkedItems=[];render();persistLocal();debouncedSync();showToast('清单已清空')};
+
+  async function createBin(){const response=await fetch(`${API_BASE}/data`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({type:'eerzee-family-hike-checklist',version:1,checkedItems:[],lastSync:new Date().toISOString()})});if(!response.ok)throw new Error('创建云端清单失败');return (await response.json()).id}
+  async function loadFromCloud(){if(!binId)return null;const response=await fetch(`${API_BASE}/data/${encodeURIComponent(binId)}`);if(response.status===404)return null;if(!response.ok)throw new Error('读取云端清单失败');return response.json()}
+  async function saveToCloud(){if(!binId)return;if(isSyncing){needsAnotherSync=true;return}isSyncing=true;needsAnotherSync=false;updateSyncStatus('pending','正在保存…');try{const response=await fetch(`${API_BASE}/data/${encodeURIComponent(binId)}`,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({type:'eerzee-family-hike-checklist',version:1,checkedItems,lastSync:new Date().toISOString()})});if(!response.ok)throw new Error('保存失败');updateSyncStatus('success','已保存到云端')}catch(error){console.error(error);updateSyncStatus('error','保存失败，已保留在本机')}finally{isSyncing=false;if(needsAnotherSync)saveToCloud()}}
+  function debouncedSync(){clearTimeout(syncTimer);updateSyncStatus(binId?'pending':'error',binId?'等待保存…':'离线模式，本机已保存');if(binId)syncTimer=setTimeout(saveToCloud,700)}
+  window.refreshData=async()=>{if(!binId){showToast('当前为离线清单');return}updateSyncStatus('pending','正在刷新…');try{const data=await loadFromCloud();if(data&&Array.isArray(data.checkedItems)){checkedItems=normalizeCheckedItems(data.checkedItems);persistLocal();render()}updateSyncStatus('success','已与云端同步');showToast('清单已刷新')}catch(error){console.error(error);updateSyncStatus('error','刷新失败，显示本机数据');showToast('暂时无法连接云端')}};
+  window.showShareModal=()=>{if(!binId){showToast('云端清单尚未连接');return}document.getElementById('share-link').value=`${location.origin}${location.pathname}?id=${encodeURIComponent(binId)}`;document.getElementById('share-modal').classList.add('show')};
+  window.closeShareModal=()=>document.getElementById('share-modal').classList.remove('show');
+  window.copyShareLink=async()=>{const input=document.getElementById('share-link');try{await navigator.clipboard.writeText(input.value)}catch(error){input.select();document.execCommand('copy')}closeShareModal();showToast('链接已复制，可以发给家人了')};
+
+  async function init(){
+    renderChecklist();render();
+    try{
+      const params=new URLSearchParams(location.search);binId=params.get('id')||localStorage.getItem(BIN_STORAGE_KEY);
+      if(!binId){restoreLocal();render();updateSyncStatus('pending','正在创建云端清单…');binId=await createBin();localStorage.setItem(BIN_STORAGE_KEY,binId);persistLocal();history.replaceState({},'',`${location.pathname}?id=${encodeURIComponent(binId)}`)}
+      else{localStorage.setItem(BIN_STORAGE_KEY,binId);restoreLocal();render();if(!params.get('id'))history.replaceState({},'',`${location.pathname}?id=${encodeURIComponent(binId)}`)}
+      const cloud=await loadFromCloud();if(cloud&&Array.isArray(cloud.checkedItems)){checkedItems=normalizeCheckedItems(cloud.checkedItems);persistLocal();render()}else if(checkedItems.length){await saveToCloud()}
+      updateSyncStatus('success','已与云端同步');
+    }catch(error){console.error(error);restoreLocal();render();updateSyncStatus('error','离线模式，本机仍会保留');showToast('网络异常，暂时使用本机数据')}
+  }
+  init();
+</script>
+</body>
+</html>
