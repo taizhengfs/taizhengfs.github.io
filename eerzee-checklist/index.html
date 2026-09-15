@@ -4,9 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#5f8f72">
-<meta name="description" content="俄尔则俄父子两天一夜徒步：装备、衣物、食物、安全、托运清单与完整行程攻略。">
+<meta name="description" content="2026 国庆杭州出发，西昌租车前往越西、普雄梯田、申果庄与俄尔则俄的父子旅行攻略、徒步装备清单和安全托运指南。">
 <link rel="icon" href="/img/favicon-3.ico">
-<title>俄尔则俄父子徒步准备清单 - Warden's Life</title>
+<title>俄尔则俄父子旅行攻略与准备清单 - Warden's Life</title>
 <style>
   :root{
     --forest:#315d46;
@@ -30,6 +30,7 @@
     background:
       radial-gradient(circle at 8% 4%,rgba(154,194,168,.28),transparent 25rem),
       linear-gradient(180deg,#edf6ef 0,#f7faf7 32rem,#f4f7f3 100%);
+    overflow-x:hidden;
   }
   button,input{font:inherit}
   button{border:0;cursor:pointer}
@@ -86,6 +87,7 @@
   .tab.active{background:var(--forest);color:#fff}
   .panel{display:none}
   .panel.active{display:block}
+  main,.panel,.guide-grid,.guide-card{min-width:0}
 
   .filterbar{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:18px 0 6px}
   .filter{padding:7px 12px;border:1px solid var(--line);border-radius:999px;background:#fff;color:var(--muted);font-size:12px}
@@ -141,6 +143,21 @@
   .decision th,.decision td{padding:10px 9px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
   .decision th{color:var(--forest);background:#f2f7f3}
   .callout{margin-top:14px;padding:14px 16px;border-radius:12px;background:var(--mint);color:var(--forest);font-size:12px;font-weight:600}
+  .trip-lead{margin-top:18px;padding:22px 24px;border:1px solid #bdd6c5;border-radius:20px;background:linear-gradient(135deg,#edf7f0,#fbfdfb);box-shadow:0 8px 28px rgba(49,93,70,.05)}
+  .trip-lead h2{font-size:20px}.trip-lead p{margin-top:7px;color:#56685e;font-size:13px}.trip-lead strong{color:var(--forest)}
+  .trip-tags{display:flex;flex-wrap:wrap;gap:7px;margin-top:13px}
+  .trip-tag{padding:5px 9px;border-radius:999px;background:#fff;border:1px solid var(--line);color:var(--leaf-dark);font-size:11px;font-weight:700}
+  .itinerary{margin-top:17px}
+  .trip-day{display:grid;grid-template-columns:112px minmax(0,1fr);gap:18px;padding:18px 0;border-top:1px solid var(--line)}
+  .trip-day:first-child{border-top:0;padding-top:0}
+  .day-date{color:var(--leaf-dark);font-size:11px;font-weight:800;letter-spacing:.05em}
+  .day-date b{display:block;margin-top:3px;color:var(--forest);font-size:18px;letter-spacing:0}
+  .day-body strong{font-size:14px}.day-body p{margin-top:4px;font-size:12px}.day-body .trip-tags{margin-top:8px}
+  .priority-list{list-style:none!important;margin:12px 0 0!important}
+  .priority-list li{display:grid;grid-template-columns:28px minmax(0,1fr);gap:10px;margin-top:10px!important}
+  .priority-list span{display:grid;place-items:center;width:26px;height:26px;border-radius:8px;background:var(--mint);color:var(--forest);font-size:11px;font-weight:800}
+  .source-links a{color:var(--leaf-dark);text-underline-offset:3px}
+  .decision{table-layout:fixed}
 
   .share-modal{position:fixed;inset:0;z-index:50;display:grid;place-items:center;padding:20px;background:rgba(28,48,36,.5);backdrop-filter:blur(5px);opacity:0;visibility:hidden;transition:.2s}
   .share-modal.show{opacity:1;visibility:visible}
@@ -163,13 +180,14 @@
   @media(max-width:520px){
     .wrap{width:min(100% - 20px,1060px);padding-top:12px}.toolbar{align-items:flex-start}.sync-status{max-width:180px;text-align:right}
     .hero{border-radius:22px}.hero-copy{font-size:13px}.summary{gap:8px}.summary-card{padding:14px}.summary-value{font-size:20px}
-    .tabs{overflow:auto}.tab{min-width:88px}.filter-spacer{display:none}.category-head{padding:16px}.items{padding:4px 8px 8px}
-    .guide-card{padding:20px}.decision{display:block;overflow-x:auto;white-space:nowrap}
+    .tabs{justify-content:flex-start;overflow-x:auto;scrollbar-width:none}.tabs::-webkit-scrollbar{display:none}.tab{flex:0 0 auto;min-width:88px}.filter-spacer{display:none}.category-head{padding:16px}.items{padding:4px 8px 8px}
+    .guide-card{padding:20px;overflow-wrap:anywhere}.trip-lead{padding:19px}.trip-day{grid-template-columns:1fr;gap:6px;padding:15px 0}.day-date b{display:inline;margin-left:7px;font-size:15px}
+    .decision,.decision tbody,.decision tr,.decision td{display:block;width:100%}.decision{margin-top:12px}.decision thead{display:none}.decision tr{margin-top:10px;padding:11px 12px;border:1px solid var(--line);border-radius:12px;background:#fbfdfb}.decision td{padding:4px 0;border:0;white-space:normal;overflow-wrap:anywhere}.decision td::before{display:block;color:var(--leaf-dark);font-size:10px;font-weight:800;letter-spacing:.08em}.decision td:nth-child(1)::before{content:"状态"}.decision td:nth-child(2)::before{content:"表现"}.decision td:nth-child(3)::before{content:"行动"}.decision td:first-child{color:var(--forest);font-size:14px;font-weight:800}
   }
   @media print{
     body{background:#fff}.wrap{width:100%;padding:0}.toolbar,.hero-actions,.tabs,.filterbar,.sync-status,.share-modal,.toast{display:none!important}
     .hero{padding:24px;border-radius:0;box-shadow:none}.panel{display:block!important}.category,.guide-card,.summary-card{box-shadow:none;break-inside:avoid}
-    #guide-panel{margin-top:24px}.item[hidden]{display:grid}.item.done{opacity:.55}
+    #trip-panel,#guide-panel{margin-top:24px}.item[hidden]{display:grid}.item.done{opacity:.55}
   }
 </style>
 </head>
@@ -181,12 +199,12 @@
   </div>
 
   <header class="hero">
-    <div class="eyebrow">FATHER &amp; SON · 2 DAYS / 1 NIGHT</div>
-    <h1>俄尔则俄徒步准备</h1>
-    <p class="hero-copy">父子两天一夜轻装方案。把保暖、睡眠和撤退能力放在第一位，也给捡水晶留一点孩子会喜欢的期待。</p>
-    <div class="hero-meta"><span>⛰ 高海拔露营</span><span>🌲 魔幻森林</span><span>💧 墨海 · 红海</span><span>💎 地表找水晶</span></div>
+    <div class="eyebrow">FATHER &amp; SON · GOLDEN WEEK 2026</div>
+    <h1>俄尔则俄父子旅行计划</h1>
+    <p class="hero-copy">从杭州到西昌，在越西慢慢适应海拔，再去普雄梯田、申果庄与俄尔则俄。这里放好整趟 7 天路线、两天一夜徒步、装备与安全清单。</p>
+    <div class="hero-meta"><span>📅 10 月 1–7 日</span><span>🚙 西昌租车</span><span>🌾 普雄 · 申果庄</span><span>⛰ 俄尔则俄露营</span></div>
     <div class="hero-actions">
-      <button class="btn btn-light" type="button" onclick="switchPanel('checklist')">开始整理</button>
+      <button class="btn btn-light" type="button" onclick="switchPanel('trip')">查看完整行程</button>
       <button class="btn btn-ghost" type="button" onclick="refreshData()">↻ 刷新</button>
       <button class="btn btn-ghost" type="button" onclick="showShareModal()">↗ 分享</button>
       <button class="btn btn-ghost" type="button" onclick="window.print()">打印 / PDF</button>
@@ -208,7 +226,8 @@
 
   <nav class="tabs" aria-label="页面内容">
     <button class="tab active" data-panel="checklist" type="button">准备清单</button>
-    <button class="tab" data-panel="guide" type="button">行程攻略</button>
+    <button class="tab" data-panel="trip" type="button">整趟行程</button>
+    <button class="tab" data-panel="guide" type="button">徒步攻略</button>
     <button class="tab" data-panel="safety" type="button">安全与托运</button>
   </nav>
 
@@ -226,6 +245,93 @@
       </div>
       <div id="checklist-root"></div>
       <div id="empty-state" class="empty">这个筛选条件下没有项目。</div>
+    </section>
+
+    <section id="trip-panel" class="panel">
+      <div class="trip-lead">
+        <div class="guide-kicker">RECOMMENDED PLAN · 7 DAYS / 6 NIGHTS</div>
+        <h2>推荐 10 月 1 日出发，给天气和孩子留一天缓冲</h2>
+        <p><strong>主线：</strong>杭州 → 西昌 → 越西 / 普雄 → 申果庄 → 俄尔则俄 → 西昌 → 杭州。2026 年国庆假期为 10 月 1–7 日；完整走法刚好 7 天。若 10 月 2 日才走，就在“普雄”和“申果庄”里只选一个，不能压缩徒步后的缓冲日。</p>
+        <div class="trip-tags"><span class="trip-tag">先适应海拔</span><span class="trip-tag">不走夜间山路</span><span class="trip-tag">徒步后不赶长途</span><span class="trip-tag">10/6 机动日</span></div>
+      </div>
+
+      <div class="guide-grid">
+        <article class="guide-card wide">
+          <div class="guide-kicker">DAY BY DAY</div><h2>10 月 1 日出发 · 完整版</h2>
+          <div class="itinerary">
+            <div class="trip-day"><div class="day-date">周四<b>10 / 1</b></div><div class="day-body"><strong>杭州 → 成都 → 西昌｜只赶路，不取车夜驾</strong><p>优先上午飞成都，至少给“机场进城 + 成都南站换乘”留 4.5–5 小时，再乘约 3 小时动车到西昌西；住西昌。若届时有合适的杭州直飞西昌，当天直飞更省力。租车放到第二天白天。</p><div class="trip-tags"><span class="trip-tag">住西昌</span><span class="trip-tag">海拔约 1500 m</span></div></div></div>
+            <div class="trip-day"><div class="day-date">周五<b>10 / 2</b></div><div class="day-body"><strong>西昌取车 → 越西 → 普雄羊坪梯田</strong><p>早上取燃油 SUV，检查轮胎、备胎、刹车与底盘，采购气罐和路餐。西昌到越西约 120–135 km，正常约 2.5–3 小时，国庆按更久预留；下午去普雄羊坪梯田，住普雄或越西。这里约 2350 m，适合先住一晚适应。</p><div class="trip-tags"><span class="trip-tag">山路不抢时间</span><span class="trip-tag">梯田看傍晚光线</span></div></div></div>
+            <div class="trip-day"><div class="day-date">周六<b>10 / 3</b></div><div class="day-body"><strong>申果庄方向半日 → 与向导会合 → 山口附近早睡</strong><p>申果庄在越西东部高山区域，从县城方向往返不是顺手一拐，按半天到一天看待。只走开放道路和村落 / 林缘，不自行进入自然保护区核心区域。下午按向导发来的<strong>准确集合点定位</strong>会合，拆分行李、确认接驳、住起点附近。</p><div class="trip-tags"><span class="trip-tag">不以偶遇野生熊猫为目标</span><span class="trip-tag">拒绝摸黑找路</span></div></div></div>
+            <div class="trip-day"><div class="day-date">周日<b>10 / 4</b></div><div class="day-body"><strong>徒步 D1｜约 3300 m 起步 → 魔幻森林 → 墨海营地</strong><p>建议 08:00 前后出发，第一小时刻意放慢，每 45–60 分钟补水和小食。目标 15:00–16:00 前到约 4000 m 营地；停下先给孩子加羽绒服，再搭营。</p><div class="trip-tags"><span class="trip-tag">住帐篷</span><span class="trip-tag">当天不追落日机位</span></div></div></div>
+            <div class="trip-day"><div class="day-date">周一<b>10 / 5</b></div><div class="day-body"><strong>徒步 D2｜墨海 → 红海 / 无名海子 → 下撤</strong><p>早餐前先看孩子精神、食欲、头痛和步态；状态正常才继续。按向导所述路线不完全原路返回，途中只捡地表裸露小水晶。下山后住集合点或附近县镇，绝不连夜长途开回西昌。</p><div class="trip-tags"><span class="trip-tag">无论几点出山都不夜驾</span></div></div></div>
+            <div class="trip-day"><div class="day-date">周二<b>10 / 6</b></div><div class="day-body"><strong>天气缓冲日｜返回西昌 + 邛海日落</strong><p>若徒步准时完成，白天开回西昌，傍晚去邛海；体力好再逛建昌古城 / 唐园，二选一即可。若前两天下雨、孩子需多休息或路线顺延，这一天直接作为应急缓冲，不安排硬性景点。</p><div class="trip-tags"><span class="trip-tag">还车前加满油</span><span class="trip-tag">住西昌</span></div></div></div>
+            <div class="trip-day"><div class="day-date">周三<b>10 / 7</b></div><div class="day-body"><strong>西昌 → 杭州｜回程</strong><p>当前航班计划里周三有西昌直飞杭州，优先选直飞；计划可能调整，以出票时为准。若只能动车回成都再飞杭州，务必选早班动车并留足跨城 / 机场换乘时间，不做紧绷衔接。</p><div class="trip-tags"><span class="trip-tag">关键衣物和锂电池随身</span></div></div></div>
+          </div>
+        </article>
+
+        <article class="guide-card">
+          <div class="guide-kicker">OCTOBER 2 OPTION</div><h2>10 月 2 日出发怎么压缩</h2>
+          <p>目前可查到的 2026 年 10 月 2 日为杭州直飞西昌的计划执飞日之一，上午出发、下午抵达；实际航班仍以购票页面为准。</p>
+          <ul>
+            <li>10/2：直飞西昌，住西昌，不下飞机立刻跑山路。</li>
+            <li>10/3：西昌 → 越西，只选<strong>普雄或申果庄</strong>，傍晚会合向导。</li>
+            <li>10/4–5：俄尔则俄两天一夜，不压缩。</li>
+            <li>10/6：缓冲并回西昌；10/7 直飞杭州。</li>
+          </ul>
+          <div class="callout">如果 10/3 不能在天黑前到集合点，就放弃当天支线景点。少去一个地方，比少一个安全缓冲日划算。</div>
+        </article>
+
+        <article class="guide-card">
+          <div class="guide-kicker">TRANSPORT</div><h2>交通怎么选</h2>
+          <p><strong>最省事：</strong>10/2 杭州直飞西昌。目前计划为每周三 / 五 / 日执飞，约 3 小时 15 分；国庆可能调班，看到合适退改政策就先锁。</p>
+          <p><strong>最稳妥：</strong>10/1 杭州飞成都，再从成都南站坐动车到西昌西，动车约 3–3.5 小时。注意天府机场到成都南站不是同一地点。</p>
+          <p><strong>不建议：</strong>成都租车后一路开到越西。它会增加城市取还车、长途高速和疲劳驾驶，西昌取还更顺。</p>
+        </article>
+
+        <article class="guide-card">
+          <div class="guide-kicker">ROUTE FIRST</div><h2>先让向导发一个地图定位</h2>
+          <p>俄尔则俄跨冕宁、越西、喜德一带，网络攻略对“村口 / 徒步起点”的叫法并不统一。申果庄也不等于徒步入口。</p>
+          <ol>
+            <li>让向导发微信地图定位和经纬度，而不是只说村名。</li>
+            <li>确认普通城市 SUV 能否到、最后一段是否需本地接驳。</li>
+            <li>确认从越西、普雄或申果庄哪边过去更顺。</li>
+            <li>据定位再订 10/3 住宿；可免费取消优先。</li>
+          </ol>
+          <div class="red-flag"><strong>路线排序以向导定位为准：</strong><p>如果起点实际在冕宁 / 喜德侧，就不要为了“地图看着近”硬把申果庄塞进同一天。</p></div>
+        </article>
+
+        <article class="guide-card">
+          <div class="guide-kicker">NEARBY</div><h2>附近值得玩的地方</h2>
+          <ul class="priority-list">
+            <li><span>A</span><div><strong>普雄羊坪梯田</strong><p>越西东部的山地梯田，秋季收获氛围合适；留 2–3 小时，不需要单独占一天。</p></div></li>
+            <li><span>A</span><div><strong>邛海 + 建昌古城 / 唐园</strong><p>放在回到西昌后的半天，轻松、餐饮住宿成熟，适合徒步后的恢复。</p></div></li>
+            <li><span>B</span><div><strong>申果庄开放区域</strong><p>高山森林与村落本身值得看，但路远、保护区限制多；必须先确认道路与开放范围。</p></div></li>
+            <li><span>C</span><div><strong>螺髻山 / 九十九里温泉</strong><p>在西昌南面，和本次越西方向相反。只有多加 1–2 天才安排，不塞进 7 天核心线。</p></div></li>
+          </ul>
+        </article>
+
+        <article class="guide-card">
+          <div class="guide-kicker">CAR &amp; STAY</div><h2>租车与住宿原则</h2>
+          <ul>
+            <li>选燃油紧凑 SUV，完整车损保障最好覆盖轮胎、玻璃和底盘；不选纯电车跑陌生山路。</li>
+            <li>取车时拍全车视频，确认备胎、千斤顶、胎压、油量和客服电话。</li>
+            <li>山路按白天行驶规划，油量低于半箱就补；离线地图要两部手机都有。</li>
+            <li>10/1、10/6 住西昌；10/2 住普雄或越西；10/3、10/5 的住宿等向导发定位后再定。</li>
+            <li>国庆住宿优先可免费取消，徒步前后两晚不要为了省钱住得离起点太远。</li>
+          </ul>
+        </article>
+
+        <article class="guide-card wide source-links">
+          <div class="guide-kicker">BOOK NOW</div><h2>按这个顺序锁定</h2>
+          <ol>
+            <li><strong>先锁往返大交通：</strong>10/1 成都中转版与 10/2 西昌直飞版同时比价，回程优先 10/7 西昌直飞杭州。</li>
+            <li><strong>再锁向导和集合点：</strong>把准确定位、进出山时段、取消条件、公共装备写进聊天记录。</li>
+            <li><strong>再订车和房：</strong>西昌租车 10/2–10/6；先订可取消住宿，收到定位后调整 10/3 与 10/5。</li>
+            <li><strong>最后采购：</strong>气罐必须到当地买；食物按孩子吃得惯的口味准备。</li>
+          </ol>
+          <div class="callout">已从向导聊天确认：两天一夜、魔幻森林—墨海—红海及更多无名海子，路线不完全原路返回，露营食物自背、本人带路。仍需补齐起点定位、每天里程爬升、营地水源和恶劣天气取消标准。</div>
+        </article>
+      </div>
     </section>
 
     <section id="guide-panel" class="panel">
@@ -344,7 +450,7 @@
     </section>
   </main>
 
-  <footer>重量与预算为常见轻量装备的估算值，实际以你的现有装备、向导提供项目和承运航司规定为准。出发前根据天气与向导信息做最终删减。<br>安全信息参考：<a href="https://www.cdc.gov/yellow-book/hcp/environmental-hazards-risks/high-altitude-travel-and-altitude-illness.html" target="_blank" rel="noopener">CDC 高海拔旅行指南</a> · <a href="https://www.caac.gov.cn/XWZX/MHYW/202506/t20250626_227805.html" target="_blank" rel="noopener">中国民航局充电宝规定</a></footer>
+  <footer>行程按目前公开信息规划，国庆交通、开放范围与山路状况会变化，出票和出发前需再次确认。重量与预算为常见轻量装备估算值。<br>参考：<a href="https://big5.www.gov.cn/gate/big5/www.gov.cn/gongbao/2025/issue_12406/202511/content_7048922.html" target="_blank" rel="noopener">2026 年节假日安排</a> · <a href="https://www.flightconnections.com/cn/%E4%BB%8E-hgh-%E9%A3%9E%E5%BE%80-xic-%E7%9A%84%E8%88%AA%E7%8F%AD" target="_blank" rel="noopener">杭州—西昌直飞计划</a> · <a href="https://wlt.sc.gov.cn/scwlt/hydt/2024/4/15/216872234d6f43628663556810ebb381.shtml" target="_blank" rel="noopener">普雄羊坪梯田</a> · <a href="https://www.cdc.gov/yellow-book/hcp/environmental-hazards-risks/high-altitude-travel-and-altitude-illness.html" target="_blank" rel="noopener">CDC 高海拔旅行指南</a> · <a href="https://www.caac.gov.cn/XWZX/MHYW/202506/t20250626_227805.html" target="_blank" rel="noopener">民航局充电宝规定</a></footer>
 </div>
 
 <div id="share-modal" class="share-modal" onclick="if(event.target===this)closeShareModal()">
@@ -359,6 +465,16 @@
   const FALLBACK_KEY='eerzee_checklist_offline';
 
   const categories=[
+    {id:'travel',icon:'◎',title:'整趟旅行预订',sub:'先锁大交通，再按向导定位调整山里住宿',items:[
+      ['outbound','去程机票 / 动车','10/1 成都中转与 10/2 西昌直飞同时比价；优先可退改。',0,0,0,'shared','cabin'],
+      ['return','10/7 回程票','优先西昌直飞杭州；中转方案给动车、进城和机场留足时间。',0,0,0,'shared','cabin'],
+      ['rental','西昌租车 10/2–10/6','燃油 SUV、完整车损保障；确认轮胎 / 玻璃 / 底盘保障与儿童乘车需求。',0,0,0,'shared','cabin'],
+      ['stay-xichang','西昌住宿 10/1、10/6','优先停车方便、可取消；回程前一晚不要住远郊。',0,0,0,'shared','cabin'],
+      ['stay-yuexi','普雄 / 越西住宿 10/2','选择停车方便且评价稳定的住宿，作为海拔适应夜。',0,0,0,'shared','cabin'],
+      ['guide-pin','徒步集合点准确定位','让向导同时发地图定位、经纬度、道路类型和普通 SUV 能否到。',0,0,0,'shared','cabin'],
+      ['trail-stays','徒步前后住宿 10/3、10/5','收到集合点定位后再订，优先可免费取消。',0,0,0,'shared','cabin'],
+      ['road-plan','路线与离线导航','收藏西昌、越西、普雄、申果庄、集合点和备用住宿；两机离线。',0,0,0,'shared','cabin']
+    ]},
     {id:'confirm',icon:'✓',title:'预订与确认',sub:'先把路线、人员与风险信息确认清楚',items:[
       ['guide','向导与接驳确认','写清集合地点、出发/返回时间、费用与包含项目。',0,0,0,'shared','cabin'],
       ['route','路线与海拔数据','确认起点、营地、最高点、每日里程和累计爬升。',0,0,0,'shared','cabin'],
