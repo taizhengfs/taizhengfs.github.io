@@ -25,3 +25,12 @@
   3. 今日新增可复用判断：睡眠短（5.62h）但 HRV 反升（71 > 基线上限 69）⇒ 「睡眠债提前支取」，需在 advice 里预警而非表扬。
   4. 训练质量维度值得每次写：骑行 avgHR 102 属热身区、TE 1.98；跑步 TE 4.09 —— 直接给出「别骑车去跑步」的落地建议。
 
+## 2026-09-16
+- 状态：成功（push 前需额外处理分叉）。commit `17eabb6..c21751b` 推到 master。smoke 错误项「无」，活动明细 561 份。
+- 注意点：
+  1. **远端分叉**：Warden 从别处推了 Eerzee 徒步页提交，本地 3 个 fitness 提交被拒（fetch first）。解决：`cp tools.html /tmp/tools.html.local.bak` → `git stash push -- tools.html` → `git pull --rebase origin master` → `git stash pop`。远端与本地改的是 tools.html 不同区域，合并干净。**push 被拒就走这套，别硬推。**
+  2. 站点仓库 tools.html 常年有一笔未提交改动（publish.sh 只 add fitness/），rebase 前必须 stash 掉。
+  3. 字数：本次首稿 566 → 中间 528/495 → 终稿 448。**可靠做法：分段写，先逐段 `len()` 量，再拼装。目测仍会低估 15–20%。**
+  4. 今日判断框架（可复用）：准备度四连跌但 RHR/HRV 分量全绿 ⇒ 判定为「停练掉分（detraining）」而非疲劳，advice 给加量；反之若 HRV 跌破基线下限 + RHR 上行，才是该休息。
+  5. 脚本小坑：push 失败时 daily_update.sh 第 67 行会报 `rc: unbound variable`（bash + set -u），会吞掉「发布失败」日志，但不影响本自动化自己跑 publish.sh。
+
