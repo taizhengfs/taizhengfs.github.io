@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-09-19T11:00:36",
+ "generatedAt": "2026-09-19T11:06:46",
  "range": {
   "start": "2026-06-16",
   "end": "2026-09-19",
@@ -2574,7 +2574,7 @@
   {
    "acuteLoad": 223,
    "bbCharged": 78,
-   "bbDrained": 23,
+   "bbDrained": 24,
    "bbMax": 88,
    "bbMin": 10,
    "date": "2026-09-19",
