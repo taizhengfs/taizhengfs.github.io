@@ -113,6 +113,8 @@
   .item-name{font-size:14px;font-weight:700}
   .item.done .item-name{text-decoration:line-through;color:#9aa59e}
   .item-tip{margin-top:3px;color:var(--muted);font-size:12px;line-height:1.55}
+  .item-brand{margin-top:6px;display:block;padding:4px 9px;border-radius:7px;background:var(--mint);color:var(--leaf-dark);font-size:11.5px;line-height:1.65;font-weight:600;word-break:break-word}
+  .item-brand::before{content:"推荐品牌";display:inline-block;margin-right:6px;padding:0 5px;border-radius:4px;background:var(--leaf);color:#fff;font-size:9.5px;font-weight:800;letter-spacing:.3px;vertical-align:1px}
   .meta{display:flex;justify-content:flex-end;flex-wrap:wrap;gap:5px;max-width:250px}
   .chip{padding:3px 7px;border-radius:6px;background:#eef4ef;color:#597062;font-size:10px;white-space:nowrap}
   .chip.warn{background:#fff5dd;color:#826520}
@@ -569,6 +571,102 @@
     ]}
   ];
 
+  // 推荐品牌：仅在准备清单渲染时作为参考标签显示，不参与勾选同步与预算计算。
+  // 「性价比」一项多为国内买得到、售后方便的选择；贵价档标注的为国际一线常用型号系列。
+  const BRANDS={
+    /* 整趟旅行预订 */
+    outbound:"携程 / 飞猪 / 航司官网三方比价。杭州出发优先看四川航空、国航经成都中转，以及杭州—西昌直飞班次（非每日执飞）",
+    return:"渠道同去程。西昌青山机场班次少，回程优先直飞杭州；中转方案务必选早班动车 + 晚班机，不给跨城换乘留少于 4 小时",
+    rental:"神州租车 / 一嗨租车（西昌网点，选燃油 SUV + 不计免赔）。取车当天绕车拍一遍轮胎、玻璃与底盘视频",
+    "stay-xichang":"携程 / 美团筛选「免费取消 + 免费停车」，邛海一带的连锁酒店或口碑民宿更稳",
+    "stay-yuexi":"携程筛选近三年新开房源，优先靠近客运站 / 县城主干道，停车和半夜找吃的地方都方便",
+    "guide-pin":"让向导发微信定位后，再用高德 / 百度地图双人核对坐标；另存一份截图发给山下紧急联系人",
+    "trail-stays":"只在确认可免费取消的房源里挑；连锁兜底选尚客优、城市便捷、速 8 这类 가격 稳定的经济型",
+    "road-plan":"离线地图包下载高德 / 百度；轨迹用「两步路」「六只脚」按名称搜索并缓存到两部手机",
+
+    /* 预订与确认 */
+    insurance:"安联、平安产险、人保的户外运动专项险。投保前逐条确认：覆盖海拔 4000 m 以上徒步、且含担架 / 直升机救援，不看价格先看免责条款",
+    "offline-map":"「两步路」「六只脚」下载离线轨迹与等高线地图，「奥维互动地图」缓存离线影像；出发前在家连 Wi-Fi 完成一次加载验证",
+
+    /* 睡眠与营地 */
+    tent:"入门：挪客 Naturehike Cloud-Up 2｜进阶：三峰出 蓝山 / 飘云 2｜高端：MSR Hubba Hubba NX、Hilleberg Anjan 2。两人出行建议实际容积选「标称 +1 人」的型号",
+    groundsheet:"杜邦 Tyvek 1443R 自行裁剪（轻且耐磨），或买 MSR / 三峰出原厂地布（贴合度更好）",
+    "dad-bag":"黑冰 BlackIce B1000（-10℃ 档，国产高性价比）｜Rab Ascent 700｜Sea to Summit Ascent Tk III。买前认准「舒适温标」而非极限温标",
+    "kid-bag":"迪卡侬 Forclaz MT900 儿童羽绒款｜Sea to Summit Nylon Kids Bag。买不到的情况下，选成人小码短拉链款比硬凑儿童款更保暖",
+    "dad-pad":"Therm-a-Rest NeoAir NXT XTherm（R 6.9）｜Sea to Summit Ether Light XT Extreme｜预算型：挪客加厚蛋巢 + 铝箔垫双层组合",
+    "kid-pad":"Therm-a-Rest / Sea to Summit 短尺寸款｜预算型：迪卡侬 Forclaz MT500 单人防潮垫。R 值 ≥4 是底线，别只看厚度",
+    pillows:"Sea to Summit Aeros 轻量充气枕｜Trekology｜挪客。也可以用装衣物的收纳袋临时替代",
+    drybags:"Sea to Summit Ultra-Sil｜Osprey UltraLight Dry Sack｜挪客压缩防水袋。睡袋、羽绒服、备用衣袜三样各自独立装",
+
+    /* 爸爸衣物 */
+    "dad-base":"Icebreaker 200 Oasis｜Smartwool Classic All-Season（均为美利奴羊毛）｜性价比：迪卡侬 Forclaz ML900、UTO 悠途",
+    "dad-fleece":"Patagonia R1｜Arc'teryx Covert｜Rab Nexus｜性价比：迪卡侬 Forclaz MH500、国产 Polartec 面料款",
+    "dad-down":"Arc'teryx Cerium｜Rab Microlight Alpine｜Montbell Plasma 1000｜性价比：黑冰、君羽、凯乐石 700 蓬以上款",
+    "dad-shell":"Arc'teryx Beta LT｜Mammut｜Montbell Rain Trek｜性价比：凯乐石 Aero Plus、探路者 Gore-Tex 款。认准压胶条与可调帽兜",
+    "dad-rainpants":"Montbell Versalite Rain Pants｜Arc'teryx Beta Rain Pant｜性价比：迪卡侬 Forclaz MT900 防雨裤（侧拉链全开款更好穿脱）",
+    "dad-pants":"Klättermusen 攀山鼠｜Kailas 凯乐石 T9 软壳裤｜Gramicci｜性价比：迪卡侬 Forclaz MH500",
+    "dad-socks":"Darn Tough（终身保修，磨破了寄回去换）｜Smartwool｜Bridgedale｜Injinji 五指袜",
+    "dad-accessories":"帽子 / 脖套：Buff、Smartwool｜手套：Black Diamond、Rab。方案是「薄抓绒内胆 + 防水外层」双层，比一副厚手套实用",
+
+    /* 孩子衣物 */
+    "kid-base":"Icebreaker Kids｜Joha 羊毛内衣｜性价比：迪卡侬 Quechua Kids 美利奴款",
+    "kid-fleece":"迪卡侬 Quechua Kids MH500 抓绒｜Jack Wolfskin Kids｜Reima（芬兰童装品牌，尺码偏欧洲版）",
+    "kid-down":"迪卡侬 Forclaz MT900 Kids 羽绒｜Reima Down Jacket｜Jack Wolfskin Kids。宁可选稍大一码留出叠穿空间",
+    "kid-shell":"Reima Kids Shell｜Jack Wolfskin Kids｜迪卡侬 MH500 Kids 冲锋衣。检查三点：压胶<｜hy_place▁holder▁no▁813｜>、可调帽兜、抬手不勒腋下",
+    "kid-rainpants":"迪卡侬 Quechua Kids 雨裤｜Reima Rain Set｜Playshoes 儿童雨裤。关键是能套在鞋外直接穿脱",
+    "kid-pants":"迪卡侬 Quechua Kids NH500 徒步裤｜Reima Softshell｜Jack Wolfskin Kids",
+    "kid-thermal":"Joha / Icebreaker Kids 羊毛裤｜性价比：迪卡侬 ML500 儿童保暖裤",
+    "kid-socks":"Darn Tough Youth｜Smartwool Kids｜迪卡侬 Kids 羊毛袜。至少一整双封在防水袋里当营地袜",
+    "kid-accessories":"帽子 / 脖套：Buff Kids、Smartwool Kids｜手套：Reima、Ziener Kids（儿童滑雪手套系列防水性很好）",
+
+    /* 背负、鞋与行走 */
+    "dad-pack":"Osprey Atmos AG 50｜Deuter Aircontact Core 50+10｜Gregory Zulu 50｜性价比：凯乐石 Olympus、探路者。一定要到店负重试背",
+    "kid-pack":"Deuter Junior｜Osprey Jet Kids｜迪卡侬 Quechua Kids 10 L。必须有胸扣和加厚软肩带，背负硬塑料板的不买",
+    "pack-cover":"Osprey UltraLight Raincover｜Sea to Summit｜迪卡侬 Forclaz 防雨罩（按背包升数选号，宁小勿大）",
+    "dad-boots":"Salomon Quest 4 GTX｜Lowa Renegade GTX Mid｜Scarpa Terra GTX｜宽脚：Keen Targhee III Mid｜预算：凯乐石 KS9000",
+    "kid-boots":"Salomon X Raise Kids｜Keen Targhee Kids Mid｜迪卡侬 Quechua Kids MH500 Mid Waterproof。务必提前两周穿出门磨合",
+    gaiters:"Outdoor Research Crocodiles｜Black Diamond GTX Gaiter｜性价比：迪卡侬 Forclaz MT900 雪套",
+    poles:"LEKI Trental AMK｜Black Diamond Trail Ergo Cork｜Komperdell｜性价比：迪卡侬 Forclaz MT500、火枫",
+    sandals:"Teva Hurricane XLT｜Keen Newport H2｜Chaco Z1｜Merrell Hydro Moc（营地鞋不看颜值，看能不能踩水）",
+
+    /* 食物、水与炊具 */
+    water:"当地超市整箱采购即可：农夫山泉、怡宝、冰露。不必背进口水和功能水进山",
+    bottles:"Hydrapak Seeker｜Platypus SoftBottle｜CamelBak Crux 水袋｜性价比：迪卡侬 Forclaz 软水壶",
+    filter:"Katadyn BeFree 1.0 L｜Sawyer Squeeze Mini｜LifeStraw Flex｜MSR TrailShot。注意零度以下滤芯不能结冰，晚上放进睡袋",
+    "trail-food":"能量胶 GU Energy / Maurten Gel 100｜能量棒 Clif Bar / PowerBar / 康比特｜补液 Nuun 泡腾片、宝矿力水特粉剂｜再备两条士力架应急",
+    dinner:"自嗨锅 / 海底捞自热米饭 / 统一开小灶｜早餐：桂格即食燕麦、雀巢奶粉、德运全脂奶粉。选孩子在家吃过、确定吃得惯的",
+    "emergency-food":"冠生园压缩饼干、09 式压缩干粮｜备选 Datrex 应急口粮 2400｜再配两条士力架。注意有效期和热量标注",
+    stove:"Soto Windmaster｜MSR PocketRocket 2｜Jetboil Zip｜性价比：火枫 Fire-Maple（国产，配件便宜好配）。海拔高、风大时优先选带预热管的分体炉",
+    fuel:"Coleman C300 高山罐｜火枫高山气罐｜MSR IsoPro。当地户外店或超市买，冷天选异丁烷混合比例高的款式",
+    cookset:"Evernew Ultra Light Titanium｜Toaks Titanium 750 ml｜性价比：火枫 FMS-116T 套锅、挪客钛合金锅。一锅到底最省事",
+    trash:"Ziploc 密封袋 / 宜家 ISTAD｜性价比：妙洁密实袋。湿衣、脏鞋、垃圾各用一个，别混装",
+
+    /* 安全、医疗与卫生 */
+    "first-aid":"Adventure Medical Kits Mountain Series｜Lifesystems Mountain Leader｜性价比：迪卡侬 MH500 急救包 + 自行补充无菌敷料与弹性绷带",
+    "personal-meds":"按本人医嘱自备。常见可对照：必理通 Panadol / 芬必得（布洛芬）、博叶口服补液盐 III、思密达蒙脱石散。带原包装和说明书",
+    blister:"Compeed 水胶体创可贴｜Leukotape P 运动胶带｜3M Durapore 白胶布。出发前先在小面积皮肤试贴一次，确认不过敏",
+    oxygen:"在正规连锁药店购买（大参林、老百姓、益丰）或抵达西昌后在当地药房买。认准「国药准字」及产品标准，不买网红罐装所谓高原专用氧",
+    "emergency-blanket":"SOL Emergency Blanket｜AMK Heatsheets｜Life Bivvy。选加厚镀铝 PE 材质，别用一次性烧烤式铝箔毯",
+    whistles:"ACME Thunderer｜Fox 40 Classic｜SOL Slim Rescue Howler。必须是无珠哨，湿了也能吹响",
+    sun:"Anessa 安耐晒金瓶 SPF50+ PA++++｜La Roche-Posay Anthelios｜Banana Boat Sport｜润唇膏 Blistex、曼秀雷敦药用款",
+    glasses:"Julbo Looping Kids｜Bollé Kids｜Oakley Youth。选 3–4 级深色镜片 + 防滑头带，偏光不是必须的",
+    hygiene:"洁丽雅 / 维达小包装湿巾｜滴露 / 威露士免洗手凝胶｜心相印纸巾。所有包装按天分装，减重也避免遗留",
+    toilet:"便携厕所袋 WAG Bag / Cleanwaste RESTOP 2｜猫洞铲 TheTentLab The Deuce、Sea to Summit Pocket Trowel",
+    bug:"OFF! Deep Woods（DEET 25%）｜Sawyer Picaridin 20%｜Vape 未来。衣物另用 Sawyer Permethrin 氯菊酯预处理，回程逐件检查蜱虫",
+
+    /* 照明、通信与记录 */
+    headlamps:"Petzl Actik Core｜Nitecore NU25 UL｜Black Diamond Spot 400｜Fenix HM50R。孩子可选 Petzl Tikkina，简单好操作",
+    powerbank:"Anker｜小米 Xiaomi｜CUKTECH 酷态科（10000–20000 mAh）。必须有清晰有效的 3C 标识且不在召回批次内，单块额定能量 ≤100 Wh",
+    cables:"Anker / Ugreen 绿联 / Baseus 倍思。只带当天实际用到的接口，多余线材是纯负重",
+    camera:"运动相机 GoPro HERO / DJI Osmo Action / Insta360 Ace Pro｜静态 Sony α7C II、Fujifilm X100VI。孩子随拍优先选防摔款",
+    recorder:"Zoom H1essential｜Sony ICD 系列｜无线麦 RODE Wireless GO II / DJI Mic 2。出发前清空存储和电池",
+    comms:"无信号路段建议用北斗短报文手机（华为 Mate / Pura 系列）或 Garmin inReach Mini 2。普通对讲机选 Motorola T600、小米米家，注意国内公众对讲机功率限制",
+
+    /* 出发前装包 */
+    weigh:"香山 SENSSUN / 凯丰 Camry 便携行李秤（50 kg 量程，弹簧式比电子式耐用）",
+    "pack-bag":"Osprey Airporter LZ45–75｜Thule RoundTrip｜性价比：迪卡侬 Forclaz 托运运输袋"
+  };
+
   const allItems=categories.flatMap(category=>category.items.map(item=>({category:category.id,id:item[0],name:item[1],tip:item[2],weight:item[3],min:item[4],max:item[5],owner:item[6],carry:item[7]})));
   const validItemIds=new Set(allItems.map(item=>item.id));
   let checkedItems=[];
@@ -583,7 +681,7 @@
 
   function renderChecklist(){
     const root=document.getElementById('checklist-root');
-    root.innerHTML=categories.map(category=>`<section class="category" data-category="${category.id}"><div class="category-head"><div class="category-icon">${category.icon}</div><div><h2 class="category-title">${category.title}</h2><div class="category-sub">${category.sub}</div></div><div class="category-count" id="count-${category.id}"></div></div><div class="items">${category.items.map(raw=>{const [id,name,tip,weight,min,max,owner,carry]=raw;return `<div class="item" role="checkbox" tabindex="0" aria-checked="false" data-id="${id}" data-owner="${owner}" data-carry="${carry}"><span class="check"></span><span><div class="item-name">${name}</div><div class="item-tip">${tip}</div></span><span class="meta"><span class="chip ${owner==='kid'?'kid':owner==='dad'?'dad':''}">${ownerLabel[owner]}</span><span class="chip">${carryLabel[carry]}</span>${weight?`<span class="chip">${weight>=1000?(weight/1000).toFixed(1)+' kg':weight+' g'}</span>`:''}${max?`<span class="chip warn">${money(min)}–${money(max)}</span>`:''}</span></div>`}).join('')}</div></section>`).join('');
+    root.innerHTML=categories.map(category=>`<section class="category" data-category="${category.id}"><div class="category-head"><div class="category-icon">${category.icon}</div><div><h2 class="category-title">${category.title}</h2><div class="category-sub">${category.sub}</div></div><div class="category-count" id="count-${category.id}"></div></div><div class="items">${category.items.map(raw=>{const [id,name,tip,weight,min,max,owner,carry]=raw;return `<div class="item" role="checkbox" tabindex="0" aria-checked="false" data-id="${id}" data-owner="${owner}" data-carry="${carry}"><span class="check"></span><span><div class="item-name">${name}</div><div class="item-tip">${tip}</div>${BRANDS[id]?`<div class="item-brand">${BRANDS[id]}</div>`:''}</span><span class="meta"><span class="chip ${owner==='kid'?'kid':owner==='dad'?'dad':''}">${ownerLabel[owner]}</span><span class="chip">${carryLabel[carry]}</span>${weight?`<span class="chip">${weight>=1000?(weight/1000).toFixed(1)+' kg':weight+' g'}</span>`:''}${max?`<span class="chip warn">${money(min)}–${money(max)}</span>`:''}</span></div>`}).join('')}</div></section>`).join('');
     root.querySelectorAll('.item').forEach(el=>{el.addEventListener('click',()=>toggleItem(el.dataset.id));el.addEventListener('keydown',event=>{if(event.key==='Enter'||event.key===' '){event.preventDefault();toggleItem(el.dataset.id)}})});
   }
 
