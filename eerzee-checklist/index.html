@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#5f8f72">
-<meta name="description" content="2026 国庆杭州出发，西昌租车前往越西、普雄梯田、申果庄与俄尔则俄的父子旅行攻略、徒步装备清单和安全托运指南。">
+<meta name="description" content="2026 年 10 月 2–7 日杭州直飞西昌、西昌飞宁波，租车前往越西、申果庄、普雄梯田与俄尔则俄的父子旅行攻略、徒步装备清单和安全托运指南。">
 <link rel="icon" href="/img/favicon-3.ico">
 <title>俄尔则俄父子旅行攻略与准备清单 - Warden's Life</title>
 <style>
@@ -67,7 +67,7 @@
   .btn-ghost{color:#fff;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.25)}
   .btn:hover{transform:translateY(-1px)}
 
-  .summary{display:grid;grid-template-columns:1.15fr repeat(3,1fr);gap:12px;margin-top:16px}
+  .summary{display:grid;grid-template-columns:1.15fr repeat(4,1fr);gap:12px;margin-top:16px}
   .summary-card{padding:18px 19px;border:1px solid rgba(95,143,114,.13);border-radius:18px;background:rgba(255,255,255,.78);box-shadow:0 8px 28px rgba(49,93,70,.05)}
   .summary-card.primary{background:var(--forest);color:#fff}
   .summary-label{font-size:11px;color:var(--muted);letter-spacing:.06em}
@@ -95,6 +95,7 @@
   .filter-spacer{flex:1}
   .quiet-btn{padding:7px 11px;border-radius:9px;background:transparent;color:var(--muted);font-size:12px}
   .quiet-btn:hover{background:var(--mint);color:var(--forest)}
+  .purchase-hint{margin:6px 0 0;padding:10px 13px;border-radius:11px;background:var(--mint);color:var(--leaf-dark);font-size:11px;font-weight:600}
 
   .category{margin-top:16px;border:1px solid rgba(95,143,114,.13);border-radius:21px;background:var(--paper);box-shadow:0 8px 28px rgba(49,93,70,.055);overflow:hidden}
   .category-head{display:flex;align-items:center;gap:13px;padding:19px 21px;border-bottom:1px solid var(--line)}
@@ -107,7 +108,8 @@
   .item:first-child{border-top:0}
   .item:hover{background:var(--mist)}
   .item[hidden]{display:none}
-  .check{position:relative;width:23px;height:23px;margin-top:1px;border:2px solid #86aa92;border-radius:7px;background:#fff;transition:.2s}
+  .check{position:relative;width:23px;height:23px;margin-top:1px;padding:0;border:2px solid #86aa92;border-radius:7px;background:#fff;transition:.2s}
+  .check:focus-visible{outline:3px solid rgba(95,143,114,.25);outline-offset:2px}
   .item.done .check{border-color:var(--leaf);background:var(--leaf)}
   .item.done .check::after{content:"✓";position:absolute;inset:-2px 0 0;display:grid;place-items:center;color:#fff;font-size:14px;font-weight:800}
   .item-name{font-size:14px;font-weight:700}
@@ -115,6 +117,11 @@
   .item-tip{margin-top:3px;color:var(--muted);font-size:12px;line-height:1.55}
   .item-brand{margin-top:6px;display:block;padding:4px 9px;border-radius:7px;background:var(--mint);color:var(--leaf-dark);font-size:11.5px;line-height:1.65;font-weight:600;word-break:break-word}
   .item-brand::before{content:"选购建议";display:inline-block;margin-right:6px;padding:0 5px;border-radius:4px;background:var(--leaf);color:#fff;font-size:9.5px;font-weight:800;letter-spacing:.3px;vertical-align:1px}
+  .purchase-editor{display:none;grid-template-columns:minmax(0,1fr) minmax(120px,.55fr);gap:8px;margin-top:9px;padding:10px;border:1px solid #cfe0d4;border-radius:10px;background:#f7fbf8;cursor:default}
+  .item.done .purchase-editor{display:grid}
+  .purchase-field{display:block;min-width:0;color:var(--leaf-dark);font-size:10px;font-weight:800;letter-spacing:.04em}
+  .purchase-input{display:block;width:100%;margin-top:4px;padding:8px 9px;border:1px solid #cadbd0;border-radius:8px;background:#fff;color:var(--ink);font-size:12px;font-weight:500;letter-spacing:0;outline:none}
+  .purchase-input:focus{border-color:var(--leaf);box-shadow:0 0 0 3px rgba(95,143,114,.12)}
   .meta{display:flex;justify-content:flex-end;flex-wrap:wrap;gap:5px;max-width:250px}
   .chip{padding:3px 7px;border-radius:6px;background:#eef4ef;color:#597062;font-size:10px;white-space:nowrap}
   .chip.warn{background:#fff5dd;color:#826520}
@@ -203,6 +210,7 @@
     .wrap{width:min(100% - 20px,1060px);padding-top:12px}.toolbar{align-items:flex-start}.sync-status{max-width:180px;text-align:right}
     .hero{border-radius:22px}.hero-copy{font-size:13px}.summary{gap:8px}.summary-card{padding:14px}.summary-value{font-size:20px}
     .tabs{justify-content:flex-start;overflow-x:auto;scrollbar-width:none}.tabs::-webkit-scrollbar{display:none}.tab{flex:0 0 auto;min-width:88px}.filter-spacer{display:none}.category-head{padding:16px}.items{padding:4px 8px 8px}
+    .purchase-editor{grid-template-columns:1fr}
     .guide-card{padding:20px;overflow-wrap:anywhere}.trip-lead{padding:19px}.trip-day{grid-template-columns:1fr;gap:6px;padding:15px 0}.day-date b{display:inline;margin-left:7px;font-size:15px}
     .score-intro{padding:20px}.score-formula{grid-template-columns:repeat(2,1fr)}.score-factor:last-child{grid-column:1/-1}.score-card{padding:18px}.score-row{gap:8px}.score-spec{overflow-wrap:anywhere}
     .decision,.decision tbody,.decision tr,.decision td{display:block;width:100%}.decision{margin-top:12px}.decision thead{display:none}.decision tr{margin-top:10px;padding:11px 12px;border:1px solid var(--line);border-radius:12px;background:#fbfdfb}.decision td{padding:4px 0;border:0;white-space:normal;overflow-wrap:anywhere}.decision td::before{display:block;color:var(--leaf-dark);font-size:10px;font-weight:800;letter-spacing:.08em}.decision td:nth-child(1)::before{content:"状态"}.decision td:nth-child(2)::before{content:"表现"}.decision td:nth-child(3)::before{content:"行动"}.decision td:first-child{color:var(--forest);font-size:14px;font-weight:800}
@@ -224,8 +232,8 @@
   <header class="hero">
     <div class="eyebrow">FATHER &amp; SON · GOLDEN WEEK 2026</div>
     <h1>俄尔则俄父子旅行计划</h1>
-    <p class="hero-copy">从杭州到西昌，在越西慢慢适应海拔，再去普雄梯田、申果庄与俄尔则俄。这里放好整趟 7 天路线、两天一夜徒步、装备与安全清单。</p>
-    <div class="hero-meta"><span>📅 10 月 1–7 日</span><span>🚙 西昌租车</span><span>🌾 普雄 · 申果庄</span><span>⛰ 俄尔则俄露营</span></div>
+    <p class="hero-copy">10 月 2 日从杭州直飞西昌，西昌租车前往越西、申果庄、普雄梯田与俄尔则俄，10 月 7 日从西昌飞宁波。这里放好整趟 6 天路线、两天一夜徒步、装备与安全清单。</p>
+    <div class="hero-meta"><span>📅 10 月 2–7 日 · 6 天 5 晚</span><span>✈️ 杭州 → 西昌 → 宁波</span><span>🚙 西昌租车</span><span>⛰ 俄尔则俄露营</span></div>
     <div class="hero-actions">
       <button class="btn btn-light" type="button" onclick="switchPanel('trip')">查看完整行程</button>
       <button class="btn btn-ghost" type="button" onclick="refreshData()">↻ 刷新</button>
@@ -241,6 +249,7 @@
       <div class="summary-note"><span id="done-count">0</span> / <span id="total-count">0</span> 项</div>
     </div>
     <div class="summary-card"><div class="summary-label">待准备预算</div><div class="summary-value" id="budget-value">¥0</div><div class="summary-note">按未勾选项目估算</div></div>
+    <div class="summary-card"><div class="summary-label">实际支出</div><div class="summary-value" id="actual-spend-value">¥0</div><div class="summary-note"><span id="priced-count">0</span> 项已填写价格</div></div>
     <div class="summary-card"><div class="summary-label">全部参考总重</div><div class="summary-value" id="weight-value">0 kg</div><div class="summary-note">父子合计，含穿着、起步水和可选项</div></div>
     <div class="summary-card"><div class="summary-label">建议负重</div><div class="summary-value">10–12 kg</div><div class="summary-note">爸爸 · 孩子不超过 3 kg</div></div>
   </section>
@@ -267,6 +276,7 @@
         <span class="filter-spacer"></span>
         <button class="quiet-btn" type="button" onclick="resetChecklist()">清空勾选</button>
       </div>
+      <div class="purchase-hint">勾选完成后会展开购买记录：填写品牌 / 型号和实际价格，顶部会自动汇总真实支出。</div>
       <div id="checklist-root"></div>
       <div id="empty-state" class="empty">这个筛选条件下没有项目。</div>
     </section>
@@ -394,43 +404,42 @@
 
     <section id="trip-panel" class="panel">
       <div class="trip-lead">
-        <div class="guide-kicker">RECOMMENDED PLAN · 7 DAYS / 6 NIGHTS</div>
-        <h2>推荐 10 月 1 日出发，给天气和孩子留一天缓冲</h2>
-        <p><strong>主线：</strong>杭州 → 西昌 → 越西 / 普雄 → 申果庄 → 俄尔则俄 → 西昌 → 杭州。2026 年国庆假期为 10 月 1–7 日；完整走法刚好 7 天。若 10 月 2 日才走，就在“普雄”和“申果庄”里只选一个，不能压缩徒步后的缓冲日。</p>
-        <div class="trip-tags"><span class="trip-tag">先适应海拔</span><span class="trip-tag">不走夜间山路</span><span class="trip-tag">徒步后不赶长途</span><span class="trip-tag">10/6 机动日</span></div>
+        <div class="guide-kicker">TICKETED PLAN · 6 DAYS / 5 NIGHTS</div>
+        <h2>按已出票航班重排：10 月 2 日到西昌，10 月 7 日从西昌飞宁波</h2>
+        <p><strong>主线：</strong>杭州 → 西昌 → 越西 / 申果庄 → 俄尔则俄 → 普雄阳坡梯田 → 西昌 → 宁波。时间比原计划少一天，因此 10 月 2 日不冒险夜驾去越西，10 月 6 日必须回到西昌；如果徒步因天气无法按 10 月 4–5 日执行，就取消或缩短山里项目，不向返程日顺延。</p>
+        <div class="trip-tags"><span class="trip-tag">航班已出票</span><span class="trip-tag">10/2 住西昌</span><span class="trip-tag">10/3 去申果庄</span><span class="trip-tag">10/6 必回西昌</span></div>
       </div>
 
       <div class="guide-grid">
         <article class="guide-card wide">
-          <div class="guide-kicker">DAY BY DAY</div><h2>10 月 1 日出发 · 完整版</h2>
+          <div class="guide-kicker">DAY BY DAY</div><h2>10 月 2–7 日 · 已出票版</h2>
           <div class="itinerary">
-            <div class="trip-day"><div class="day-date">周四<b>10 / 1</b></div><div class="day-body"><strong>杭州 → 成都 → 西昌｜只赶路，不取车夜驾</strong><p>优先上午飞成都，至少给“机场进城 + 成都南站换乘”留 4.5–5 小时，再乘约 3 小时动车到西昌西；住西昌。若届时有合适的杭州直飞西昌，当天直飞更省力。租车放到第二天白天。</p><div class="trip-tags"><span class="trip-tag">住西昌</span><span class="trip-tag">海拔约 1500 m</span></div></div></div>
-            <div class="trip-day"><div class="day-date">周五<b>10 / 2</b></div><div class="day-body"><strong>西昌取车 → 越西 → 普雄羊坪梯田</strong><p>早上取燃油 SUV，检查轮胎、备胎、刹车与底盘，采购气罐和路餐。西昌到越西约 120–135 km，正常约 2.5–3 小时，国庆按更久预留；下午去普雄羊坪梯田，住普雄或越西。这里约 2350 m，适合先住一晚适应。</p><div class="trip-tags"><span class="trip-tag">山路不抢时间</span><span class="trip-tag">梯田看傍晚光线</span></div></div></div>
-            <div class="trip-day"><div class="day-date">周六<b>10 / 3</b></div><div class="day-body"><strong>申果庄方向半日 → 与向导会合 → 山口附近早睡</strong><p>申果庄在越西东部高山区域，从县城方向往返不是顺手一拐，按半天到一天看待。只走开放道路和村落 / 林缘，不自行进入自然保护区核心区域。下午按向导发来的<strong>准确集合点定位</strong>会合，拆分行李、确认接驳、住起点附近。</p><div class="trip-tags"><span class="trip-tag">不以偶遇野生熊猫为目标</span><span class="trip-tag">拒绝摸黑找路</span></div></div></div>
+            <div class="trip-day"><div class="day-date">周五<b>10 / 2</b></div><div class="day-body"><strong>TV9950｜杭州萧山 T3 10:05 → 西昌青山 13:20</strong><p>取行李、取燃油 SUV 并验车后，预计 14:30–15:00 才能离开机场。先在西昌采购气罐、饮水和路餐；天气和体力合适就去邛海散步看日落，住西昌。当天不再开 3 小时左右的国庆山路去越西。</p><div class="trip-tags"><span class="trip-tag">西藏航空</span><span class="trip-tag">邛海轻松活动</span><span class="trip-tag">住西昌</span></div></div></div>
+            <div class="trip-day"><div class="day-date">周六<b>10 / 3</b></div><div class="day-body"><strong>西昌 → 越西 → 申果庄开放区域 → 与向导会合</strong><p>尽量 07:00–07:30 出发，国庆路况留余量。到越西补油、午餐后，按向导确认的道路进入申果庄开放村落 / 林缘；不自行进入自然保护区核心区域。最晚按向导要求抵达<strong>准确集合点</strong>，拆分行李、确认接驳，住徒步起点附近。当天不再绕去普雄梯田。</p><div class="trip-tags"><span class="trip-tag">申果庄安排在今天</span><span class="trip-tag">只走开放道路</span><span class="trip-tag">天黑前到住宿</span></div></div></div>
             <div class="trip-day"><div class="day-date">周日<b>10 / 4</b></div><div class="day-body"><strong>徒步 D1｜约 3300 m 起步 → 魔幻森林 → 墨海营地</strong><p>建议 08:00 前后出发，第一小时刻意放慢，每 45–60 分钟补水和小食。目标 15:00–16:00 前到约 4000 m 营地；停下先给孩子加羽绒服，再搭营。</p><div class="trip-tags"><span class="trip-tag">住帐篷</span><span class="trip-tag">当天不追落日机位</span></div></div></div>
             <div class="trip-day"><div class="day-date">周一<b>10 / 5</b></div><div class="day-body"><strong>徒步 D2｜墨海 → 红海 / 无名海子 → 下撤</strong><p>早餐前先看孩子精神、食欲、头痛和步态；状态正常才继续。按向导所述路线不完全原路返回，途中只捡地表裸露小水晶。下山后住集合点或附近县镇，绝不连夜长途开回西昌。</p><div class="trip-tags"><span class="trip-tag">无论几点出山都不夜驾</span></div></div></div>
-            <div class="trip-day"><div class="day-date">周二<b>10 / 6</b></div><div class="day-body"><strong>天气缓冲日｜返回西昌 + 邛海日落</strong><p>若徒步准时完成，白天开回西昌，傍晚去邛海；体力好再逛建昌古城 / 唐园，二选一即可。若前两天下雨、孩子需多休息或路线顺延，这一天直接作为应急缓冲，不安排硬性景点。</p><div class="trip-tags"><span class="trip-tag">还车前加满油</span><span class="trip-tag">住西昌</span></div></div></div>
-            <div class="trip-day"><div class="day-date">周三<b>10 / 7</b></div><div class="day-body"><strong>西昌 → 杭州｜回程</strong><p>当前航班计划里周三有西昌直飞杭州，优先选直飞；计划可能调整，以出票时为准。若只能动车回成都再飞杭州，务必选早班动车并留足跨城 / 机场换乘时间，不做紧绷衔接。</p><div class="trip-tags"><span class="trip-tag">关键衣物和锂电池随身</span></div></div></div>
+            <div class="trip-day"><div class="day-date">周二<b>10 / 6</b></div><div class="day-body"><strong>普雄阳坡梯田（可取消）→ 返回西昌 → 晚上还车</strong><p>早起先看孩子恢复情况、天气和道路；三项都正常，且向导确认线路顺路时，再留 1.5–2 小时简单看阳坡村梯田。最晚中午前开始返西昌，天黑前到达、加满油并尽量当晚还车，住机场方向或市区停车方便的酒店。任何延误都直接取消梯田。</p><div class="trip-tags"><span class="trip-tag">梯田是可选项</span><span class="trip-tag">10/6 必须回西昌</span><span class="trip-tag">建议当晚还车</span></div></div></div>
+            <div class="trip-day"><div class="day-date">周三<b>10 / 7</b></div><div class="day-body"><strong>GY7216｜西昌青山 T1 12:30 → 宁波栎社 T1 15:30</strong><p>建议 10:00 前到机场；若前晚未还车，至少预留还车、接驳和托运时间。到宁波后再转杭州：可选机场地铁到宁波站后乘高铁，或预订接送车；后续交通按航班延误留可退改余量。</p><div class="trip-tags"><span class="trip-tag">多彩贵州航空</span><span class="trip-tag">锂电池随身</span><span class="trip-tag">宁波 → 杭州另行衔接</span></div></div></div>
           </div>
         </article>
 
         <article class="guide-card">
-          <div class="guide-kicker">OCTOBER 2 OPTION</div><h2>10 月 2 日出发怎么压缩</h2>
-          <p>目前可查到的 2026 年 10 月 2 日为杭州直飞西昌的计划执飞日之一，上午出发、下午抵达；实际航班仍以购票页面为准。</p>
+          <div class="guide-kicker">FIXED DATES</div><h2>这次什么时候去申果庄？</h2>
+          <p><strong>定在 10 月 3 日。</strong>它和前往徒步集合点合并成一天，比 10 月 2 日落地后赶夜路安全，也不会占用 10 月 6 日必须返回西昌的时间。</p>
           <ul>
-            <li>10/2：直飞西昌，住西昌，不下飞机立刻跑山路。</li>
-            <li>10/3：西昌 → 越西，只选<strong>普雄或申果庄</strong>，傍晚会合向导。</li>
+            <li>10/2：落地西昌后取车、采购、邛海，住西昌。</li>
+            <li>10/3：早出发去越西和申果庄，下午与向导会合。</li>
             <li>10/4–5：俄尔则俄两天一夜，不压缩。</li>
-            <li>10/6：缓冲并回西昌；10/7 直飞杭州。</li>
+            <li>10/6：普雄梯田仅在顺路且时间充足时安排，晚上必须回西昌。</li>
           </ul>
-          <div class="callout">如果 10/3 不能在天黑前到集合点，就放弃当天支线景点。少去一个地方，比少一个安全缓冲日划算。</div>
+          <div class="callout">先让向导确认“申果庄开放路段 → 集合点”是否顺路。若不顺路，就把申果庄降级为沿途短停；不能牺牲天黑前到达和孩子休息时间。</div>
         </article>
 
         <article class="guide-card">
-          <div class="guide-kicker">TRANSPORT</div><h2>交通怎么选</h2>
-          <p><strong>最省事：</strong>10/2 杭州直飞西昌。目前计划为每周三 / 五 / 日执飞，约 3 小时 15 分；国庆可能调班，看到合适退改政策就先锁。</p>
-          <p><strong>最稳妥：</strong>10/1 杭州飞成都，再从成都南站坐动车到西昌西，动车约 3–3.5 小时。注意天府机场到成都南站不是同一地点。</p>
-          <p><strong>不建议：</strong>成都租车后一路开到越西。它会增加城市取还车、长途高速和疲劳驾驶，西昌取还更顺。</p>
+          <div class="guide-kicker">FLIGHTS</div><h2>已出票航班</h2>
+          <p><strong>去程：</strong>10/2 西藏航空 TV9950，杭州萧山 T3 10:05 起飞，西昌青山 13:20 到达。</p>
+          <p><strong>回程：</strong>10/7 多彩贵州航空 GY7216，西昌青山 T1 12:30 起飞，宁波栎社 T1 15:30 到达。</p>
+          <p><strong>关键提醒：</strong>返程落地城市是宁波，不是杭州；把宁波机场到杭州的接驳加入预算和当天时间。</p>
         </article>
 
         <article class="guide-card">
@@ -448,10 +457,10 @@
         <article class="guide-card">
           <div class="guide-kicker">NEARBY</div><h2>附近值得玩的地方</h2>
           <ul class="priority-list">
-            <li><span>A</span><div><strong>普雄羊坪梯田</strong><p>越西东部的山地梯田，秋季收获氛围合适；留 2–3 小时，不需要单独占一天。</p></div></li>
-            <li><span>A</span><div><strong>邛海 + 建昌古城 / 唐园</strong><p>放在回到西昌后的半天，轻松、餐饮住宿成熟，适合徒步后的恢复。</p></div></li>
-            <li><span>B</span><div><strong>申果庄开放区域</strong><p>高山森林与村落本身值得看，但路远、保护区限制多；必须先确认道路与开放范围。</p></div></li>
-            <li><span>C</span><div><strong>螺髻山 / 九十九里温泉</strong><p>在西昌南面，和本次越西方向相反。只有多加 1–2 天才安排，不塞进 7 天核心线。</p></div></li>
+            <li><span>A</span><div><strong>申果庄开放区域</strong><p>排在 10/3，和前往集合点合并；只走向导确认开放、普通 SUV 可通行的村落与林缘。</p></div></li>
+            <li><span>A</span><div><strong>邛海</strong><p>排在 10/2 落地取车和采购之后；只做轻松散步，不再追加建昌古城或唐园赶场。</p></div></li>
+            <li><span>B</span><div><strong>普雄阳坡梯田</strong><p>排在 10/6 回程路上，留 1.5–2 小时；只要孩子疲劳、道路延误或天气不好就取消。</p></div></li>
+            <li><span>C</span><div><strong>螺髻山 / 九十九里温泉</strong><p>方向相反且至少多占 1–2 天，不放进这次 6 天行程。</p></div></li>
           </ul>
         </article>
 
@@ -461,7 +470,7 @@
             <li>选燃油紧凑 SUV，完整车损保障最好覆盖轮胎、玻璃和底盘；不选纯电车跑陌生山路。</li>
             <li>取车时拍全车视频，确认备胎、千斤顶、胎压、油量和客服电话。</li>
             <li>山路按白天行驶规划，油量低于半箱就补；离线地图要两部手机都有。</li>
-            <li>10/1、10/6 住西昌；10/2 住普雄或越西；10/3、10/5 的住宿等向导发定位后再定。</li>
+            <li>10/2、10/6 住西昌；10/3、10/5 住哪里等向导发集合点和出山点定位后再定。</li>
             <li>国庆住宿优先可免费取消，徒步前后两晚不要为了省钱住得离起点太远。</li>
           </ul>
         </article>
@@ -469,9 +478,9 @@
         <article class="guide-card wide source-links">
           <div class="guide-kicker">BOOK NOW</div><h2>按这个顺序锁定</h2>
           <ol>
-            <li><strong>先锁往返大交通：</strong>10/1 成都中转版与 10/2 西昌直飞版同时比价，回程优先 10/7 西昌直飞杭州。</li>
-            <li><strong>再锁向导和集合点：</strong>把准确定位、进出山时段、取消条件、公共装备写进聊天记录。</li>
-            <li><strong>再订车和房：</strong>西昌租车 10/2–10/6；先订可取消住宿，收到定位后调整 10/3 与 10/5。</li>
+            <li><strong>往返航班已完成：</strong>把 TV9950、GY7216 和父子证件信息保存在两部手机；另安排 10/7 宁波到杭州的接驳。</li>
+            <li><strong>现在锁向导和集合点：</strong>把准确定位、10/3 会合时间、进出山时段、取消条件和公共装备写进聊天记录。</li>
+            <li><strong>再订车和房：</strong>西昌租车 10/2 下午至 10/6 晚；先订 10/2、10/6 西昌住宿，再按定位订 10/3 与 10/5。</li>
             <li><strong>最后采购：</strong>气罐必须到当地买；食物按孩子吃得惯的口味准备。</li>
           </ol>
           <div class="callout">已从向导聊天确认：两天一夜、魔幻森林—墨海—红海及更多无名海子，路线不完全原路返回，露营食物自背、本人带路。仍需补齐起点定位、每天里程爬升、营地水源和恶劣天气取消标准。</div>
@@ -595,7 +604,7 @@
     </section>
   </main>
 
-  <footer>行程按目前公开信息规划，国庆交通、开放范围与山路状况会变化，出票和出发前需再次确认。重量与预算为常见轻量装备估算值。<br>参考：<a href="https://big5.www.gov.cn/gate/big5/www.gov.cn/gongbao/2025/issue_12406/202511/content_7048922.html" target="_blank" rel="noopener">2026 年节假日安排</a> · <a href="https://www.flightconnections.com/cn/%E4%BB%8E-hgh-%E9%A3%9E%E5%BE%80-xic-%E7%9A%84%E8%88%AA%E7%8F%AD" target="_blank" rel="noopener">杭州—西昌直飞计划</a> · <a href="https://wlt.sc.gov.cn/scwlt/hydt/2024/4/15/216872234d6f43628663556810ebb381.shtml" target="_blank" rel="noopener">普雄羊坪梯田</a> · <a href="https://www.cdc.gov/yellow-book/hcp/environmental-hazards-risks/high-altitude-travel-and-altitude-illness.html" target="_blank" rel="noopener">CDC 高海拔旅行指南</a> · <a href="https://www.caac.gov.cn/XWZX/MHYW/202506/t20250626_227805.html" target="_blank" rel="noopener">民航局充电宝规定</a></footer>
+  <footer>行程按已出票航班 TV9950 与 GY7216 规划；国庆交通、开放范围与山路状况仍需在出发前复核。重量与预算为常见轻量装备估算值。<br>参考：<a href="https://big5.www.gov.cn/gate/big5/www.gov.cn/gongbao/2025/issue_12406/202511/content_7048922.html" target="_blank" rel="noopener">2026 年节假日安排</a> · <a href="https://wlt.sc.gov.cn/scwlt/hydt/2024/4/15/216872234d6f43628663556810ebb381.shtml" target="_blank" rel="noopener">普雄羊坪梯田</a> · <a href="https://www.cdc.gov/yellow-book/hcp/environmental-hazards-risks/high-altitude-travel-and-altitude-illness.html" target="_blank" rel="noopener">CDC 高海拔旅行指南</a> · <a href="https://www.caac.gov.cn/XWZX/MHYW/202506/t20250626_227805.html" target="_blank" rel="noopener">民航局充电宝规定</a></footer>
 </div>
 
 <div id="share-modal" class="share-modal" onclick="if(event.target===this)closeShareModal()">
@@ -610,14 +619,15 @@
   const FALLBACK_KEY='eerzee_checklist_offline';
 
   const categories=[
-    {id:'travel',icon:'◎',title:'整趟旅行预订',sub:'先锁大交通，再按向导定位调整山里住宿',items:[
-      ['outbound','去程机票 / 动车','10/1 成都中转与 10/2 西昌直飞同时比价；优先可退改。',0,0,0,'shared','cabin'],
-      ['return','10/7 回程票','优先西昌直飞杭州；中转方案给动车、进城和机场留足时间。',0,0,0,'shared','cabin'],
-      ['rental','西昌租车 10/2–10/6','燃油 SUV、完整车损保障；确认轮胎 / 玻璃 / 底盘保障与儿童乘车需求。',0,0,0,'shared','cabin'],
-      ['stay-xichang','西昌住宿 10/1、10/6','优先停车方便、可取消；回程前一晚不要住远郊。',0,0,0,'shared','cabin'],
-      ['stay-yuexi','普雄 / 越西住宿 10/2','选择停车方便且评价稳定的住宿，作为海拔适应夜。',0,0,0,'shared','cabin'],
+    {id:'travel',icon:'◎',title:'整趟旅行预订',sub:'航班已出票，接下来锁租车、接驳和山里住宿',items:[
+      ['outbound','去程 TV9950（已出票）','10/2 杭州萧山 T3 10:05 → 西昌青山 13:20；提前值机并核对托运行李。',0,0,0,'shared','cabin'],
+      ['return','回程 GY7216（已出票）','10/7 西昌青山 T1 12:30 → 宁波栎社 T1 15:30；另安排宁波到杭州。',0,0,0,'shared','cabin'],
+      ['rental','西昌租车 10/2 下午–10/6 晚','燃油 SUV、完整车损保障；确认轮胎 / 玻璃 / 底盘保障和儿童增高垫。',0,0,0,'shared','cabin'],
+      ['stay-xichang','西昌住宿 10/2、10/6','10/2 方便取车采购，10/6 方便还车和第二天去机场；优先可取消。',0,0,0,'shared','cabin'],
+      ['stay-yuexi','徒步前住宿 10/3','按向导给的集合点选择，可能是越西、申果庄或起点附近。',0,0,0,'shared','cabin'],
+      ['ningbo-transfer','10/7 宁波 → 杭州接驳','机场地铁 + 高铁或接送车二选一；按航班延误购买可退改方案。',0,0,0,'shared','cabin'],
       ['guide-pin','徒步集合点准确定位','让向导同时发地图定位、经纬度、道路类型和普通 SUV 能否到。',0,0,0,'shared','cabin'],
-      ['trail-stays','徒步前后住宿 10/3、10/5','收到集合点定位后再订，优先可免费取消。',0,0,0,'shared','cabin'],
+      ['trail-stays','出山后住宿 10/5','按实际出山时间和地点选择；不预设当晚长途开回西昌。',0,0,0,'shared','cabin'],
       ['road-plan','路线与离线导航','收藏西昌、越西、普雄、申果庄、集合点和备用住宿；两机离线。',0,0,0,'shared','cabin']
     ]},
     {id:'confirm',icon:'✓',title:'预订与确认',sub:'先把路线、人员与风险信息确认清楚',items:[
@@ -718,13 +728,14 @@
   // 评分是本次父子高海拔露营的场景适配分，并非通用实验室排名，也不参与勾选同步与预算计算。
   const BRANDS={
     /* 整趟旅行预订 */
-    outbound:"携程 / 飞猪 / 航司官网三方比价。杭州出发优先看四川航空、国航经成都中转，以及杭州—西昌直飞班次（非每日执飞）",
-    return:"渠道同去程。西昌青山机场班次少，回程优先直飞杭州；中转方案务必选早班动车 + 晚班机，不给跨城换乘留少于 4 小时",
+    outbound:"已出票：西藏航空 TV9950。出发前在航司或购票渠道核对值机开放时间、父子座位和免费托运行李额",
+    return:"已出票：多彩贵州航空 GY7216。注意落地宁波栎社 T1，不是杭州；宁波到杭州的接驳应选择可退改方案",
     rental:"神州租车 / 一嗨租车（西昌网点，选燃油 SUV + 不计免赔）。取车当天绕车拍一遍轮胎、玻璃与底盘视频",
     "stay-xichang":"携程 / 美团筛选「免费取消 + 免费停车」，邛海一带的连锁酒店或口碑民宿更稳",
-    "stay-yuexi":"携程筛选近三年新开房源，优先靠近客运站 / 县城主干道，停车和半夜找吃的地方都方便",
+    "stay-yuexi":"以向导集合点为圆心筛选可取消住宿；若住越西县城，优先主干道附近、停车方便且清晨能吃到早餐的房源",
     "guide-pin":"让向导发微信定位后，再用高德 / 百度地图双人核对坐标；另存一份截图发给山下紧急联系人",
-    "trail-stays":"只在确认可免费取消的房源里挑；连锁兜底选尚客优、城市便捷、速 8 这类 가격 稳定的经济型",
+    "trail-stays":"只在确认出山点后预订可免费取消的房源；优先距离近、能停车、有热水和晚餐，不为连锁品牌额外夜驾",
+    "ningbo-transfer":"铁路方案用 12306 购买宁波站 → 杭州东可退改车次；若带大量装备或孩子很疲劳，提前比较正规平台接送车",
     "road-plan":"离线地图包下载高德 / 百度；轨迹用「两步路」「六只脚」按名称搜索并缓存到两部手机",
 
     /* 预订与确认 */
@@ -813,49 +824,71 @@
   const allItems=categories.flatMap(category=>category.items.map(item=>({category:category.id,id:item[0],name:item[1],tip:item[2],weight:item[3],min:item[4],max:item[5],owner:item[6],carry:item[7]})));
   const validItemIds=new Set(allItems.map(item=>item.id));
   let checkedItems=[];
+  let purchaseDetails={};
   let binId=null;
   let activeFilter='all';
   let syncTimer=null,isSyncing=false,needsAnotherSync=false;
 
   const money=n=>`¥${Math.round(n).toLocaleString('zh-CN')}`;
+  const actualMoney=n=>`¥${n.toLocaleString('zh-CN',{minimumFractionDigits:0,maximumFractionDigits:2})}`;
+  const escapeAttr=value=>String(value??'').replace(/[&"'<>]/g,char=>({'&':'&amp;','"':'&quot;',"'":'&#39;','<':'&lt;','>':'&gt;'}[char]));
   const ownerLabel={kid:'孩子',dad:'爸爸',shared:'共用'};
   const carryLabel={cabin:'随身上机',checkin:'建议托运',wear:'穿着',dadbag:'爸爸背',kidbag:'孩子背',carry:'途中消耗'};
   const localDataKey=()=>binId?`${LOCAL_DATA_PREFIX}${binId}`:FALLBACK_KEY;
 
   function renderChecklist(){
     const root=document.getElementById('checklist-root');
-    root.innerHTML=categories.map(category=>`<section class="category" data-category="${category.id}"><div class="category-head"><div class="category-icon">${category.icon}</div><div><h2 class="category-title">${category.title}</h2><div class="category-sub">${category.sub}</div></div><div class="category-count" id="count-${category.id}"></div></div><div class="items">${category.items.map(raw=>{const [id,name,tip,weight,min,max,owner,carry]=raw;return `<div class="item" role="checkbox" tabindex="0" aria-checked="false" data-id="${id}" data-owner="${owner}" data-carry="${carry}"><span class="check"></span><span><div class="item-name">${name}</div><div class="item-tip">${tip}</div>${BRANDS[id]?`<div class="item-brand">${BRANDS[id]}</div>`:''}</span><span class="meta"><span class="chip ${owner==='kid'?'kid':owner==='dad'?'dad':''}">${ownerLabel[owner]}</span><span class="chip">${carryLabel[carry]}</span>${weight?`<span class="chip">${weight>=1000?(weight/1000).toFixed(1)+' kg':weight+' g'}</span>`:''}${max?`<span class="chip warn">${money(min)}–${money(max)}</span>`:''}</span></div>`}).join('')}</div></section>`).join('');
-    root.querySelectorAll('.item').forEach(el=>{el.addEventListener('click',()=>toggleItem(el.dataset.id));el.addEventListener('keydown',event=>{if(event.key==='Enter'||event.key===' '){event.preventDefault();toggleItem(el.dataset.id)}})});
+    root.innerHTML=categories.map(category=>`<section class="category" data-category="${category.id}"><div class="category-head"><div class="category-icon">${category.icon}</div><div><h2 class="category-title">${category.title}</h2><div class="category-sub">${category.sub}</div></div><div class="category-count" id="count-${category.id}"></div></div><div class="items">${category.items.map(raw=>{const [id,name,tip,weight,min,max,owner,carry]=raw,detail=purchaseDetails[id]||{};return `<div class="item" data-id="${id}" data-owner="${owner}" data-carry="${carry}"><button class="check" type="button" aria-label="切换 ${name} 完成状态" aria-pressed="false"></button><div><div class="item-name">${name}</div><div class="item-tip">${tip}</div>${BRANDS[id]?`<div class="item-brand">${BRANDS[id]}</div>`:''}<div class="purchase-editor" aria-label="${name} 的购买记录"><label class="purchase-field">品牌 / 型号<input class="purchase-input" type="text" maxlength="120" autocomplete="off" placeholder="例如：Therm-a-Rest XTherm NXT" data-purchase-field="brand" value="${escapeAttr(detail.brand)}"></label><label class="purchase-field">实际价格（元）<input class="purchase-input" type="number" min="0" max="9999999" step="0.01" inputmode="decimal" placeholder="0.00" data-purchase-field="price" value="${escapeAttr(detail.price)}"></label></div></div><span class="meta"><span class="chip ${owner==='kid'?'kid':owner==='dad'?'dad':''}">${ownerLabel[owner]}</span><span class="chip">${carryLabel[carry]}</span>${weight?`<span class="chip">${weight>=1000?(weight/1000).toFixed(1)+' kg':weight+' g'}</span>`:''}${max?`<span class="chip warn">${money(min)}–${money(max)}</span>`:''}</span></div>`}).join('')}</div></section>`).join('');
+    root.querySelectorAll('.item').forEach(el=>el.addEventListener('click',event=>{if(event.target.closest('.purchase-editor'))return;toggleItem(el.dataset.id)}));
+    root.querySelectorAll('.purchase-input').forEach(input=>input.addEventListener('input',event=>updatePurchaseDetail(event.target.closest('.item').dataset.id,event.target.dataset.purchaseField,event.target.value)));
   }
 
   function normalizeCheckedItems(value){return Array.isArray(value)?Array.from(new Set(value.filter(id=>validItemIds.has(id)))):[]}
-  function persistLocal(){localStorage.setItem(localDataKey(),JSON.stringify({checkedItems,lastSync:new Date().toISOString()}))}
-  function restoreLocal(){try{const saved=JSON.parse(localStorage.getItem(localDataKey()));checkedItems=normalizeCheckedItems(saved&&saved.checkedItems)}catch(error){checkedItems=[]}}
+  function normalizePurchaseDetails(value){
+    if(!value||typeof value!=='object'||Array.isArray(value))return {};
+    return Object.fromEntries(Object.entries(value).flatMap(([id,detail])=>{
+      if(!validItemIds.has(id)||!detail||typeof detail!=='object')return [];
+      const brand=String(detail.brand??'').slice(0,120),rawPrice=String(detail.price??'').trim(),number=Number(rawPrice);
+      const price=rawPrice!==''&&Number.isFinite(number)&&number>=0&&number<=9999999?String(number):'';
+      return brand||price?[[id,{brand,price}]]:[];
+    }));
+  }
+  function persistLocal(){localStorage.setItem(localDataKey(),JSON.stringify({checkedItems,purchaseDetails,lastSync:new Date().toISOString()}))}
+  function restoreLocal(){try{const saved=JSON.parse(localStorage.getItem(localDataKey()));checkedItems=normalizeCheckedItems(saved&&saved.checkedItems);purchaseDetails=normalizePurchaseDetails(saved&&saved.purchaseDetails)}catch(error){checkedItems=[];purchaseDetails={}}}
   function showToast(message,duration=2400){const el=document.getElementById('toast');el.textContent=message;el.classList.add('show');setTimeout(()=>el.classList.remove('show'),duration)}
   function updateSyncStatus(status,text){const el=document.getElementById('sync-status');el.className=`sync-status ${status}`;document.getElementById('sync-text').textContent=text}
 
   function render(){
     const selected=new Set(checkedItems);
-    document.querySelectorAll('.item').forEach(el=>{const done=selected.has(el.dataset.id);el.classList.toggle('done',done);el.setAttribute('aria-checked',String(done));const visible=activeFilter==='all'||(activeFilter==='done'&&done)||(activeFilter==='pending'&&!done)||(activeFilter==='kid'&&el.dataset.owner==='kid')||(activeFilter==='cabin'&&el.dataset.carry==='cabin')||(activeFilter==='checkin'&&el.dataset.carry==='checkin');el.hidden=!visible});
+    document.querySelectorAll('.item').forEach(el=>{const done=selected.has(el.dataset.id),detail=purchaseDetails[el.dataset.id]||{};el.classList.toggle('done',done);el.querySelector('.check').setAttribute('aria-pressed',String(done));el.querySelectorAll('.purchase-input').forEach(input=>{if(document.activeElement!==input)input.value=detail[input.dataset.purchaseField]||''});const visible=activeFilter==='all'||(activeFilter==='done'&&done)||(activeFilter==='pending'&&!done)||(activeFilter==='kid'&&el.dataset.owner==='kid')||(activeFilter==='cabin'&&el.dataset.carry==='cabin')||(activeFilter==='checkin'&&el.dataset.carry==='checkin');el.hidden=!visible});
     categories.forEach(category=>{const list=category.items;const done=list.filter(item=>selected.has(item[0])).length;document.getElementById(`count-${category.id}`).textContent=`${done} / ${list.length}`;const section=document.querySelector(`[data-category="${category.id}"]`);section.hidden=!section.querySelector('.item:not([hidden])')});
     const done=selected.size,total=allItems.length,progress=Math.round(done/total*100);
     document.getElementById('done-count').textContent=done;document.getElementById('total-count').textContent=total;document.getElementById('progress-value').textContent=`${progress}%`;document.getElementById('progress-fill').style.width=`${progress}%`;
     const pending=allItems.filter(item=>!selected.has(item.id));const min=pending.reduce((sum,item)=>sum+item.min,0),max=pending.reduce((sum,item)=>sum+item.max,0);document.getElementById('budget-value').textContent=min===max?money(min):`${money(min)}–${money(max)}`;
+    const priced=checkedItems.map(id=>purchaseDetails[id]).filter(detail=>detail&&detail.price!==''&&Number.isFinite(Number(detail.price))&&Number(detail.price)>=0);const actualSpend=priced.reduce((sum,detail)=>sum+Number(detail.price),0);document.getElementById('actual-spend-value').textContent=actualMoney(actualSpend);document.getElementById('priced-count').textContent=priced.length;
     const weight=allItems.reduce((sum,item)=>sum+item.weight,0)/1000;document.getElementById('weight-value').textContent=`${weight.toFixed(1)} kg`;
     document.getElementById('empty-state').style.display=document.querySelectorAll('.item:not([hidden])').length?'none':'block';
   }
 
   function toggleItem(id){const set=new Set(checkedItems);set.has(id)?set.delete(id):set.add(id);checkedItems=Array.from(set);render();persistLocal();debouncedSync()}
+  function updatePurchaseDetail(id,field,value){
+    if(!validItemIds.has(id)||!['brand','price'].includes(field))return;
+    const detail={brand:'',price:'',...(purchaseDetails[id]||{})};
+    if(field==='brand')detail.brand=value.slice(0,120);else detail.price=value;
+    if(!detail.brand&&!detail.price)delete purchaseDetails[id];else purchaseDetails[id]=detail;
+    const priced=checkedItems.map(itemId=>purchaseDetails[itemId]).filter(item=>item&&item.price!==''&&Number.isFinite(Number(item.price))&&Number(item.price)>=0);document.getElementById('actual-spend-value').textContent=actualMoney(priced.reduce((sum,item)=>sum+Number(item.price),0));document.getElementById('priced-count').textContent=priced.length;
+    persistLocal();debouncedSync();
+  }
   document.querySelectorAll('.filter').forEach(btn=>btn.addEventListener('click',()=>{activeFilter=btn.dataset.filter;document.querySelectorAll('.filter').forEach(el=>el.classList.toggle('active',el===btn));render()}));
   document.querySelectorAll('.tab').forEach(btn=>btn.addEventListener('click',()=>switchPanel(btn.dataset.panel)));
   window.switchPanel=name=>{document.querySelectorAll('.tab').forEach(el=>el.classList.toggle('active',el.dataset.panel===name));document.querySelectorAll('.panel').forEach(el=>el.classList.toggle('active',el.id===`${name}-panel`));document.querySelector('.tabs').scrollIntoView({behavior:'smooth',block:'start'})};
-  window.resetChecklist=()=>{if(!checkedItems.length)return;checkedItems=[];render();persistLocal();debouncedSync();showToast('清单已清空')};
+  window.resetChecklist=()=>{if(!checkedItems.length)return;checkedItems=[];render();persistLocal();debouncedSync();showToast('勾选已清空，购买记录仍保留')};
 
-  async function createBin(){const response=await fetch(`${API_BASE}/data`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({type:'eerzee-family-hike-checklist',version:1,checkedItems:[],lastSync:new Date().toISOString()})});if(!response.ok)throw new Error('创建云端清单失败');return (await response.json()).id}
+  async function createBin(){const response=await fetch(`${API_BASE}/data`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({type:'eerzee-family-hike-checklist',version:2,checkedItems:[],purchaseDetails:{},lastSync:new Date().toISOString()})});if(!response.ok)throw new Error('创建云端清单失败');return (await response.json()).id}
   async function loadFromCloud(){if(!binId)return null;const response=await fetch(`${API_BASE}/data/${encodeURIComponent(binId)}`);if(response.status===404)return null;if(!response.ok)throw new Error('读取云端清单失败');return response.json()}
-  async function saveToCloud(){if(!binId)return;if(isSyncing){needsAnotherSync=true;return}isSyncing=true;needsAnotherSync=false;updateSyncStatus('pending','正在保存…');try{const response=await fetch(`${API_BASE}/data/${encodeURIComponent(binId)}`,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({type:'eerzee-family-hike-checklist',version:1,checkedItems,lastSync:new Date().toISOString()})});if(!response.ok)throw new Error('保存失败');updateSyncStatus('success','已保存到云端')}catch(error){console.error(error);updateSyncStatus('error','保存失败，已保留在本机')}finally{isSyncing=false;if(needsAnotherSync)saveToCloud()}}
+  async function saveToCloud(){if(!binId)return;if(isSyncing){needsAnotherSync=true;return}isSyncing=true;needsAnotherSync=false;updateSyncStatus('pending','正在保存…');try{const response=await fetch(`${API_BASE}/data/${encodeURIComponent(binId)}`,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({type:'eerzee-family-hike-checklist',version:2,checkedItems,purchaseDetails,lastSync:new Date().toISOString()})});if(!response.ok)throw new Error('保存失败');updateSyncStatus('success','已保存到云端')}catch(error){console.error(error);updateSyncStatus('error','保存失败，已保留在本机')}finally{isSyncing=false;if(needsAnotherSync)saveToCloud()}}
   function debouncedSync(){clearTimeout(syncTimer);updateSyncStatus(binId?'pending':'error',binId?'等待保存…':'离线模式，本机已保存');if(binId)syncTimer=setTimeout(saveToCloud,700)}
-  window.refreshData=async()=>{if(!binId){showToast('当前为离线清单');return}updateSyncStatus('pending','正在刷新…');try{const data=await loadFromCloud();if(data&&Array.isArray(data.checkedItems)){checkedItems=normalizeCheckedItems(data.checkedItems);persistLocal();render()}updateSyncStatus('success','已与云端同步');showToast('清单已刷新')}catch(error){console.error(error);updateSyncStatus('error','刷新失败，显示本机数据');showToast('暂时无法连接云端')}};
+  window.refreshData=async()=>{if(!binId){showToast('当前为离线清单');return}updateSyncStatus('pending','正在刷新…');try{const data=await loadFromCloud();if(data&&Array.isArray(data.checkedItems)){checkedItems=normalizeCheckedItems(data.checkedItems);purchaseDetails=normalizePurchaseDetails(data.purchaseDetails);persistLocal();render()}updateSyncStatus('success','已与云端同步');showToast('清单已刷新')}catch(error){console.error(error);updateSyncStatus('error','刷新失败，显示本机数据');showToast('暂时无法连接云端')}};
   window.showShareModal=()=>{if(!binId){showToast('云端清单尚未连接');return}document.getElementById('share-link').value=`${location.origin}${location.pathname}?id=${encodeURIComponent(binId)}`;document.getElementById('share-modal').classList.add('show')};
   window.closeShareModal=()=>document.getElementById('share-modal').classList.remove('show');
   window.copyShareLink=async()=>{const input=document.getElementById('share-link');try{await navigator.clipboard.writeText(input.value)}catch(error){input.select();document.execCommand('copy')}closeShareModal();showToast('链接已复制，可以发给家人了')};
@@ -866,7 +899,7 @@
       const params=new URLSearchParams(location.search);binId=params.get('id')||localStorage.getItem(BIN_STORAGE_KEY);
       if(!binId){restoreLocal();render();updateSyncStatus('pending','正在创建云端清单…');binId=await createBin();localStorage.setItem(BIN_STORAGE_KEY,binId);persistLocal();history.replaceState({},'',`${location.pathname}?id=${encodeURIComponent(binId)}`)}
       else{localStorage.setItem(BIN_STORAGE_KEY,binId);restoreLocal();render();if(!params.get('id'))history.replaceState({},'',`${location.pathname}?id=${encodeURIComponent(binId)}`)}
-      const cloud=await loadFromCloud();if(cloud&&Array.isArray(cloud.checkedItems)){checkedItems=normalizeCheckedItems(cloud.checkedItems);persistLocal();render()}else if(checkedItems.length){await saveToCloud()}
+      const cloud=await loadFromCloud();if(cloud&&Array.isArray(cloud.checkedItems)){checkedItems=normalizeCheckedItems(cloud.checkedItems);purchaseDetails=normalizePurchaseDetails(cloud.purchaseDetails);persistLocal();render()}else if(checkedItems.length||Object.keys(purchaseDetails).length){await saveToCloud()}
       updateSyncStatus('success','已与云端同步');
     }catch(error){console.error(error);restoreLocal();render();updateSyncStatus('error','离线模式，本机仍会保留');showToast('网络异常，暂时使用本机数据')}
   }
