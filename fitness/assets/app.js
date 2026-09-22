@@ -334,7 +334,7 @@ async function load() {
     $('#foot').innerHTML =
       `<div style="margin-bottom:6px">方盛 · 腕上设备自动同步 · ${core.range.n} 次活动 / ${health.range.days} 天生理数据${aiTag}</div>` +
       `<div style="opacity:.75">数据生成于 ${gen} · 重新解析：<code>python3 scripts/parse_fit.py &amp;&amp; python3 scripts/split_data.py</code></div>`;
-    renderBriefing(); renderDiary(); renderOverview(); renderHealth(); renderTraining(); renderActivityTab(); renderPB();
+    renderBriefing(); renderDiary(); renderSleepGrid(); renderOverview(); renderHealth(); renderTraining(); renderActivityTab(); renderPB();
     const h = location.hash.replace('#', '');
     if (h && $('#tab-' + h)) { switchTab(h); if (h === 'activity') ensureActivitySelected(); }
   } catch (e) {
@@ -568,6 +568,186 @@ function renderDiary() {
       }).join('')}
     </div>`).join('') ||
     '<div class="empty">还没有历史日记。AI 解读落盘后会自动归档到这里。</div>';
+}
+
+/* ============================ 睡眠年历（GitHub 贡献图风格） ============================ */
+/* 10 级色阶：等级 1（黑，最差）→ 10（深绿，最好）。
+   配色遵循「深绿 / 绿 / 浅绿 = 好，橙 = 开始留意，红 / 大红 = 差，黑 = 几乎没睡」。 */
+const SG_LEVELS = [
+  { min: 90, lv: 10, label: '极佳', color: '#166534', note: '深绿 · 年度顶级' },
+  { min: 80, lv: 9,  label: '优秀', color: '#2f9e44', note: '深绿 · 恢复充分' },
+  { min: 70, lv: 8,  label: '良好', color: '#51cf66', note: '绿 · 高于平均' },
+  { min: 60, lv: 7,  label: '达标', color: '#8ce99a', note: '浅绿 · 基本够用' },
+  { min: 50, lv: 6,  label: '尚可', color: '#ffd43b', note: '黄 · 勉强压线' },
+  { min: 40, lv: 5,  label: '一般', color: '#f59f00', note: '橙 · 开始留意' },
+  { min: 30, lv: 4,  label: '注意', color: '#e8590c', note: '深橙 · 敲响警钟' },
+  { min: 20, lv: 3,  label: '警报', color: '#e03131', note: '红 · 明显欠债' },
+  { min: 10, lv: 2,  label: '很差', color: '#a51111', note: '大红 · 严重不足' },
+  { min: 0,  lv: 1,  label: '极差', color: '#0d1017', note: '黑 · 几乎没睡' },
+];
+const SG_WEEK = ['日', '一', '二', '三', '四', '五', '六'];
+
+function sgIso(d) {
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+}
+
+function sgBand(score) {
+  if (score == null || !isFinite(score)) return null;
+  for (const b of SG_LEVELS) if (score >= b.min) return b;
+  return SG_LEVELS[SG_LEVELS.length - 1];
+}
+
+function renderSleepGrid() {
+  const host = $('#sg-grid');
+  if (!host) return;
+  const daily = (STATE.health && STATE.health.daily) || [];
+  if (!daily.length) { $('#sg-sub').textContent = '暂无逐日睡眠数据'; return; }
+
+  const rec = {};
+  daily.forEach(d => { rec[d.date] = d; });
+
+  const today = (STATE.insight && STATE.insight.asOf) || daily[daily.length - 1].date;
+  const end = new Date(today + 'T00:00:00');
+  const start = new Date(end);
+  start.setDate(start.getDate() - 364);
+  start.setDate(start.getDate() - start.getDay());      // 第一列对齐到周日
+
+  const days = [];
+  for (const d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) days.push(new Date(d));
+  const colCount = Math.ceil(days.length / 7);
+
+  // ---- 格子：一列 = 一周，行 = 周日…周六 ----
+  const grid = days.map(d => {
+    const iso = sgIso(d);
+    const r = rec[iso] || {};
+    const b = sgBand(r.sleepScore != null ? r.sleepScore : null);
+    if (!b) return '<i class="sg-cell sg-none"></i>';
+    const cls = 'sg-cell' + (iso === today ? ' sg-today' : '');
+    return `<i class="${cls}" data-date="${iso}" data-score="${r.sleepScore}" style="background:${b.color}"></i>`;
+  });
+  while (grid.length < colCount * 7) grid.push('<i class="sg-cell sg-none sg-ghost"></i>');
+  host.style.gridTemplateColumns = `repeat(${colCount}, 13px)`;
+  host.innerHTML = grid.join('');
+
+  // ---- 顶部月份刻度 ----
+  const months = [];
+  let lastM = -1, lastLabel = -99;
+  for (let j = 0; j < colCount; j++) {
+    const first = days[j * 7];
+    let label = '';
+    if (first) {
+      const m = first.getMonth();
+      if (m !== lastM && j - lastLabel >= 3) { label = (m + 1) + '月'; lastLabel = j; }
+      lastM = m;
+    }
+    months.push(`<span class="sg-m">${label}</span>`);
+  }
+  const mh = $('#sg-months');
+  mh.style.gridTemplateColumns = `repeat(${colCount}, 13px)`;
+  mh.innerHTML = months.join('');
+
+  $('#sg-weekdays').innerHTML = SG_WEEK
+    .map((w, i) => `<span class="sg-w">${i % 2 === 1 ? w : ''}</span>`).join('');
+
+  // ---- 年度统计 ----
+  const scoredDays = days.map(d => rec[sgIso(d)]).filter(d => d && d.sleepScore != null);
+  const scoredCount = scoredDays.length || 1;
+  const avg = scoredDays.reduce((s, d) => s + d.sleepScore, 0) / scoredCount;
+  const good = scoredDays.filter(d => d.sleepScore >= 70).length;
+  const alarm = scoredDays.filter(d => d.sleepScore < 50).length;
+  let streak = 0, best = 0, bestEnd = '';
+  days.forEach(d => {
+    const r = rec[sgIso(d)];
+    if (r && r.sleepScore != null && r.sleepScore >= 60) {
+      streak++;
+      if (streak > best) { best = streak; bestEnd = sgIso(d); }
+    } else streak = 0;
+  });
+  const worst = scoredDays.length
+    ? scoredDays.reduce((a, b) => (b.sleepScore < a.sleepScore ? b : a)) : null;
+
+  $('#sg-stats').innerHTML = [
+    { v: avg.toFixed(1), l: '年均睡眠评分', s: `${scoredDays.length} 天有评分` },
+    { v: Math.round(good * 100 / scoredCount) + '%', l: '≥70 分天数', s: `${good} / ${scoredDays.length} 天` },
+    { v: best + ' 天', l: '最长连续达标 (≥60)', s: bestEnd ? '截至 ' + bestEnd.slice(5) : '—' },
+    { v: alarm + ' 天', l: '警报 (<50 分)', s: worst ? `最差 ${worst.date.slice(5)} · ${worst.sleepScore} 分` : '—' },
+  ].map(k => `<div class="sg-stat"><div class="sg-v">${k.v}</div>` +
+             `<div class="sg-l">${k.l}</div><div class="sg-s">${k.s}</div></div>`).join('');
+
+  $('#sg-sub').textContent =
+    `过去一年 ${sgIso(days[0])} → ${today} · 共 ${days.length} 天（按周对齐补满首尾两列）· 鼠标悬停，手机点按`;
+
+  // ---- 图例 ----
+  $('#sg-legend').innerHTML =
+    '<span class="sg-lg-t">差</span>' +
+    SG_LEVELS.slice().reverse()
+      .map(b => `<i class="sg-cell" title="${b.label}（${b.min} 分以上）" style="background:${b.color}"></i>`)
+      .join('') +
+    '<span class="sg-lg-t">好</span>' +
+    `<span class="sg-lg-note">${SG_LEVELS.slice().reverse()
+      .map(b => `${b.label} ${b.note.split(' · ')[0]}`).join(' → ')}</span>`;
+
+  attachSleepTip();
+}
+
+function sgTipHtml(iso) {
+  const daily = (STATE.health && STATE.health.daily) || [];
+  const r = daily.find(x => x.date === iso);
+  if (!r) return '';
+  const d = new Date(iso + 'T00:00:00');
+  const b = sgBand(r.sleepScore != null ? r.sleepScore : null);
+  const hh = v => (v == null ? '—' : Number(v).toFixed(2) + 'h');
+  const eff = (r.sleepH != null && r.awakeH != null) ? Math.max(0, r.sleepH - r.awakeH) : null;
+  const out = [`<div class="sg-tip-date">${iso} · 周${SG_WEEK[d.getDay()]}</div>`];
+  if (b) {
+    out.push(`<div class="sg-tip-score"><i class="sg-chip" style="background:${b.color}"></i>` +
+             `<b>${r.sleepScore}</b> 分 · ${b.label}<span class="sg-tip-note">${b.note}</span></div>`);
+  } else {
+    out.push('<div class="sg-tip-score">当天没有睡眠记录</div>');
+  }
+  out.push(`<div class="sg-tip-kv">总睡眠 <b>${hh(r.sleepH)}</b>` +
+           (eff != null ? ` · 有效 <b>${hh(eff)}</b>` : '') + `</div>`);
+  out.push(`<div class="sg-tip-kv">深睡 <b>${hh(r.deepH)}</b> · REM <b>${hh(r.remH)}</b> · 清醒 <b>${hh(r.awakeH)}</b></div>`);
+  const extra = [];
+  if (r.rhr != null) extra.push(`静息心率 <b>${r.rhr}</b> bpm`);
+  if (r.steps != null) extra.push(`步数 <b>${Number(r.steps).toLocaleString('zh-CN')}</b>`);
+  if (extra.length) out.push(`<div class="sg-tip-kv">${extra.join(' · ')}</div>`);
+  return out.join('');
+}
+
+function attachSleepTip() {
+  const host = $('#sg-grid');
+  const tip = $('#sg-tip');
+  const card = $('#sg-card');
+  if (!host || !tip || !card || host.dataset.bound) return;
+  host.dataset.bound = '1';
+
+  const place = e => {
+    const r = card.getBoundingClientRect();
+    let x = e.clientX - r.left + 14;
+    let y = e.clientY - r.top + 14;
+    if (x + tip.offsetWidth > r.width - 10) x = e.clientX - r.left - tip.offsetWidth - 12;
+    tip.style.left = Math.max(6, x) + 'px';
+    tip.style.top = Math.max(6, y) + 'px';
+  };
+  const show = (cell, e) => {
+    tip.innerHTML = sgTipHtml(cell.dataset.date);
+    tip.style.display = 'block';
+    if (e) place(e);
+  };
+  host.addEventListener('mouseover', e => {
+    const c = e.target.closest && e.target.closest('.sg-cell[data-date]');
+    if (c) show(c, e);
+  });
+  host.addEventListener('mousemove', e => { if (tip.style.display === 'block') place(e); });
+  host.addEventListener('mouseleave', () => { tip.style.display = 'none'; });
+  host.addEventListener('click', e => {
+    const c = e.target.closest && e.target.closest('.sg-cell[data-date]');
+    if (c) show(c, e);
+  });
+  document.addEventListener('click', e => {
+    if (!host.contains(e.target)) tip.style.display = 'none';
+  });
 }
 
 /* ============================ 训练效果 / 负荷比 / 状态分 ============================ */
