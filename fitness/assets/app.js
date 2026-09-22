@@ -572,29 +572,77 @@ function renderDiary() {
 
 /* ============================ 睡眠年历（GitHub 贡献图风格） ============================ */
 /* 10 级色阶：等级 1（黑，最差）→ 10（深绿，最好）。
-   配色遵循「深绿 / 绿 / 浅绿 = 好，橙 = 开始留意，红 / 大红 = 差，黑 = 几乎没睡」。 */
+   配色遵循「深绿 / 绿 / 浅绿 = 好，橙 = 开始留意，红 / 大红 = 差，黑 = 几乎没睡」。
+   分级不直接看 Garmin 评分，而是先合成「睡眠质量指数 SQI」再看落点（见 sgSleepIndex）。 */
 const SG_LEVELS = [
-  { min: 90, lv: 10, label: '极佳', color: '#166534', note: '深绿 · 年度顶级' },
-  { min: 80, lv: 9,  label: '优秀', color: '#2f9e44', note: '深绿 · 恢复充分' },
-  { min: 70, lv: 8,  label: '良好', color: '#51cf66', note: '绿 · 高于平均' },
-  { min: 60, lv: 7,  label: '达标', color: '#8ce99a', note: '浅绿 · 基本够用' },
-  { min: 50, lv: 6,  label: '尚可', color: '#ffd43b', note: '黄 · 勉强压线' },
-  { min: 40, lv: 5,  label: '一般', color: '#f59f00', note: '橙 · 开始留意' },
-  { min: 30, lv: 4,  label: '注意', color: '#e8590c', note: '深橙 · 敲响警钟' },
-  { min: 20, lv: 3,  label: '警报', color: '#e03131', note: '红 · 明显欠债' },
-  { min: 10, lv: 2,  label: '很差', color: '#a51111', note: '大红 · 严重不足' },
+  { min: 92, lv: 10, label: '极佳', color: '#166534', note: '深绿 · 年度顶级' },
+  { min: 86, lv: 9,  label: '优秀', color: '#2f9e44', note: '深绿 · 恢复充分' },
+  { min: 80, lv: 8,  label: '良好', color: '#51cf66', note: '绿 · 高于平均' },
+  { min: 74, lv: 7,  label: '达标', color: '#8ce99a', note: '浅绿 · 基本够用' },
+  { min: 68, lv: 6,  label: '一般', color: '#ffd43b', note: '黄 · 勉强及格' },
+  { min: 60, lv: 5,  label: '勉强', color: '#f59f00', note: '橙 · 开始留意' },
+  { min: 50, lv: 4,  label: '注意', color: '#e8590c', note: '深橙 · 敲响警钟' },
+  { min: 38, lv: 3,  label: '差',   color: '#e03131', note: '红 · 明显欠债' },
+  { min: 25, lv: 2,  label: '很差', color: '#a51111', note: '大红 · 严重不足' },
   { min: 0,  lv: 1,  label: '极差', color: '#0d1017', note: '黑 · 几乎没睡' },
 ];
 const SG_WEEK = ['日', '一', '二', '三', '四', '五', '六'];
+
+/* SQI 四个分项的权重。只靠 Garmin 评分不够：它会出现「睡 4 小时却给出 55 分」
+   这种偏高的判断，必须把时长、修复性睡眠（深睡+REM）、清醒占比都放进来。 */
+const SG_WEIGHTS = { score: 0.40, dur: 0.35, struct: 0.15, cont: 0.10 };
+const SG_PART_LABEL = { score: '评分', dur: '时长', struct: '修复', cont: '连续' };
 
 function sgIso(d) {
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
 }
 
-function sgBand(score) {
-  if (score == null || !isFinite(score)) return null;
-  for (const b of SG_LEVELS) if (score >= b.min) return b;
-  return SG_LEVELS[SG_LEVELS.length - 1];
+function sgInterp(x, pts) {
+  if (x <= pts[0][0]) return pts[0][1];
+  for (let i = 1; i < pts.length; i++) {
+    const [x1, y1] = pts[i - 1], [x2, y2] = pts[i];
+    if (x <= x2) return y1 + (y2 - y1) * (x - x1) / (x2 - x1);
+  }
+  return pts[pts.length - 1][1];
+}
+
+/* 睡眠质量指数（0–100）+ 分项明细。缺项时分权重自动重分配给剩余项。 */
+function sgSleepIndex(r) {
+  const h = r && r.sleepH ? r.sleepH : 0;
+  const p = {
+    score: (r && r.sleepScore != null) ? r.sleepScore : null,
+    dur: h ? sgInterp(h, [[0, 0], [3, 12], [4, 26], [5, 42], [6, 58], [7, 75], [8, 90], [9, 100], [12, 100]]) : null,
+    struct: (r && (r.deepH != null || r.remH != null))
+      ? Math.min(100, ((r.deepH || 0) + (r.remH || 0)) / 3 * 100) : null,
+    cont: (h && r.awakeH != null)
+      ? Math.max(0, Math.min(100, ((1 - r.awakeH / h) - 0.70) / 0.26 * 100)) : null,
+  };
+  const keys = Object.keys(p).filter(k => p[k] != null);
+  const tw = keys.reduce((s, k) => s + SG_WEIGHTS[k], 0);
+  if (!tw) return { index: null, parts: p };
+  const index = keys.reduce((s, k) => s + p[k] * SG_WEIGHTS[k], 0) / tw;
+  return { index, parts: p };
+}
+
+/* 落到 10 级；并叠一条硬约束：睡不够时长就封顶，避免「只睡 4 小时却因为
+   某一项好看而显得没那么糟」。返回 null band 表示当天无睡眠记录。 */
+function sgLevelOf(r) {
+  const { index, parts } = sgSleepIndex(r);
+  if (index == null) return { index: null, parts, band: null, capped: null };
+  let band = null;
+  for (const b of SG_LEVELS) if (index >= b.min) { band = b; break; }
+
+  let capped = null;
+  const h = r.sleepH || 0;
+  if (h > 0) {
+    let cap = null;
+    if (h < 3) cap = 1; else if (h < 4) cap = 3; else if (h < 5) cap = 4;
+    if (cap != null && band && band.lv > cap) {
+      band = SG_LEVELS.find(b => b.lv === cap);
+      capped = `只睡 ${h.toFixed(2)} 小时，已封顶到「${band.label}」`;
+    }
+  }
+  return { index, parts, band, capped };
 }
 
 function renderSleepGrid() {
@@ -620,10 +668,11 @@ function renderSleepGrid() {
   const grid = days.map(d => {
     const iso = sgIso(d);
     const r = rec[iso] || {};
-    const b = sgBand(r.sleepScore != null ? r.sleepScore : null);
-    if (!b) return '<i class="sg-cell sg-none"></i>';
+    const res = sgLevelOf(r);
+    if (!res.band) return '<i class="sg-cell sg-none"></i>';
     const cls = 'sg-cell' + (iso === today ? ' sg-today' : '');
-    return `<i class="${cls}" data-date="${iso}" data-score="${r.sleepScore}" style="background:${b.color}"></i>`;
+    return `<i class="${cls}" data-date="${iso}" data-lv="${res.band.lv}" ` +
+           `data-sqi="${res.index.toFixed(1)}" style="background:${res.band.color}"></i>`;
   });
   while (grid.length < colCount * 7) grid.push('<i class="sg-cell sg-none sg-ghost"></i>');
   host.style.gridTemplateColumns = `repeat(${colCount}, 13px)`;
@@ -649,39 +698,40 @@ function renderSleepGrid() {
   $('#sg-weekdays').innerHTML = SG_WEEK
     .map((w, i) => `<span class="sg-w">${i % 2 === 1 ? w : ''}</span>`).join('');
 
-  // ---- 年度统计 ----
-  const scoredDays = days.map(d => rec[sgIso(d)]).filter(d => d && d.sleepScore != null);
-  const scoredCount = scoredDays.length || 1;
-  const avg = scoredDays.reduce((s, d) => s + d.sleepScore, 0) / scoredCount;
-  const good = scoredDays.filter(d => d.sleepScore >= 70).length;
-  const alarm = scoredDays.filter(d => d.sleepScore < 50).length;
+  // ---- 年度统计（全部改用 SQI）----
+  const rated = days.map(d => ({ rec: rec[sgIso(d)], date: sgIso(d) }))
+    .map(x => ({ ...sgLevelOf(x.rec || {}), date: x.date, rec: x.rec }))
+    .filter(x => x.index != null);
+  const ratedCount = rated.length || 1;
+  const avg = rated.reduce((s, x) => s + x.index, 0) / ratedCount;
+  const good = rated.filter(x => x.index >= 80).length;
+  const alarm = rated.filter(x => x.index < 50).length;
   let streak = 0, best = 0, bestEnd = '';
-  days.forEach(d => {
-    const r = rec[sgIso(d)];
-    if (r && r.sleepScore != null && r.sleepScore >= 60) {
+  rated.forEach(x => {
+    if (x.index >= 68) {
       streak++;
-      if (streak > best) { best = streak; bestEnd = sgIso(d); }
+      if (streak > best) { best = streak; bestEnd = x.date; }
     } else streak = 0;
   });
-  const worst = scoredDays.length
-    ? scoredDays.reduce((a, b) => (b.sleepScore < a.sleepScore ? b : a)) : null;
+  const worst = rated.length ? rated.reduce((a, b) => (b.index < a.index ? b : a)) : null;
 
   $('#sg-stats').innerHTML = [
-    { v: avg.toFixed(1), l: '年均睡眠评分', s: `${scoredDays.length} 天有评分` },
-    { v: Math.round(good * 100 / scoredCount) + '%', l: '≥70 分天数', s: `${good} / ${scoredDays.length} 天` },
-    { v: best + ' 天', l: '最长连续达标 (≥60)', s: bestEnd ? '截至 ' + bestEnd.slice(5) : '—' },
-    { v: alarm + ' 天', l: '警报 (<50 分)', s: worst ? `最差 ${worst.date.slice(5)} · ${worst.sleepScore} 分` : '—' },
+    { v: avg.toFixed(1), l: '年均睡眠指数 SQI', s: `${rated.length} 天有记录` },
+    { v: Math.round(good * 100 / ratedCount) + '%', l: '良好以上 (SQI≥80)', s: `${good} / ${rated.length} 天` },
+    { v: best + ' 天', l: '最长连续及格 (≥68)', s: bestEnd ? '截至 ' + bestEnd.slice(5) : '—' },
+    { v: alarm + ' 天', l: '警报 (SQI<50)', s: worst ? `最差 ${worst.date.slice(5)} · ${worst.index.toFixed(0)}` : '—' },
   ].map(k => `<div class="sg-stat"><div class="sg-v">${k.v}</div>` +
              `<div class="sg-l">${k.l}</div><div class="sg-s">${k.s}</div></div>`).join('');
 
   $('#sg-sub').textContent =
-    `过去一年 ${sgIso(days[0])} → ${today} · 共 ${days.length} 天（按周对齐补满首尾两列）· 鼠标悬停，手机点按`;
+    `过去一年 ${sgIso(days[0])} → ${today} · ${days.length} 天 · ` +
+    `分级 = 评分 40% + 时长 35% + 深睡/REM 15% + 连续性 10% · 鼠标悬停，手机点按`;
 
   // ---- 图例 ----
   $('#sg-legend').innerHTML =
     '<span class="sg-lg-t">差</span>' +
     SG_LEVELS.slice().reverse()
-      .map(b => `<i class="sg-cell" title="${b.label}（${b.min} 分以上）" style="background:${b.color}"></i>`)
+      .map(b => `<i class="sg-cell" title="${b.label}（SQI ≥ ${b.min}）" style="background:${b.color}"></i>`)
       .join('') +
     '<span class="sg-lg-t">好</span>' +
     `<span class="sg-lg-note">${SG_LEVELS.slice().reverse()
@@ -695,23 +745,34 @@ function sgTipHtml(iso) {
   const r = daily.find(x => x.date === iso);
   if (!r) return '';
   const d = new Date(iso + 'T00:00:00');
-  const b = sgBand(r.sleepScore != null ? r.sleepScore : null);
+  const res = sgLevelOf(r);
+  const { index, parts, band, capped } = res;
   const hh = v => (v == null ? '—' : Number(v).toFixed(2) + 'h');
   const eff = (r.sleepH != null && r.awakeH != null) ? Math.max(0, r.sleepH - r.awakeH) : null;
   const out = [`<div class="sg-tip-date">${iso} · 周${SG_WEEK[d.getDay()]}</div>`];
-  if (b) {
-    out.push(`<div class="sg-tip-score"><i class="sg-chip" style="background:${b.color}"></i>` +
-             `<b>${r.sleepScore}</b> 分 · ${b.label}<span class="sg-tip-note">${b.note}</span></div>`);
+
+  if (band) {
+    out.push(`<div class="sg-tip-score"><i class="sg-chip" style="background:${band.color}"></i>` +
+             `<b>${index.toFixed(0)}</b> SQI · ${band.label}` +
+             `<span class="sg-tip-note">${band.note.split(' · ')[0]}</span></div>`);
+    // 分项明细：哪一项拖后腿一眼可见
+    const rows2 = Object.keys(SG_WEIGHTS)
+      .filter(k => parts[k] != null)
+      .map(k => `${SG_PART_LABEL[k]} <b>${parts[k].toFixed(0)}</b>`)
+      .join(' · ');
+    out.push(`<div class="sg-tip-parts">${rows2}</div>`);
   } else {
     out.push('<div class="sg-tip-score">当天没有睡眠记录</div>');
   }
-  out.push(`<div class="sg-tip-kv">总睡眠 <b>${hh(r.sleepH)}</b>` +
-           (eff != null ? ` · 有效 <b>${hh(eff)}</b>` : '') + `</div>`);
+
+  out.push(`<div class="sg-tip-kv">Garmin 评分 <b>${r.sleepScore != null ? r.sleepScore : '—'}</b>` +
+           ` · 总睡眠 <b>${hh(r.sleepH)}</b>` + (eff != null ? ` · 有效 <b>${hh(eff)}</b>` : '') + `</div>`);
   out.push(`<div class="sg-tip-kv">深睡 <b>${hh(r.deepH)}</b> · REM <b>${hh(r.remH)}</b> · 清醒 <b>${hh(r.awakeH)}</b></div>`);
   const extra = [];
   if (r.rhr != null) extra.push(`静息心率 <b>${r.rhr}</b> bpm`);
   if (r.steps != null) extra.push(`步数 <b>${Number(r.steps).toLocaleString('zh-CN')}</b>`);
   if (extra.length) out.push(`<div class="sg-tip-kv">${extra.join(' · ')}</div>`);
+  if (capped) out.push(`<div class="sg-tip-warn">${capped}</div>`);
   return out.join('');
 }
 

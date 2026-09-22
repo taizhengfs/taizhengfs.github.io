@@ -478,6 +478,15 @@ select:focus, input:focus { border-color: #3b4757; }
 .sg-tip-note { margin-left: auto; font-size: 11.5px; color: var(--fg-mute); }
 .sg-tip-kv { color: var(--fg-dim); font-variant-numeric: tabular-nums; }
 .sg-tip-kv b { color: var(--fg); font-weight: 600; }
+.sg-tip-parts {
+  color: var(--fg-mute); font-size: 11.5px; font-variant-numeric: tabular-nums;
+  margin-top: 2px; padding-top: 4px; border-top: 1px solid var(--line-soft);
+}
+.sg-tip-parts b { color: var(--fg-dim); font-weight: 600; }
+.sg-tip-warn {
+  margin-top: 5px; padding: 3px 7px; border-radius: 6px; font-size: 11.5px;
+  background: rgba(229, 49, 49, 0.14); color: #ffa8b6; display: inline-block;
+}
 
 @media (max-width: 760px) {
   .sg-stats { gap: 16px 20px; }
