@@ -10,7 +10,7 @@ const C = {
   z: ['#4c6ef5', '#22b8cf', '#51cf66', '#fab005', '#ff6b6b'],
 };
 
-const STATE = { core: null, health: null, tab: 'overview', act: null, stream: null, pbDist: '5000', rhrRange: 'all' };
+const STATE = { core: null, health: null, tab: 'overview', act: null, stream: null, pbDist: '5000', rhrRange: 'all', insight: null, diary: null };
 
 /* ============================ 全局错误捕获 ============================ */
 const APP_VERSION = 'v3';
@@ -316,6 +316,14 @@ async function load() {
     } catch (_) { /* 忽略：尚未生成简报 */ }
     STATE.insight = insight;
 
+    // AI 健康日记索引（由 scripts/diary.py 从 diary/*.md 生成）
+    let diary = null;
+    try {
+      const dres = await fetch('data/diary.json');
+      if (dres.ok) diary = await dres.json();
+    } catch (_) { /* 忽略：尚未有日记 */ }
+    STATE.diary = diary;
+
     $('#loading').style.display = 'none';
     $('#hdr-sub').textContent =
       `${core.range.start} — ${core.range.end} · ${core.range.n} 次活动 · ${health.range.days} 天生理数据 · 源自 ${core.range.n} 个 FIT 原始文件`;
@@ -326,7 +334,7 @@ async function load() {
     $('#foot').innerHTML =
       `<div style="margin-bottom:6px">方盛 · 腕上设备自动同步 · ${core.range.n} 次活动 / ${health.range.days} 天生理数据${aiTag}</div>` +
       `<div style="opacity:.75">数据生成于 ${gen} · 重新解析：<code>python3 scripts/parse_fit.py &amp;&amp; python3 scripts/split_data.py</code></div>`;
-    renderBriefing(); renderOverview(); renderHealth(); renderTraining(); renderActivityTab(); renderPB();
+    renderBriefing(); renderDiary(); renderOverview(); renderHealth(); renderTraining(); renderActivityTab(); renderPB();
     const h = location.hash.replace('#', '');
     if (h && $('#tab-' + h)) { switchTab(h); if (h === 'activity') ensureActivitySelected(); }
   } catch (e) {
@@ -357,10 +365,6 @@ function renderBriefing() {
   const I = STATE.insight;
   if (!I) {
     $('#br-kpi').innerHTML = '';
-    $('#br-src').textContent = '—';
-    $('#br-narrative').textContent = '尚未生成每日简报。请在项目目录执行 python3 scripts/build_insight.py 后刷新页面。';
-    $('#br-rule-wrap').style.display = 'none';
-    $('#br-advice-card').style.display = 'none';
     $('#br-findings').innerHTML = '';
     $('#br-week').innerHTML = '';
     $('#br-week-range').textContent = '—';
@@ -383,44 +387,8 @@ function renderBriefing() {
     `<div class="value">${k.v}<span class="unit">${k.u}</span></div>` +
     `<div class="delta flat">${k.s}</div></div>`).join('');
 
-  // ---- 文案（AI 优先，规则引擎兜底）----
-  const srcMap = { rule: '规则引擎自动生成' };
-  const src = I.narrativeSource || 'rule';
-  const hasAI = !!I.aiNarrative;
-  const descSrc = s =>
-    srcMap[s] || (String(s).startsWith('llm:') ? 'AI 生成（' + String(s).slice(4) + '）' : s);
-
-  if (hasAI) {
-    $('#br-src').innerHTML =
-      `截至 ${I.asOf} · <b style="color:var(--accent)">${I.aiModel || 'AI'} 生成</b>` +
-      (I.aiAt ? ` · ${new Date(I.aiAt).toLocaleString('zh-CN')}` : '');
-    $('#br-narrative').textContent = I.aiNarrative;
-    if (I.narrative) {
-      $('#br-rule-wrap').style.display = '';
-      $('#br-rule-narrative').textContent = I.narrative;
-    }
-  } else {
-    $('#br-src').textContent = `截至 ${I.asOf} · ${descSrc(src)}`;
-    $('#br-narrative').textContent = I.narrative || '—';
-    $('#br-rule-wrap').style.display = 'none';
-  }
-
-  // ---- AI 建议卡 ----
-  if (I.aiAdvice) {
-    $('#br-advice-card').style.display = '';
-    $('#br-advice-src').textContent =
-      (I.aiModel || 'AI') + ' 基于近 30 天数据给出' + (I.aiAt ? ` · ${new Date(I.aiAt).toLocaleString('zh-CN')}` : '');
-    $('#br-advice').innerHTML = String(I.aiAdvice)
-      .split('\n')
-      .map(s => s.trim())
-      .filter(Boolean)
-      .map(s => `<div class="ai-line">${s.replace(/^[-•*]\s*/, '')}</div>`)
-      .join('');
-  } else {
-    $('#br-advice-card').style.display = 'none';
-  }
-
   // ---- 需要关注 ----
+  // （AI 解读与建议已迁到「AI 健康日记」页签，见 renderDiary）
   $('#br-findings').innerHTML = (I.findings || []).map(f => {
     const m = BR_LEVEL[f.level] || BR_LEVEL.info;
     return `<div style="border-left:3px solid ${m.c};padding:10px 0 10px 12px;margin-bottom:10px">
@@ -498,6 +466,108 @@ function renderBriefing() {
   renderReadiness(I);
   renderBriefingAcwr(I);
   renderWellness(I);
+}
+
+/* ============================ AI 健康日记 ============================ */
+const escHtml = s => String(s == null ? '' : s).replace(/[&<>"']/g,
+  c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+
+function aiLineHtml(items) {
+  return (items || [])
+    .map(s => `<div class="ai-line">${escHtml(String(s).replace(/^[-•*]\s*/, ''))}</div>`)
+    .join('');
+}
+
+function renderDiary() {
+  const I = STATE.insight;
+  const entries = (STATE.diary && STATE.diary.entries) || [];
+  const todayDate = I ? I.asOf : null;
+
+  // 今日卡片：insight 里已有 AI 文案就用它（build_insight 会从 diary 继承），
+  // 否则倒回日记库里翻同一天，保证任何一次同步之后都不会「凭空消失」。
+  let cur = null;
+  if (I && I.aiNarrative) {
+    cur = {
+      date: I.asOf,
+      narrative: I.aiNarrative,
+      advice: String(I.aiAdvice || '').split('\n').map(s => s.trim()).filter(Boolean),
+      model: I.aiModel || 'WorkBuddy AI',
+      at: I.aiAt || '',
+    };
+  } else if (todayDate) {
+    cur = entries.find(e => e.date === todayDate || e.asOf === todayDate) || null;
+  }
+
+  if (cur) {
+    $('#dj-src').innerHTML =
+      `截至 ${escHtml(cur.date)} · <b style="color:var(--accent)">${escHtml(cur.model || 'AI')} 生成</b>` +
+      (cur.at ? ` · ${new Date(cur.at).toLocaleString('zh-CN')}` : '');
+    $('#dj-narrative').textContent = cur.narrative;
+  } else {
+    $('#dj-src').textContent = I ? `截至 ${I.asOf}` : '—';
+    $('#dj-narrative').textContent = I
+      ? '今天的 AI 解读还没生成。同步任务会写入；也可以手动执行 ' +
+        'python3 scripts/apply_ai.py --json /tmp/ai_brief.json 补写。'
+      : '尚未生成每日简报，请先执行 python3 scripts/build_insight.py。';
+  }
+
+  // 规则引擎版本作为对照，AI 文案存在时才展示
+  if (I && I.narrative && cur) {
+    $('#dj-rule-wrap').style.display = '';
+    $('#dj-rule-narrative').textContent = I.narrative;
+  } else {
+    $('#dj-rule-wrap').style.display = 'none';
+  }
+
+  if (cur && cur.advice && cur.advice.length) {
+    $('#dj-advice-card').style.display = '';
+    $('#dj-advice-src').textContent =
+      (cur.model || 'AI') + ' 基于近 30 天数据给出' +
+      (cur.at ? ` · ${new Date(cur.at).toLocaleString('zh-CN')}` : '');
+    $('#dj-advice').innerHTML = aiLineHtml(cur.advice);
+  } else {
+    $('#dj-advice-card').style.display = 'none';
+  }
+
+  // 历史列表：按月分组
+  const groups = [];
+  entries.forEach(e => {
+    const m = e.date.slice(0, 7);
+    let g = groups.find(x => x.month === m);
+    if (!g) { g = { month: m, items: [] }; groups.push(g); }
+    g.items.push(e);
+  });
+  groups.sort((a, b) => b.month.localeCompare(a.month));
+
+  $('#dj-count').textContent = entries.length
+    ? `共 ${entries.length} 篇 · 最新 ${entries[0].date} · 按月归档于 diary/YYYY-MM.md`
+    : '暂无历史日记';
+
+  $('#dj-list').innerHTML = groups.map(g => `
+    <div class="dj-month">
+      <div class="dj-month-hd">${g.month.slice(0, 4)} 年 ${g.month.slice(5)} 月<span class="hint">${g.items.length} 篇</span></div>
+      ${g.items.map(e => {
+        const open = e.date === todayDate ? ' open' : '';
+        const preview = escHtml(String(e.narrative || '').replace(/\s+/g, ' ').slice(0, 70));
+        return `<details class="dj-item"${open}>
+          <summary>
+            <span class="dj-date">${escHtml(e.date)}</span>
+            <span class="dj-meta">${escHtml(e.model || 'AI')}${e.at ? ' · ' + escHtml(e.at.slice(5, 16).replace('T', ' ')) : ''}</span>
+            <span class="dj-preview">${preview}…</span>
+          </summary>
+          <div class="dj-body">
+            <div class="dj-sec-label">今天怎么说</div>
+            <div class="dj-text">${String(e.narrative || '').split('\n').filter(s => s.trim())
+              .map(s => `<p>${escHtml(s)}</p>`).join('')}</div>
+            ${(e.advice && e.advice.length)
+              ? `<div class="dj-sec-label">接下来怎么做</div>
+                 <div class="ai-advice">${aiLineHtml(e.advice)}</div>`
+              : ''}
+          </div>
+        </details>`;
+      }).join('')}
+    </div>`).join('') ||
+    '<div class="empty">还没有历史日记。AI 解读落盘后会自动归档到这里。</div>';
 }
 
 /* ============================ 训练效果 / 负荷比 / 状态分 ============================ */

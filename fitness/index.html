@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <title>方盛的数据实验室</title>
-<link rel="stylesheet" href="assets/style.css?v=4">
+<link rel="stylesheet" href="assets/style.css?v=5">
 <script>
   // 腾讯地图：仅在密钥代理已被运行时注入时（本地 WorkBuddy 环境）才加载底图。
   // 部署到 GitHub Pages 等静态站点时无代理，跳过加载，直接使用内置的纯 SVG 轨迹图。
@@ -31,6 +31,7 @@
     </div>
     <nav class="tabs" id="tabs">
       <button data-tab="briefing" class="on">每日简报</button>
+      <button data-tab="diary">AI 健康日记</button>
       <button data-tab="overview">概览</button>
       <button data-tab="health">健康趋势</button>
       <button data-tab="training">训练分析</button>
@@ -67,24 +68,6 @@
 
     <div class="grid g4" id="br-kpi" style="margin-bottom:16px"></div>
 
-    <div class="card" style="margin-bottom:16px">
-      <div class="card-head">
-        <div><h3>今天怎么说</h3><span class="hint" id="br-src">—</span></div>
-      </div>
-      <div class="note" id="br-narrative">—</div>
-      <div class="rule-note" id="br-rule-wrap" style="display:none">
-        <div class="rule-note-label">规则引擎版本</div>
-        <div class="rule-note-text" id="br-rule-narrative"></div>
-      </div>
-    </div>
-
-    <div class="card ai-card" id="br-advice-card" style="margin-bottom:16px;display:none">
-      <div class="card-head">
-        <div><h3>接下来怎么做</h3><span class="hint" id="br-advice-src">—</span></div>
-      </div>
-      <div class="ai-advice" id="br-advice"></div>
-    </div>
-
     <div class="grid g-2-1" style="margin-bottom:16px">
       <div class="card">
         <div class="card-head">
@@ -119,6 +102,34 @@
       </div>
       <div class="grid g4" id="wl-grid"></div>
       <div class="wl-extra" id="wl-extra"></div>
+    </div>
+  </section>
+
+  <!-- ============ AI 健康日记 ============ -->
+  <section class="tab" id="tab-diary">
+    <div class="card ai-card" id="dj-today-card" style="margin-bottom:16px">
+      <div class="card-head">
+        <div><h3>今天怎么说</h3><span class="hint" id="dj-src">—</span></div>
+      </div>
+      <div class="note" id="dj-narrative">—</div>
+      <div class="rule-note" id="dj-rule-wrap" style="display:none">
+        <div class="rule-note-label">规则引擎版本</div>
+        <div class="rule-note-text" id="dj-rule-narrative"></div>
+      </div>
+    </div>
+
+    <div class="card ai-card" id="dj-advice-card" style="margin-bottom:16px;display:none">
+      <div class="card-head">
+        <div><h3>接下来怎么做</h3><span class="hint" id="dj-advice-src">—</span></div>
+      </div>
+      <div class="ai-advice" id="dj-advice"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-head">
+        <div><h3>历史日记</h3><span class="hint" id="dj-count">按月归档于 diary/YYYY-MM.md</span></div>
+      </div>
+      <div id="dj-list"></div>
     </div>
   </section>
 
@@ -415,6 +426,6 @@
 <div class="tip" id="tip"></div>
 <div id="errbar"></div>
 
-<script src="assets/app.js?v=4"></script>
+<script src="assets/app.js?v=5"></script>
 </body>
 </html>
