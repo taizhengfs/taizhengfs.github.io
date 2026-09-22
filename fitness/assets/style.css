@@ -349,6 +349,22 @@ select:focus, input:focus { border-color: #3b4757; }
 .dj-text p { margin: 0 0 9px; }
 .dj-text p:last-child { margin-bottom: 0; }
 
+/* ---------- 睡眠日历（GitHub 贡献图风格） ---------- */
+.cal-wrap { width: 100%; overflow-x: auto; padding: 4px 0 2px; }
+.cal-wrap svg { display: block; min-width: 620px; }
+.cal-month { fill: var(--fg-mute); font-size: 10px; }
+.cal-dow { fill: var(--fg-mute); font-size: 10px; }
+.cal-cell { cursor: pointer; transition: stroke .1s ease; }
+.cal-cell:hover { stroke: var(--fg); stroke-width: 1.5; }
+.cal-legend {
+  display: flex; align-items: center; gap: 3px;
+  margin-top: 12px; font-size: 11px; color: var(--fg-mute);
+}
+.cal-lg-t { margin: 0 4px; }
+.cal-lg-c { width: 11px; height: 11px; border-radius: 2.5px; }
+.cal-lg-null { display: flex; align-items: center; gap: 5px; margin-left: 12px; }
+.cal-lg-null i { display: inline-block; width: 11px; height: 11px; border-radius: 2.5px; }
+
 .foot { color: var(--fg-mute); font-size: 12px; margin-top: 30px; text-align: center; }
 
 .loader { padding: 60px; text-align: center; color: var(--fg-mute); }

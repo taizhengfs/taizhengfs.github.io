@@ -10,7 +10,7 @@ const C = {
   z: ['#4c6ef5', '#22b8cf', '#51cf66', '#fab005', '#ff6b6b'],
 };
 
-const STATE = { core: null, health: null, tab: 'overview', act: null, stream: null, pbDist: '5000', rhrRange: 'all', insight: null, diary: null };
+const STATE = { core: null, health: null, tab: 'overview', act: null, stream: null, pbDist: '5000', rhrRange: 'all', insight: null, diary: null, calMetric: 'score' };
 
 /* ============================ 全局错误捕获 ============================ */
 const APP_VERSION = 'v3';
@@ -894,6 +894,150 @@ const HRV_METRICS = {
     tip: d => `<div class="r"><span>区间</span><b>${d.bbMin ?? '—'} – ${d.bbMax ?? '—'}</b></div>`,
   },
 };
+/* ============================ 睡眠日历（GitHub 贡献图风格） ============================ */
+/* 10 级色阶：1 最差（近黑）→ 10 最好（墨绿）。中间用红/橙承担「敲警钟」的语义。 */
+const SLEEP_RAMP = [
+  '#2b0a08', // 1 极差
+  '#b3241c', // 2 大红
+  '#d9482b', // 3 红
+  '#ef7d29', // 4 橙红
+  '#f2b134', // 5 橙
+  '#e3cc47', // 6 黄
+  '#a8d24c', // 7 黄绿
+  '#5cc06d', // 8 浅绿
+  '#229a53', // 9 绿
+  '#0a5c33', // 10 深绿（最优）
+];
+const CAL_EMPTY = '#1c212b';
+const CAL_WD = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
+
+const CAL_METRICS = {
+  score: {
+    label: '睡眠评分',
+    get: d => d.sleepScore,
+    fmt: v => (v == null ? '—' : Math.round(v) + ' 分'),
+    // Garmin 口径：90+ 优秀 / 80+ 良好 / 70+ 一般 / 60+ 偏差 / <60 差
+    bucket: v => v >= 90 ? 10 : v >= 85 ? 9 : v >= 80 ? 8 : v >= 75 ? 7 : v >= 70 ? 6
+      : v >= 65 ? 5 : v >= 60 ? 4 : v >= 50 ? 3 : v >= 40 ? 2 : 1,
+    levels: ['<40', '40-49', '50-59', '60-64', '65-69', '70-74', '75-79', '80-84', '85-89', '90+'],
+  },
+  hours: {
+    label: '睡眠时长',
+    get: d => d.sleepH,
+    fmt: v => (v == null ? '—' : v.toFixed(2) + ' h'),
+    bucket: v => v >= 8.5 ? 10 : v >= 8 ? 9 : v >= 7.5 ? 8 : v >= 7 ? 7 : v >= 6.5 ? 6
+      : v >= 6 ? 5 : v >= 5.5 ? 4 : v >= 5 ? 3 : v >= 4 ? 2 : 1,
+    levels: ['<4h', '4-5h', '5-5.5h', '5.5-6h', '6-6.5h', '6.5-7h', '7-7.5h', '7.5-8h', '8-8.5h', '8.5h+'],
+  },
+};
+
+function renderSleepCalendar() {
+  const H = STATE.health;
+  const node = $('#he-cal');
+  if (!H || !H.daily || !H.daily.length) { node.innerHTML = ''; return; }
+
+  const key = STATE.calMetric || 'score';
+  const M = CAL_METRICS[key];
+  const daily = H.daily;
+
+  // 网格：结束于最后一天所在周的周六，向前铺满 53 周
+  const lastDate = daily[daily.length - 1].date;
+  const endD = new Date(lastDate + 'T00:00:00');
+  const gridEnd = new Date(endD);
+  gridEnd.setDate(endD.getDate() + (6 - endD.getDay()));
+  const gridStart = new Date(gridEnd);
+  gridStart.setDate(gridEnd.getDate() - (53 * 7 - 1));
+
+  const byDate = new Map();
+  daily.forEach(d => byDate.set(d.date, d));
+
+  const CELL = 11, GAP = 3, STEP = CELL + GAP, PAD_L = 30, PAD_T = 18;
+  let cells = '', months = '', lastMonth = -1;
+
+  for (let w = 0; w < 53; w++) {
+    for (let dow = 0; dow < 7; dow++) {
+      const dt = new Date(gridStart);
+      dt.setDate(gridStart.getDate() + w * 7 + dow);
+      if (dt > gridEnd) continue;
+      // 未来日期不画格子（本周未到的几天留白，与 GitHub 一致）
+      if (dt > endD) continue;
+      const ds = `${dt.getFullYear()}-${String(dt.getMonth() + 1).padStart(2, '0')}-${String(dt.getDate()).padStart(2, '0')}`;
+      const d = byDate.get(ds);
+      const v = d ? M.get(d) : null;
+      const lv = (v === null || v === undefined || !isFinite(v)) ? 0 : M.bucket(v);
+      const fill = lv === 0 ? CAL_EMPTY : SLEEP_RAMP[lv - 1];
+      const x = PAD_L + w * STEP, y = PAD_T + dow * STEP;
+      cells += `<rect class="cal-cell" x="${x}" y="${y}" width="${CELL}" height="${CELL}" rx="2.5"` +
+        ` fill="${fill}" data-d="${ds}"${d ? '' : ' data-empty="1"'}></rect>`;
+      if (dow === 0 && dt.getMonth() !== lastMonth) {
+        lastMonth = dt.getMonth();
+        months += `<text class="cal-month" x="${x}" y="${PAD_T - 6}">${lastMonth + 1}月</text>`;
+      }
+    }
+  }
+
+  const dows = [1, 3, 5].map(i =>
+    `<text class="cal-dow" x="0" y="${PAD_T + i * STEP + CELL - 1}">${CAL_WD[i].slice(1)}</text>`).join('');
+
+  const W = PAD_L + 53 * STEP, Hh = PAD_T + 7 * STEP;
+  node.innerHTML =
+    `<svg viewBox="0 0 ${W} ${Hh + 2}" width="100%" height="${Hh + 2}" ` +
+    `preserveAspectRatio="xMinYMin meet" role="img" aria-label="过去一年每日睡眠${M.label}热力方格图">` +
+    months + dows + cells + `</svg>`;
+
+  // 悬浮浮层：给出当天完整的睡眠结构
+  $$('#he-cal .cal-cell').forEach(r => {
+    r.addEventListener('mousemove', e => {
+      const ds = r.dataset.d;
+      const d = byDate.get(ds);
+      const dt = new Date(ds + 'T00:00:00');
+      let html;
+      if (!d) {
+        html = `<div class="t">${ds} ${CAL_WD[dt.getDay()]}</div>
+          <div class="r"><span>无睡眠记录</span></div>`;
+      } else {
+        const row = (k, v) => `<div class="r"><span>${k}</span><b>${v}</b></div>`;
+        html = `<div class="t">${ds} ${CAL_WD[dt.getDay()]}</div>` +
+          row(M.label, M.fmt(M.get(d))) +
+          (key === 'hours' ? '' : row('睡眠时长', isNum(d.sleepH) ? d.sleepH.toFixed(2) + ' h' : '—')) +
+          row('深睡', isNum(d.deepH) ? d.deepH.toFixed(2) + ' h' : '—') +
+          row('REM', isNum(d.remH) ? d.remH.toFixed(2) + ' h' : '—') +
+          row('夜间清醒', isNum(d.awakeH) ? d.awakeH.toFixed(2) + ' h' : '—') +
+          row('静息心率', isNum(d.rhr) ? Math.round(d.rhr) + ' bpm' : '—');
+      }
+      showTip(html, e.clientX, e.clientY);
+    });
+    r.addEventListener('mouseleave', hideTip);
+  });
+
+  // 图例
+  $('#he-cal-lg').innerHTML =
+    `<span class="cal-lg-t">差</span>` +
+    SLEEP_RAMP.map((c, i) =>
+      `<span class="cal-lg-c" style="background:${c}" title="${M.levels[i]}"></span>`).join('') +
+    `<span class="cal-lg-t">好</span>` +
+    `<span class="cal-lg-null"><i style="background:${CAL_EMPTY}"></i>无记录</span>`;
+
+  // 汇总
+  // 注意：不能用 toISOString()，那是 UTC，会把本地 00:00 推成前一天
+  const fmtLocal = dt => `${dt.getFullYear()}-${String(dt.getMonth() + 1).padStart(2, '0')}-${String(dt.getDate()).padStart(2, '0')}`;
+  const win = daily.filter(d => d.date >= fmtLocal(gridStart) && d.date <= lastDate);
+  const vals = win.map(M.get).filter(v => v !== null && v !== undefined && isFinite(v));
+  if (vals.length) {
+    const avg = vals.reduce((a, b) => a + b, 0) / vals.length;
+    const good = vals.filter(v => M.bucket(v) >= 8).length;
+    const bad = vals.filter(v => M.bucket(v) <= 3).length;
+    $('#he-cal-sub').textContent =
+      `过去 ${win.length} 天 · ${M.label}均 ${M.fmt(avg)} · 良好 ${good} 天 · 偏差 ${bad} 天`;
+  }
+
+  $('#he-cal-metric').innerHTML = Object.entries(CAL_METRICS)
+    .map(([k, v]) => `<button class="chip${k === key ? ' on' : ''}" data-m="${k}">${v.label}</button>`).join('');
+  $$('#he-cal-metric .chip').forEach(b => {
+    b.onclick = () => { STATE.calMetric = b.dataset.m; renderSleepCalendar(); };
+  });
+}
+
 function renderHealthHrv() {
   const wl = STATE.insight && STATE.insight.wellness;
   const daily = (wl && wl.daily) || [];
@@ -1231,7 +1375,8 @@ function renderHealth() {
     });
   } else $('#he-weight').innerHTML = '<div class="empty">无体重数据</div>';
 
-  renderHealthHrv();
+    renderHealthHrv();
+    renderSleepCalendar();
 }
 
 /* ============================ 训练分析 ============================ */

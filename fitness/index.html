@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <title>方盛的数据实验室</title>
-<link rel="stylesheet" href="assets/style.css?v=5">
+<link rel="stylesheet" href="assets/style.css?v=6">
 <script>
   // 腾讯地图：仅在密钥代理已被运行时注入时（本地 WorkBuddy 环境）才加载底图。
   // 部署到 GitHub Pages 等静态站点时无代理，跳过加载，直接使用内置的纯 SVG 轨迹图。
@@ -173,6 +173,16 @@
   <section class="tab" id="tab-health">
     <div class="grid g4" id="he-kpi" style="margin-bottom:16px"></div>
     <div class="note" id="he-note"></div>
+
+    <!-- 睡眠日历：GitHub 贡献图风格，一年一格 -->
+    <div class="card" style="margin-bottom:16px">
+      <div class="card-head">
+        <div><h3>睡眠日历</h3><span class="hint" id="he-cal-sub">过去一年 · 每格一天</span></div>
+        <div class="chips" id="he-cal-metric"></div>
+      </div>
+      <div class="cal-wrap" id="he-cal"></div>
+      <div class="cal-legend" id="he-cal-lg"></div>
+    </div>
 
     <div class="card" style="margin-bottom:16px">
       <div class="card-head">
@@ -426,6 +436,6 @@
 <div class="tip" id="tip"></div>
 <div id="errbar"></div>
 
-<script src="assets/app.js?v=5"></script>
+<script src="assets/app.js?v=6"></script>
 </body>
 </html>
