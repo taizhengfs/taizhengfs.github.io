@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-09-26T07:00:41",
+ "generatedAt": "2026-09-26T09:00:41",
  "asOf": "2026-09-26",
  "today": {
   "date": "2026-09-26",
@@ -9,17 +9,17 @@
   "steps": 55,
   "steps7": 4136.0,
   "steps30": 5430.0,
-  "sleepH": null,
-  "sleepScore": null,
-  "deepH": null,
-  "lightH": null,
-  "remH": null,
-  "awakeH": null,
+  "sleepH": 7.76,
+  "sleepScore": 72,
+  "deepH": 1.32,
+  "lightH": 5.27,
+  "remH": 1.18,
+  "awakeH": 0.85,
   "sleep7": 6.5,
   "sleep30": 6.6,
-  "score7": 66.7,
+  "score7": 66.4,
   "weight": null,
-  "deepPct": null
+  "deepPct": 17.0
  },
  "yesterday": {
   "date": "2026-09-25",
@@ -47,8 +47,8 @@
    "2026-09-26"
   ],
   "cur": {
-   "sleepAvg": 6.27,
-   "scoreAvg": 65.5,
+   "sleepAvg": 6.49,
+   "scoreAvg": 66.4,
    "rhrAvg": 49.0,
    "stepsAvg": 4136.0,
    "activeDays": 6
@@ -61,10 +61,10 @@
    "activeDays": 7
   },
   "delta": {
-   "sleepAvg": -0.45,
+   "sleepAvg": -0.23,
    "rhrAvg": -0.1,
    "stepsAvg": -2203.0,
-   "scoreAvg": -8.6
+   "scoreAvg": -7.7
   },
   "workouts": [],
   "workoutCount": 0,
@@ -166,8 +166,8 @@
   },
   {
    "date": "2026-09-26",
-   "sleepH": null,
-   "sleepScore": null,
+   "sleepH": 7.76,
+   "sleepScore": 72,
    "rhr": 48,
    "steps": 55
   }
@@ -178,6 +178,16 @@
    "level": "good",
    "title": "静息心率平稳",
    "text": "今日 48 bpm，与月均 49.4 bpm 基本持平。"
+  },
+  {
+   "level": "good",
+   "title": "睡眠充足",
+   "text": "昨晚睡了 7.76 小时，高于月均 6.6 小时。"
+  },
+  {
+   "level": "warn",
+   "title": "夜间易醒",
+   "text": "夜间清醒 0.85 小时，睡眠连续性受影响，会降低睡眠评分的实际恢复价值。"
   },
   {
    "level": "warn",
@@ -200,8 +210,13 @@
    "text": "负荷比 0.00，低于 0.8——近一个月练得太少，已积累的有氧基础正在流失。每周加 1–2 次低强度有氧即可回升。"
   },
   {
-   "level": "warn",
-   "title": "训练准备度 68 分 · 状态一般",
+   "level": "good",
+   "title": "HRV 处于基线内",
+   "text": "昨夜 HRV 67 ms，在本人的平衡区间内，周均 65 ms，恢复状态稳定。"
+  },
+  {
+   "level": "good",
+   "title": "训练准备度 74 分 · 状态一般",
    "text": "腕表综合睡眠、HRV、压力与近期负荷给出的判断，可直接决定今天该练还是该歇。"
   }
  ],
@@ -995,10 +1010,28 @@
   ]
  },
  "readiness": {
-  "score": 87,
+  "score": 86,
   "level": "excellent",
   "label": "状态极佳",
   "comps": [
+   {
+    "key": "sleep",
+    "label": "睡眠",
+    "score": 72.0,
+    "weight": 0.3,
+    "value": "72 分",
+    "hint": "睡了 7.76 小时",
+    "effective": 29.0
+   },
+   {
+    "key": "duration",
+    "label": "睡眠时长",
+    "score": 100.0,
+    "weight": 0.1,
+    "value": "7.76 h",
+    "hint": "目标 7.5 小时",
+    "effective": 10.0
+   },
    {
     "key": "rhr",
     "label": "静息心率",
@@ -1006,16 +1039,25 @@
     "weight": 0.2,
     "value": "48 bpm",
     "hint": "月均 49.4，偏离 -1",
-    "effective": 50.0
+    "effective": 19.0
+   },
+   {
+    "key": "hrv",
+    "label": "HRV 心率变异",
+    "score": 95.0,
+    "weight": 0.25,
+    "value": "67 ms",
+    "hint": "基线区间 58–69 ms",
+    "effective": 24.0
    },
    {
     "key": "battery",
     "label": "身体电量",
-    "score": 85.0,
+    "score": 96.0,
     "weight": 0.05,
-    "value": "72",
-    "hint": "昨夜回充 72，白天消耗 —",
-    "effective": 12.0
+    "value": "82",
+    "hint": "昨夜回充 82，白天消耗 —",
+    "effective": 5.0
    },
    {
     "key": "load",
@@ -1024,12 +1066,10 @@
     "weight": 0.15,
     "value": "ACWR 0.00",
     "hint": "负荷偏低，体能可能在流失",
-    "effective": 37.0
+    "effective": 14.0
    }
   ],
-  "missing": [
-   "hrv"
-  ]
+  "missing": []
  },
  "wellness": {
   "available": true,
@@ -1679,32 +1719,45 @@
    },
    {
     "date": "2026-09-26",
-    "hrvNight": null,
-    "hrvWeekly": null,
-    "hrvStatus": null,
-    "hrvLow": null,
-    "hrvUpper": null,
-    "readinessScore": 68,
+    "hrvNight": 67,
+    "hrvWeekly": 65,
+    "hrvStatus": "BALANCED",
+    "hrvLow": 58,
+    "hrvUpper": 69,
+    "readinessScore": 74,
     "readinessLevel": "MODERATE",
-    "readinessFeedback": "UNKNOWN",
-    "acuteLoad": 88,
-    "bbCharged": 72,
+    "readinessFeedback": "GOOD_SLEEP_HISTORY",
+    "acuteLoad": 66,
+    "bbCharged": 82,
     "bbDrained": 0,
     "bbMin": 5,
-    "bbMax": 77,
-    "respSleep": null,
+    "bbMax": 87,
+    "respSleep": 16.0,
     "spo2SleepAvg": null,
     "respAwake": null,
-    "respLow": null,
-    "respHigh": null,
+    "respLow": 7.0,
+    "respHigh": 22.0,
     "spo2Lowest": null
    }
   ],
   "latest": {
+   "vo2max": 54.0,
+   "vo2maxDate": "2026-09-19",
+   "loadAerobicLow": 128.0,
+   "loadAnaerobic": 0.0,
+   "loadTargetLow": 212,
+   "loadTargetHigh": 475,
+   "loadFeedback": "BELOW_TARGETS",
+   "deviceName": "Warden's 7X",
    "fitnessAge": 26.9,
    "realAge": 33,
    "fitnessAgeAchievable": 27.0,
    "bmiValue": 19.5,
+   "enduranceScore": 6003,
+   "enduranceClass": 3,
+   "enduranceNext": 5800,
+   "hillScore": 27,
+   "hillClass": 2,
    "race": {
     "date": "2026-09-26",
     "5k": 1341,
@@ -1714,6 +1767,11 @@
    }
   }
  },
- "narrative": "静息心率 48 bpm、走了 55 步。最近一次运动还是在 7 天前。需要留意的是：已 7 天没运动——连续多日未训练，运动习惯出现中断风险，建议先从 20~30 分钟的轻松跑或快走重启；活动量偏低——今日 55 步，仅为月均 5,430 步的 1%。做得好的地方：静息心率平稳。",
- "narrativeSource": "rule"
+ "narrative": "昨晚睡了 7.76 小时、睡眠评分 72 分、其中深睡 1.32 小时、静息心率 48 bpm、走了 55 步。最近一次运动还是在 7 天前。需要留意的是：已 7 天没运动——连续多日未训练，运动习惯出现中断风险，建议先从 20~30 分钟的轻松跑或快走重启；夜间易醒——夜间清醒 0.85 小时，睡眠连续性受影响，会降低睡眠评分的实际恢复价值。做得好的地方：静息心率平稳、睡眠充足、HRV 处于基线内。",
+ "narrativeSource": "rule",
+ "aiNarrative": "方盛，昨天的预告兑现：ACWR 2.25 砸到 0.00，急性负荷归零——9/19 那笔 172.2 滚出 7 天窗口。旧账到期不是你恢复，别当免练金牌。慢性负荷仍挂 10.9，10/3 前后 123.7 到期再跌\n\n状态分 87 是这轮最高，但只靠三个分项撑：静息心率 98、电量 85、负荷 72，HRV 和睡眠缺报，是薄底座顶的。腕表 68，缺口从 3 张回 19；它急性负荷仍压 88，跟我们算的 0 不是一回事\n\n昨晚睡眠今早没同步，最近一夜仍是 9/25：6.72 小时 69 分，深睡占比 15.9%、夜醒 0.72、REM 0.95，长而虚没改。REM 1.48→0.95 三连跌，连续三天破 1.5。本周睡眠分 65.5，比上周少 8.6\n\n慢变量停住了：静息心率 50 回 48，低于月均 49.4，单向上行被打断；电量回充 69 升 72。问题在你——已歇 7 天，说好的 25–30 分钟连爽四次约。窗口干净：比值归零、恢复侧全绿。今天动，单次负荷 40–60，别冲回 172",
+ "aiAdvice": "今天跑 25–30 分钟有氧慢跑，心率锁 126–138 bpm（最大心率 58–65%），配速比 9/19 慢 60 秒/公里以上，TE 落在 2.0–2.9 即达标，别冲到 4.0。\n单次负荷压在 40–60（9/19 那笔是 172.2），本周排 3 次、间隔至少 48 小时，把 28 天训练次数从 3 次拉到 6 次以上。\n今晚 22:30 前上床、睡前 60 分钟断屏、卧室降到 20–21℃，先把 REM 从 0.95 小时拉回 1.5 以上，再谈补到 7.5 小时。\n明早看静息心率和 HRV：静息心率回到 51 以上或 HRV 跌破 58，当天改散步 40 分钟，不跑步。\nACWR 0.00 不是恢复凭证，别为它减量；真正要盯的是 28 天训练次数从 3 次爬到 6 次，以及 28 天有氧训练效果从 9.0 往上走。",
+ "aiModel": "WorkBuddy AI",
+ "aiAt": "2026-09-26T08:05:51",
+ "aiSource": "diary"
 }

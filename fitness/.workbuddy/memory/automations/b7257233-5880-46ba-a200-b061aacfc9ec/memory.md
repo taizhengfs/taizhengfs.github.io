@@ -136,3 +136,17 @@
   7. **建议连续第三次未执行**：core.json 确认 9/19 后无活动，restDays=6，昨天说好的 30 分钟仍未跑。连续点破（9/23 起第 3 次）比回避有用，已成固定写法。
   8. **ACWR 解锁日要提前预告**：9/26 是 172.2 滚出 7 天窗口的日子，ratio 会直接砸到 ~0。**必须在 9/25 的 narrative 里预告「明天比值归零是旧账到期不是你恢复，别当免练金牌」，否则明天很容易误读为状态变好。这类「指标即将因窗口滚动而突变」的日期值得每次提前一天预警。**
 
+## 2026-09-26
+- 状态：**日记已生成归档，但未发布**（smoke.js 有 FAIL，按规则停在 publish 前）。站点仍是 9/25 的数据。
+- 流程：daily_update.sh「没有新数据」→ diary.py get 退出码 1（无当日日记）→ 生成 → apply_ai.py（aiNarrative 450 字 / 5 条 advice）→ smoke.js → **未执行 publish.sh --push**。
+- 数据：本地 87 / 腕表 68，缺口由 3 张回 19。ACWR 2.25→**0.00**（acute 24.6→0），chronic 仍 10.9，load28 306.5，restDays 7。
+- 注意点：
+  1. **smoke.js 出现两处 FAIL，本轮首次。触发原因都是今天的边界数据**：
+     - `ACWR 概览 0 字符` / `ACWR 迷你走势 32` = **真 bug**：assets/app.js:953 `if (!L || !L.ratio)`，ratio 恰为 0 时 falsy，整块渲染成「无训练负荷数据」，但实际有数据。最小修法 `!L.ratio` → `L.ratio == null`。
+     - `今日高亮标记 0 个` = 时序误报非 bug：app.js:673 只对有睡眠记录的日期加 `.sg-today`，今早 9/26 睡眠未同步（series 末行 sleepH=null）。**类同每日 08:00「活动量偏低」误报，可忽略。**
+  2. **校验 apply_ai 是否写入成功要看 `aiNarrative` / `aiAdvice` / `aiModel` / `aiAt`**，不是 `ai` 也不是 `narrative`（narrative 恒为规则引擎版本，narrativeSource=rule）。踩过一次坑。
+  3. **字数 556 → 494 → 481 → 460 → 448**，压四轮才进线，目测低估约 25%。规律不变：先写完再 `len()` 实量。
+  4. **wellness.json 已不再有 loadAerobicLow / loadTargetLow / loadFeedback**（9/22 时还在）。advice 里别再写「有氧负荷 128 vs 下限 212」，改用「28 天训练次数」与「28 天有氧 TE 9.0」当锚点。
+  5. **本轮判断框架（可复用）：「比值归零 ≠ 恢复」** —— acute 归零只因 172.2 滚出 7 天窗口，chronic 10.9 未变（那笔还在 28 天窗口）。且 10/3 前后 9/5 那笔 123.7 到期，chronic 会再跌到约 6.5。**下次执行要提前预警 10/3。**
+  6. **状态分高但底座薄要重复点破**：87 分只由 3 个分项撑（rhr 98 / battery 85 / load 72），missing 含 hrv，睡眠分项也缺席。高分不可尽信。
+
