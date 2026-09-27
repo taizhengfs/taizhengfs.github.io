@@ -1,14 +1,14 @@
 {
- "generatedAt": "2026-09-27T07:00:40",
+ "generatedAt": "2026-09-27T08:01:20",
  "asOf": "2026-09-27",
  "today": {
   "date": "2026-09-27",
-  "rhr": 53,
-  "rhr7": 49.4,
-  "rhr30": 49.4,
-  "steps": 15,
-  "steps7": 4243.0,
-  "steps30": 5446.0,
+  "rhr": 52,
+  "rhr7": 49.3,
+  "rhr30": 49.3,
+  "steps": 50,
+  "steps7": 4248.0,
+  "steps30": 5447.0,
   "sleepH": null,
   "sleepScore": null,
   "deepH": null,
@@ -49,8 +49,8 @@
   "cur": {
    "sleepAvg": 6.3,
    "scoreAvg": 64.8,
-   "rhrAvg": 49.4,
-   "stepsAvg": 4243.0,
+   "rhrAvg": 49.3,
+   "stepsAvg": 4248.0,
    "activeDays": 6
   },
   "prev": {
@@ -62,8 +62,8 @@
   },
   "delta": {
    "sleepAvg": -0.32,
-   "rhrAvg": 0.0,
-   "stepsAvg": -1686.0,
+   "rhrAvg": -0.1,
+   "stepsAvg": -1681.0,
    "scoreAvg": -7.3
   },
   "workouts": [
@@ -180,21 +180,21 @@
    "date": "2026-09-27",
    "sleepH": null,
    "sleepScore": null,
-   "rhr": 53,
-   "steps": 15
+   "rhr": 52,
+   "steps": 50
   }
  ],
  "restDays": 1,
  "findings": [
   {
-   "level": "warn",
-   "title": "静息心率偏高",
-   "text": "今日静息心率 53 bpm，比近 30 天均值高 4 拍。常见于恢复不足、压力大、睡眠债或饮酒，也可能是感冒前兆，建议今晚早睡并观察明天。"
+   "level": "good",
+   "title": "静息心率平稳",
+   "text": "今日 52 bpm，与月均 49.3 bpm 基本持平。"
   },
   {
    "level": "warn",
    "title": "活动量偏低",
-   "text": "今日 15 步，仅为月均 5,446 步的 0%。"
+   "text": "今日 50 步，仅为月均 5,447 步的 1%。"
   },
   {
    "level": "info",
@@ -1002,26 +1002,26 @@
   ]
  },
  "readiness": {
-  "score": 70,
+  "score": 78,
   "level": "good",
   "label": "状态良好",
   "comps": [
    {
     "key": "rhr",
     "label": "静息心率",
-    "score": 78.0,
+    "score": 84.0,
     "weight": 0.2,
-    "value": "53 bpm",
-    "hint": "月均 49.4，偏离 +4",
+    "value": "52 bpm",
+    "hint": "月均 49.3，偏离 +3",
     "effective": 50.0
    },
    {
     "key": "battery",
     "label": "身体电量",
-    "score": 32.0,
+    "score": 73.0,
     "weight": 0.05,
-    "value": "27",
-    "hint": "昨夜回充 27，白天消耗 —",
+    "value": "62",
+    "hint": "昨夜回充 62，白天消耗 —",
     "effective": 12.0
    },
    {
@@ -1695,10 +1695,10 @@
     "readinessLevel": "MODERATE",
     "readinessFeedback": "UNKNOWN",
     "acuteLoad": 73,
-    "bbCharged": 27,
+    "bbCharged": 62,
     "bbDrained": 0,
     "bbMin": 5,
-    "bbMax": 32,
+    "bbMax": 67,
     "respSleep": null,
     "spo2SleepAvg": null,
     "respAwake": null,
@@ -1721,6 +1721,6 @@
    }
   }
  },
- "narrative": "静息心率 53 bpm、走了 15 步。近 7 天共 1 次训练，累计 2.27 公里 / 11 分钟，最近一次是 2026-09-26 的骑行（2.27 公里）。需要留意的是：静息心率偏高——今日静息心率 53 bpm，比近 30 天均值高 4 拍。常见于恢复不足、压力大、睡眠债或饮酒，也可能是感冒前兆，建议今晚早睡并观察明天；活动量偏低——今日 15 步，仅为月均 5,446 步的 0%。",
+ "narrative": "静息心率 52 bpm、走了 50 步。近 7 天共 1 次训练，累计 2.27 公里 / 11 分钟，最近一次是 2026-09-26 的骑行（2.27 公里）。需要留意的是：活动量偏低——今日 50 步，仅为月均 5,447 步的 1%；训练量偏少——负荷比 0.08，低于 0.8——近一个月练得太少，已积累的有氧基础正在流失。每周加 1–2 次低强度有氧即可回升。做得好的地方：静息心率平稳。",
  "narrativeSource": "rule"
 }
