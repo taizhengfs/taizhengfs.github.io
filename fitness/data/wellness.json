@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-09-27T09:00:40",
+ "generatedAt": "2026-09-27T14:30:38",
  "range": {
   "start": "2026-06-16",
   "end": "2026-09-27",
@@ -2788,9 +2788,9 @@
    "respSleep": 16.0
   },
   {
-   "acuteLoad": 51,
+   "acuteLoad": 76,
    "bbCharged": 63,
-   "bbDrained": 0,
+   "bbDrained": 24,
    "bbMax": 68,
    "bbMin": 5,
    "date": "2026-09-27",
@@ -2805,12 +2805,12 @@
    "rSleepFactor": 59,
    "rSleepHistFactor": 56,
    "rStressFactor": 22,
-   "readinessFeedback": "WELL_RECOVERED",
-   "readinessLevel": "HIGH",
-   "readinessScore": 78,
-   "recoveryH": 1,
+   "readinessFeedback": "GOOD_SLEEP_HISTORY",
+   "readinessLevel": "MODERATE",
+   "readinessScore": 70,
+   "recoveryH": 641,
    "respAwake": 15.0,
-   "respHigh": 21.0,
+   "respHigh": 24.0,
    "respLow": 6.0,
    "respSleep": 16.0
   }
@@ -2818,7 +2818,7 @@
  "latest": {
   "vo2max": 54.0,
   "vo2maxDate": "2026-09-19",
-  "loadAerobicLow": 133.9,
+  "loadAerobicLow": 153.6,
   "loadAnaerobic": 0.0,
   "loadTargetLow": 212,
   "loadTargetHigh": 475,
