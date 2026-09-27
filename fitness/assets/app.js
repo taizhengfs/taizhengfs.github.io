@@ -950,7 +950,7 @@ function renderReadiness(I) {
 /* ---------------------------- 简报页：负荷平衡 ---------------------------- */
 function renderBriefingAcwr(I) {
   const L = I && I.load;
-  if (!L || !L.ratio) {
+  if (!L || L.ratio == null) {
     $('#acwr-sub').textContent = '—';
     $('#acwr-top').innerHTML = '';
     $('#br-acwr').innerHTML = '<div class="empty">无训练负荷数据</div>';
