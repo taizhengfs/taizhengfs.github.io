@@ -1,9 +1,9 @@
 {
- "generatedAt": "2026-09-29T22:00:42",
+ "generatedAt": "2026-09-30T07:00:40",
  "range": {
   "start": "2026-06-16",
-  "end": "2026-09-29",
-  "days": 106
+  "end": "2026-09-30",
+  "days": 107
  },
  "daily": [
   {
@@ -2843,10 +2843,10 @@
   },
   {
    "acuteLoad": 26,
-   "bbCharged": 65,
-   "bbDrained": 63,
+   "bbCharged": 71,
+   "bbDrained": 66,
    "bbMax": 74,
-   "bbMin": 9,
+   "bbMin": 8,
    "date": "2026-09-29",
    "hrvHigh": 85,
    "hrvLow": 58,
@@ -2867,32 +2867,36 @@
    "respHigh": 23.0,
    "respLow": 6.0,
    "respSleep": 16.0
+  },
+  {
+   "acuteLoad": 26,
+   "bbCharged": 45,
+   "bbDrained": 0,
+   "bbMax": 59,
+   "bbMin": 14,
+   "date": "2026-09-30",
+   "rAcwrFactor": 100,
+   "rHrvFactor": 100,
+   "rSleepFactor": 0,
+   "rSleepHistFactor": 65,
+   "rStressFactor": 29,
+   "readinessFeedback": "UNKNOWN",
+   "readinessLevel": "MODERATE",
+   "readinessScore": 74,
+   "recoveryH": 0
   }
  ],
  "latest": {
-  "vo2max": 54.0,
-  "vo2maxDate": "2026-09-19",
-  "loadAerobicLow": 153.6,
-  "loadAnaerobic": 0.0,
-  "loadTargetLow": 212,
-  "loadTargetHigh": 475,
-  "loadFeedback": "BELOW_TARGETS",
-  "deviceName": "Warden's 7X",
   "fitnessAge": 26.9,
   "realAge": 33,
   "fitnessAgeAchievable": 27.0,
   "bmiValue": 19.5,
-  "enduranceScore": 5994,
-  "enduranceClass": 3,
-  "enduranceNext": 5800,
-  "hillScore": 27,
-  "hillClass": 2,
   "race": {
-   "date": "2026-09-29",
-   "5k": 1342,
-   "10k": 2878,
-   "half": 6454,
-   "full": 14881
+   "date": "2026-09-30",
+   "5k": 1343,
+   "10k": 2879,
+   "half": 6459,
+   "full": 14889
   }
  }
 }
