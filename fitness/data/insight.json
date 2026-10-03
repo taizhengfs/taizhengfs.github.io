@@ -1,25 +1,25 @@
 {
- "generatedAt": "2026-10-03T07:00:40",
+ "generatedAt": "2026-10-03T08:03:36",
  "asOf": "2026-10-03",
  "today": {
   "date": "2026-10-03",
-  "rhr": 55,
-  "rhr7": 51.6,
+  "rhr": 54,
+  "rhr7": 51.4,
   "rhr30": 49.8,
-  "steps": 11,
-  "steps7": 5607.0,
-  "steps30": 5691.0,
-  "sleepH": null,
-  "sleepScore": null,
-  "deepH": null,
-  "lightH": null,
-  "remH": null,
-  "awakeH": null,
-  "sleep7": 7.6,
+  "steps": 31,
+  "steps7": 5610.0,
+  "steps30": 5692.0,
+  "sleepH": 6.52,
+  "sleepScore": 53,
+  "deepH": 0.7,
+  "lightH": 5.08,
+  "remH": 0.73,
+  "awakeH": 1.28,
+  "sleep7": 7.5,
   "sleep30": 6.8,
-  "score7": 77.6,
+  "score7": 74.9,
   "weight": null,
-  "deepPct": null
+  "deepPct": 10.7
  },
  "yesterday": {
   "date": "2026-10-02",
@@ -47,10 +47,10 @@
    "2026-10-03"
   ],
   "cur": {
-   "sleepAvg": 7.63,
-   "scoreAvg": 78.5,
-   "rhrAvg": 51.6,
-   "stepsAvg": 5607.0,
+   "sleepAvg": 7.47,
+   "scoreAvg": 74.9,
+   "rhrAvg": 51.4,
+   "stepsAvg": 5610.0,
    "activeDays": 5
   },
   "prev": {
@@ -61,10 +61,10 @@
    "activeDays": 7
   },
   "delta": {
-   "sleepAvg": 1.14,
-   "rhrAvg": 2.6,
-   "stepsAvg": 634.0,
-   "scoreAvg": 12.1
+   "sleepAvg": 0.98,
+   "rhrAvg": 2.4,
+   "stepsAvg": 637.0,
+   "scoreAvg": 8.5
   },
   "workouts": [
    {
@@ -189,10 +189,10 @@
   },
   {
    "date": "2026-10-03",
-   "sleepH": null,
-   "sleepScore": null,
-   "rhr": 55,
-   "steps": 11
+   "sleepH": 6.52,
+   "sleepScore": 53,
+   "rhr": 54,
+   "steps": 31
   }
  ],
  "restDays": 3,
@@ -200,12 +200,32 @@
   {
    "level": "warn",
    "title": "静息心率偏高",
-   "text": "今日静息心率 55 bpm，比近 30 天均值高 5 拍。常见于恢复不足、压力大、睡眠债或饮酒，也可能是感冒前兆，建议今晚早睡并观察明天。"
+   "text": "今日静息心率 54 bpm，比近 30 天均值高 4 拍。常见于恢复不足、压力大、睡眠债或饮酒，也可能是感冒前兆，建议今晚早睡并观察明天。"
+  },
+  {
+   "level": "info",
+   "title": "睡眠时长一般",
+   "text": "昨晚 6.52 小时，略低于月均 6.8 小时。"
+  },
+  {
+   "level": "bad",
+   "title": "睡眠质量偏差",
+   "text": "睡眠评分仅 53 分，低于 60 分说明睡眠结构或连续性有明显问题。"
+  },
+  {
+   "level": "warn",
+   "title": "深睡比例偏低",
+   "text": "深睡占比 10.7%（0.7 小时），低于 13%~23% 的健康区间。深睡是身体修复的关键阶段，偏低常与晚睡、饮酒、睡前看屏幕有关。"
+  },
+  {
+   "level": "warn",
+   "title": "夜间易醒",
+   "text": "夜间清醒 1.28 小时，睡眠连续性受影响，会降低睡眠评分的实际恢复价值。"
   },
   {
    "level": "warn",
    "title": "活动量偏低",
-   "text": "今日 11 步，仅为月均 5,691 步的 0%。"
+   "text": "今日 31 步，仅为月均 5,692 步的 1%。"
   },
   {
    "level": "warn",
@@ -215,12 +235,12 @@
   {
    "level": "good",
    "title": "本周睡眠改善",
-   "text": "近 7 天平均睡眠比上周多 1.1 小时。"
+   "text": "近 7 天平均睡眠比上周多 1.0 小时。"
   },
   {
    "level": "warn",
    "title": "本周静息心率上升",
-   "text": "近 7 天静息心率均值 51.6 bpm，比上周高 2.6 拍，留意是否训练过量。"
+   "text": "近 7 天静息心率均值 51.4 bpm，比上周高 2.4 拍，留意是否训练过量。"
   },
   {
    "level": "warn",
@@ -229,7 +249,12 @@
   },
   {
    "level": "good",
-   "title": "训练准备度 74 分 · 状态一般",
+   "title": "HRV 处于基线内",
+   "text": "昨夜 HRV 61 ms，在本人的平衡区间内，周均 64 ms，恢复状态稳定。"
+  },
+  {
+   "level": "warn",
+   "title": "训练准备度 58 分 · 状态一般",
    "text": "腕表综合睡眠、HRV、压力与近期负荷给出的判断，可直接决定今天该练还是该歇。"
   }
  ],
@@ -1023,27 +1048,54 @@
   ]
  },
  "readiness": {
-  "score": 65,
+  "score": 69,
   "level": "warn",
   "label": "一般，悠着点",
   "comps": [
    {
+    "key": "sleep",
+    "label": "睡眠",
+    "score": 53.0,
+    "weight": 0.3,
+    "value": "53 分",
+    "hint": "睡了 6.52 小时",
+    "effective": 29.0
+   },
+   {
+    "key": "duration",
+    "label": "睡眠时长",
+    "score": 74.0,
+    "weight": 0.1,
+    "value": "6.52 h",
+    "hint": "目标 7.5 小时",
+    "effective": 10.0
+   },
+   {
     "key": "rhr",
     "label": "静息心率",
-    "score": 69.0,
+    "score": 75.0,
     "weight": 0.2,
-    "value": "55 bpm",
-    "hint": "月均 49.8，偏离 +5",
-    "effective": 50.0
+    "value": "54 bpm",
+    "hint": "月均 49.8，偏离 +4",
+    "effective": 19.0
+   },
+   {
+    "key": "hrv",
+    "label": "HRV 心率变异",
+    "score": 80.0,
+    "weight": 0.25,
+    "value": "61 ms",
+    "hint": "基线区间 59–70 ms",
+    "effective": 24.0
    },
    {
     "key": "battery",
     "label": "身体电量",
-    "score": 30.0,
+    "score": 59.0,
     "weight": 0.05,
-    "value": "24",
-    "hint": "昨夜回充 24，白天消耗 —",
-    "effective": 12.0
+    "value": "50",
+    "hint": "昨夜回充 50，白天消耗 —",
+    "effective": 5.0
    },
    {
     "key": "load",
@@ -1052,12 +1104,10 @@
     "weight": 0.15,
     "value": "ACWR 0.47",
     "hint": "负荷偏低，体能可能在流失",
-    "effective": 37.0
+    "effective": 14.0
    }
   ],
-  "missing": [
-   "hrv"
-  ]
+  "missing": []
  },
  "wellness": {
   "available": true,
@@ -1707,32 +1757,45 @@
    },
    {
     "date": "2026-10-03",
-    "hrvNight": null,
-    "hrvWeekly": null,
-    "hrvStatus": null,
-    "hrvLow": null,
-    "hrvUpper": null,
-    "readinessScore": 74,
+    "hrvNight": 61,
+    "hrvWeekly": 64,
+    "hrvStatus": "BALANCED",
+    "hrvLow": 59,
+    "hrvUpper": 70,
+    "readinessScore": 58,
     "readinessLevel": "MODERATE",
-    "readinessFeedback": "UNKNOWN",
-    "acuteLoad": 21,
-    "bbCharged": 24,
+    "readinessFeedback": "FOCUS_ON_ENERGY_LEVELS",
+    "acuteLoad": 17,
+    "bbCharged": 50,
     "bbDrained": 0,
     "bbMin": 5,
-    "bbMax": 29,
-    "respSleep": null,
+    "bbMax": 55,
+    "respSleep": 16.0,
     "spo2SleepAvg": null,
-    "respAwake": null,
-    "respLow": null,
-    "respHigh": null,
+    "respAwake": 16.0,
+    "respLow": 7.0,
+    "respHigh": 21.0,
     "spo2Lowest": null
    }
   ],
   "latest": {
+   "vo2max": 54.0,
+   "vo2maxDate": "2026-09-19",
+   "loadAerobicLow": 153.6,
+   "loadAnaerobic": 0.0,
+   "loadTargetLow": 212,
+   "loadTargetHigh": 475,
+   "loadFeedback": "BELOW_TARGETS",
+   "deviceName": "Warden's 7X",
    "fitnessAge": 26.9,
    "realAge": 33,
    "fitnessAgeAchievable": 27.0,
    "bmiValue": 19.5,
+   "enduranceScore": 5983,
+   "enduranceClass": 3,
+   "enduranceNext": 5800,
+   "hillScore": 27,
+   "hillClass": 2,
    "race": {
     "date": "2026-10-03",
     "5k": 1343,
@@ -1742,6 +1805,6 @@
    }
   }
  },
- "narrative": "静息心率 55 bpm、走了 11 步。近 7 天共 2 次训练，累计 9.32 公里 / 35 分钟，最近一次是 2026-09-30 的骑行（4.92 公里）。需要留意的是：静息心率偏高——今日静息心率 55 bpm，比近 30 天均值高 5 拍。常见于恢复不足、压力大、睡眠债或饮酒，也可能是感冒前兆，建议今晚早睡并观察明天；活动量偏低——今日 11 步，仅为月均 5,691 步的 0%。做得好的地方：本周睡眠改善、训练准备度 74 分 · 状态一般。",
+ "narrative": "昨晚睡了 6.52 小时、睡眠评分 53 分、其中深睡 0.7 小时、静息心率 54 bpm、走了 31 步。近 7 天共 2 次训练，累计 9.32 公里 / 35 分钟，最近一次是 2026-09-30 的骑行（4.92 公里）。需要留意的是：睡眠质量偏差——睡眠评分仅 53 分，低于 60 分说明睡眠结构或连续性有明显问题；静息心率偏高——今日静息心率 54 bpm，比近 30 天均值高 4 拍。常见于恢复不足、压力大、睡眠债或饮酒，也可能是感冒前兆，建议今晚早睡并观察明天。做得好的地方：本周睡眠改善、HRV 处于基线内。",
  "narrativeSource": "rule"
 }
