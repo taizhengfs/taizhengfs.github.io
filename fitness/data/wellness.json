@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-10-04T07:00:41",
+ "generatedAt": "2026-10-04T14:31:15",
  "range": {
   "start": "2026-06-16",
   "end": "2026-10-04",
@@ -2977,9 +2977,9 @@
    "respSleep": 16.0
   },
   {
-   "acuteLoad": 13,
+   "acuteLoad": 40,
    "bbCharged": 66,
-   "bbDrained": 13,
+   "bbDrained": 41,
    "bbMax": 72,
    "bbMin": 7,
    "date": "2026-10-04",
@@ -2996,8 +2996,8 @@
    "rStressFactor": 17,
    "readinessFeedback": "GOOD_RECOVERY",
    "readinessLevel": "MODERATE",
-   "readinessScore": 69,
-   "recoveryH": 1,
+   "readinessScore": 60,
+   "recoveryH": 708,
    "respAwake": 13.0,
    "respHigh": 20.0,
    "respLow": 7.0,
@@ -3007,7 +3007,7 @@
  "latest": {
   "vo2max": 54.0,
   "vo2maxDate": "2026-09-19",
-  "loadAerobicLow": 36.1,
+  "loadAerobicLow": 57.1,
   "loadAnaerobic": 0.0,
   "loadTargetLow": 212,
   "loadTargetHigh": 475,
@@ -3017,17 +3017,17 @@
   "realAge": 33,
   "fitnessAgeAchievable": 27.0,
   "bmiValue": 19.5,
-  "enduranceScore": 5918,
+  "enduranceScore": 5931,
   "enduranceClass": 3,
   "enduranceNext": 5800,
   "hillScore": 27,
   "hillClass": 2,
   "race": {
    "date": "2026-10-04",
-   "5k": 1363,
-   "10k": 2914,
-   "half": 6545,
-   "full": 15115
+   "5k": 1359,
+   "10k": 2908,
+   "half": 6530,
+   "full": 15075
   }
  }
 }
