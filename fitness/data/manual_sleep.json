@@ -1,0 +1,15 @@
+{
+  "_comment": "人工补录：设备未检出睡眠但实际发生了睡眠事件的日期。Garmin 云端不可能再补算出这些日期的分期数据，所以这里由本人自述存档，经 build_health.py 合并进 health.json。estimatedSleepH 为自述估算值，不是测量值——页面上会显式标注，不与设备数据混为一谈。",
+  "_howto": "新增一条：在 entries 里加对象。kind 可选 no_sleep_detected / partial_sleep / device_off_wrist。",
+  "entries": [
+    {
+      "date": "2026-10-05",
+      "kind": "no_sleep_detected",
+      "place": "俄尔则尔雪山营地",
+      "altitudeM": 3900,
+      "note": "重装徒步露营，夜间下大雪，3900m 营地整夜几乎未眠",
+      "estimatedSleepH": 0.5,
+      "confidence": "user_report"
+    }
+  ]
+}

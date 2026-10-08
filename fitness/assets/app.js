@@ -608,7 +608,10 @@ function sgInterp(x, pts) {
 
 /* 睡眠质量指数（0–100）+ 分项明细。缺项时分权重自动重分配给剩余项。 */
 function sgSleepIndex(r) {
-  const h = r && r.sleepH ? r.sleepH : 0;
+  // 设备未检出睡眠但有自述估算时（高原露营、通宵等），时长取估算值参与计算，
+  // 否则「几乎没睡」会退化成「无记录的空格」，语义上正好相反。
+  const est = !!(r && r.sleepH == null && r.sleepEstimatedH != null);
+  const h = r ? (r.sleepH || r.sleepEstimatedH || 0) : 0;
   const p = {
     score: (r && r.sleepScore != null) ? r.sleepScore : null,
     dur: h ? sgInterp(h, [[0, 0], [3, 12], [4, 26], [5, 42], [6, 58], [7, 75], [8, 90], [9, 100], [12, 100]]) : null,
@@ -619,21 +622,21 @@ function sgSleepIndex(r) {
   };
   const keys = Object.keys(p).filter(k => p[k] != null);
   const tw = keys.reduce((s, k) => s + SG_WEIGHTS[k], 0);
-  if (!tw) return { index: null, parts: p };
+  if (!tw) return { index: null, parts: p, estimated: false };
   const index = keys.reduce((s, k) => s + p[k] * SG_WEIGHTS[k], 0) / tw;
-  return { index, parts: p };
+  return { index, parts: p, estimated: est };
 }
 
 /* 落到 10 级；并叠一条硬约束：睡不够时长就封顶，避免「只睡 4 小时却因为
    某一项好看而显得没那么糟」。返回 null band 表示当天无睡眠记录。 */
 function sgLevelOf(r) {
-  const { index, parts } = sgSleepIndex(r);
-  if (index == null) return { index: null, parts, band: null, capped: null };
+  const { index, parts, estimated } = sgSleepIndex(r);
+  if (index == null) return { index: null, parts, band: null, capped: null, estimated };
   let band = null;
   for (const b of SG_LEVELS) if (index >= b.min) { band = b; break; }
 
   let capped = null;
-  const h = r.sleepH || 0;
+  const h = (r && (r.sleepH || r.sleepEstimatedH)) || 0;
   if (h > 0) {
     let cap = null;
     if (h < 3) cap = 1; else if (h < 4) cap = 3; else if (h < 5) cap = 4;
@@ -642,7 +645,7 @@ function sgLevelOf(r) {
       capped = `只睡 ${h.toFixed(2)} 小时，已封顶到「${band.label}」`;
     }
   }
-  return { index, parts, band, capped };
+  return { index, parts, band, capped, estimated };
 }
 
 function renderSleepGrid() {
@@ -670,9 +673,12 @@ function renderSleepGrid() {
     const r = rec[iso] || {};
     const res = sgLevelOf(r);
     if (!res.band) return '<i class="sg-cell sg-none"></i>';
-    const cls = 'sg-cell' + (iso === today ? ' sg-today' : '');
+    // 设备未检出睡眠的日子：加斜纹 + 小标注，避免被误读成「忘了戴表」
+    const missed = r.sleepMissing ? ' sg-missed' : '';
+    const tip = r.sleepMissing ? ` title="${(r.sleepMissingPlace || r.sleepMissingNote || '').replace(/"/g, '')}"` : '';
+    const cls = 'sg-cell' + missed + (iso === today ? ' sg-today' : '');
     return `<i class="${cls}" data-date="${iso}" data-lv="${res.band.lv}" ` +
-           `data-sqi="${res.index.toFixed(1)}" style="background:${res.band.color}"></i>`;
+           `data-sqi="${res.index.toFixed(1)}"${tip} style="background:${res.band.color}"></i>`;
   });
   while (grid.length < colCount * 7) grid.push('<i class="sg-cell sg-none sg-ghost"></i>');
   host.style.gridTemplateColumns = `repeat(${colCount}, 13px)`;
@@ -768,6 +774,17 @@ function sgTipHtml(iso) {
   out.push(`<div class="sg-tip-kv">Garmin 评分 <b>${r.sleepScore != null ? r.sleepScore : '—'}</b>` +
            ` · 总睡眠 <b>${hh(r.sleepH)}</b>` + (eff != null ? ` · 有效 <b>${hh(eff)}</b>` : '') + `</div>`);
   out.push(`<div class="sg-tip-kv">深睡 <b>${hh(r.deepH)}</b> · REM <b>${hh(r.remH)}</b> · 清醒 <b>${hh(r.awakeH)}</b></div>`);
+  // 设备未检出睡眠：说明真相，否则用户会以为那天忘了戴表
+  if (r.sleepMissing) {
+    const bits = [r.sleepMissingPlace, r.sleepMissingAltitudeM ? `${r.sleepMissingAltitudeM}m` : '']
+      .filter(Boolean).join(' · ');
+    out.push('<div class="sg-tip-missed">设备未检出睡眠 —— ' +
+             (bits ? `<b>${bits}</b><br>` : '') +
+             `${r.sleepMissingNote || '人工补录'}` +
+             (r.sleepEstimatedH != null
+               ? `<br>自述估算仅睡 <b>${Number(r.sleepEstimatedH).toFixed(2)}h</b>，据此推算 SQI，非设备实测值`
+               : '<br>无时长估算，不计入 SQI') + '</div>');
+  }
   const extra = [];
   if (r.rhr != null) extra.push(`静息心率 <b>${r.rhr}</b> bpm`);
   if (r.steps != null) extra.push(`步数 <b>${Number(r.steps).toLocaleString('zh-CN')}</b>`);
