@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-10-10T17:00:45",
+ "generatedAt": "2026-10-10T22:00:38",
  "range": {
   "start": "2026-06-16",
   "end": "2026-10-10",
@@ -3135,9 +3135,9 @@
   {
    "acuteLoad": 77,
    "bbCharged": 80,
-   "bbDrained": 65,
+   "bbDrained": 82,
    "bbMax": 93,
-   "bbMin": 13,
+   "bbMin": 11,
    "date": "2026-10-10",
    "hrvHigh": 80,
    "hrvLow": 59,
@@ -3150,12 +3150,12 @@
    "rSleepFactor": 62,
    "rSleepHistFactor": 82,
    "rStressFactor": 39,
-   "readinessFeedback": "WELL_RECOVERED",
-   "readinessLevel": "HIGH",
-   "readinessScore": 76,
-   "recoveryH": 1,
+   "readinessFeedback": "GOOD_SLEEP_HISTORY",
+   "readinessLevel": "MODERATE",
+   "readinessScore": 74,
+   "recoveryH": 110,
    "respAwake": 15.0,
-   "respHigh": 22.0,
+   "respHigh": 23.0,
    "respLow": 8.0,
    "respSleep": 16.0
   }
