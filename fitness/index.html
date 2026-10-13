@@ -95,6 +95,26 @@
       </div>
     </div>
 
+    <!-- 卧室环境：温湿度 vs 睡眠（数据来自米家「温度计」，由 miot_env.py 每 15 分钟采集） -->
+    <div class="card" id="env-card" style="margin-bottom:16px">
+      <div class="card-head">
+        <div><h3>卧室环境</h3><span class="hint" id="env-sub">—</span></div>
+      </div>
+      <div class="grid g4" id="env-kpi" style="margin-bottom:14px"></div>
+      <div class="grid g2">
+        <div>
+          <div class="chart" id="env-temp"></div>
+          <div class="legend" id="env-temp-lg"></div>
+        </div>
+        <div>
+          <div class="chart" id="env-scatter"></div>
+          <div class="legend" id="env-scatter-lg" style="margin-top:8px"></div>
+        </div>
+      </div>
+      <div id="env-corr" style="margin-top:14px"></div>
+      <div class="hint" id="env-note" style="margin-top:10px"></div>
+    </div>
+
     <!-- 此前从未上页面的腕表指标：VO2max / 体能年龄 / 耐力 / 爬坡 / 竞赛预测 -->
     <div class="card" id="wl-card" style="margin-bottom:16px;display:none">
       <div class="card-head">

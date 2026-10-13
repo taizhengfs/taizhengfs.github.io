@@ -1,0 +1,83 @@
+{
+  "generatedAt": "2026-10-14T00:15:35",
+  "source": "米家 miaomiaoce.sensor_ht.t2（卧室「温度计」）",
+  "window": "睡眠日 D 的夜窗 = 前日 21:00 → 当日 09:00",
+  "bands": {
+    "temp": [
+      18.0,
+      22.0
+    ],
+    "humidity": [
+      40.0,
+      60.0
+    ]
+  },
+  "thresholds": {
+    "minSamplesPerNight": 4,
+    "minNightsForCorr": 10
+  },
+  "coverage": {
+    "rawSamples": 2,
+    "rawSpan": [
+      "2026-10-13",
+      "2026-10-14"
+    ],
+    "nightsMatched": 0,
+    "nightsSpan": null
+  },
+  "latest": {
+    "ts": "2026-10-14T00:03:03",
+    "temp": 26,
+    "humidity": 69.2
+  },
+  "today": null,
+  "nights": [],
+  "corr": {
+    "temp_score": {
+      "key": "temp_score",
+      "name": "夜间温度 vs 睡眠评分",
+      "n": 0,
+      "r": null,
+      "p": null,
+      "label": "样本不足",
+      "need": 10
+    },
+    "temp_awake": {
+      "key": "temp_awake",
+      "name": "夜间温度 vs 夜醒时长",
+      "n": 0,
+      "r": null,
+      "p": null,
+      "label": "样本不足",
+      "need": 10
+    },
+    "temp_deep": {
+      "key": "temp_deep",
+      "name": "夜间温度 vs 深睡占比",
+      "n": 0,
+      "r": null,
+      "p": null,
+      "label": "样本不足",
+      "need": 10
+    },
+    "hum_score": {
+      "key": "hum_score",
+      "name": "夜间湿度 vs 睡眠评分",
+      "n": 0,
+      "r": null,
+      "p": null,
+      "label": "样本不足",
+      "need": 10
+    },
+    "hum_awake": {
+      "key": "hum_awake",
+      "name": "夜间湿度 vs 夜醒时长",
+      "n": 0,
+      "r": null,
+      "p": null,
+      "label": "样本不足",
+      "need": 10
+    }
+  },
+  "signature": "48b8d21b70efdb442a54d7d50dbc5eb3"
+}

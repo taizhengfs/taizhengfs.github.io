@@ -1,0 +1,11 @@
+# 防御位：publish.sh 的 rsync 已排除这些，这里再加一道保险，
+# 防止 rsync 排除规则被改动时凭据被推送到公开站点。
+.mi.token
+.xiaoai.device
+.workbuddy/
+scripts/
+node_modules/
+serve.py
+package-lock.json
+data/fit-index.json
+data/say.log

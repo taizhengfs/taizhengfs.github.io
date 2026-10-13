@@ -10,7 +10,7 @@ const C = {
   z: ['#4c6ef5', '#22b8cf', '#51cf66', '#fab005', '#ff6b6b'],
 };
 
-const STATE = { core: null, health: null, tab: 'overview', act: null, stream: null, pbDist: '5000', rhrRange: 'all', insight: null, diary: null, calMetric: 'score' };
+const STATE = { core: null, health: null, tab: 'overview', act: null, stream: null, pbDist: '5000', rhrRange: 'all', insight: null, diary: null, calMetric: 'score', envDaily: null };
 
 /* ============================ 全局错误捕获 ============================ */
 const APP_VERSION = 'v3';
@@ -324,6 +324,14 @@ async function load() {
     } catch (_) { /* 忽略：尚未有日记 */ }
     STATE.diary = diary;
 
+    // 卧室环境（可选数据，由 build_environment.py 生成）
+    let envDaily = null;
+    try {
+      const eres = await fetch('data/environment_daily.json');
+      if (eres.ok) envDaily = await eres.json();
+    } catch (_) { /* 忽略：尚未生成环境聚合 */ }
+    STATE.envDaily = envDaily;
+
     $('#loading').style.display = 'none';
     $('#hdr-sub').textContent =
       `${core.range.start} — ${core.range.end} · ${core.range.n} 次活动 · ${health.range.days} 天生理数据 · 源自 ${core.range.n} 个 FIT 原始文件`;
@@ -334,7 +342,7 @@ async function load() {
     $('#foot').innerHTML =
       `<div style="margin-bottom:6px">方盛 · 腕上设备自动同步 · ${core.range.n} 次活动 / ${health.range.days} 天生理数据${aiTag}</div>` +
       `<div style="opacity:.75">数据生成于 ${gen} · 重新解析：<code>python3 scripts/parse_fit.py &amp;&amp; python3 scripts/split_data.py</code></div>`;
-    renderBriefing(); renderDiary(); renderSleepGrid(); renderOverview(); renderHealth(); renderTraining(); renderActivityTab(); renderPB();
+    renderBriefing(); renderDiary(); renderSleepGrid(); renderOverview(); renderHealth(); renderTraining(); renderActivityTab(); renderPB(); renderEnvironment();
     const h = location.hash.replace('#', '');
     if (h && $('#tab-' + h)) { switchTab(h); if (h === 'activity') ensureActivitySelected(); }
   } catch (e) {
@@ -1026,6 +1034,155 @@ function renderWellness(I) {
   if (L.deviceName) extra.push(`数据源：${L.deviceName}`);
   $('#wl-extra').innerHTML = extra.join('<br>');
   $('#wl-sub').textContent = W.range ? `数据区间 ${W.range.start} — ${W.range.end}（${W.range.days} 天）` : '腕表长期积累的体能类指标';
+}
+
+/* ============================ 卧室环境（温湿度 vs 睡眠） ============================ */
+function renderEnvironment() {
+  const E = STATE.envDaily;
+  const box = $('#env-card');
+  if (!box) return;
+  if (!E) { box.style.display = 'none'; return; }
+
+  const nights = E.nights || [];
+  const cov = E.coverage || {};
+  const bands = E.bands || { temp: [18, 22], humidity: [40, 60] };
+  const tBand = bands.temp, hBand = bands.humidity;
+
+  $('#env-sub').textContent = cov.nightsSpan
+    ? `${cov.nightsSpan[0]} — ${cov.nightsSpan[1]} · ${cov.nightsMatched} 个有效夜晚 · ${E.window || ''}`
+    : (E.source || '卧室「温度计」');
+
+  // ---------- 尚无有效夜晚：明确告诉用户采集中、还差多少 ----------
+  if (!nights.length) {
+    const need = Math.max(...Object.values(E.corr || {}).map(c => c.need || 0), 0);
+    $('#env-kpi').innerHTML = '';
+    $('#env-temp').innerHTML = '';
+    $('#env-temp-lg').innerHTML = '';
+    $('#env-scatter').innerHTML = '';
+    $('#env-scatter-lg').innerHTML = '';
+    $('#env-corr').innerHTML =
+      `<div style="font-size:13px;color:#97a3b6;line-height:1.8">
+        原始采样已积累 <b style="color:var(--fg)">${cov.rawSamples ?? 0}</b> 点${cov.rawSpan ? `（${cov.rawSpan[0]} 起）` : ''}，
+        但要凑够一整夜还需再等 —— 单晚至少 ${(E.thresholds || {}).minSamplesPerNight || 4} 个采样点才计入统计。<br>
+        建议：保持 Mac 不休眠（launchd <code>com.warden.miot-env</code> 夜间每 10 分钟采一次），
+        累计到 ${(E.thresholds || {}).minNightsForCorr || 10} 个有效夜晚后这里才会给出温度与睡眠的相关系数${need ? `（当前还差 ${need} 晚）` : ''}。
+      </div>`;
+    $('#env-note').textContent = E.generatedAt ? `聚合于 ${new Date(E.generatedAt).toLocaleString('zh-CN')}` : '';
+    return;
+  }
+
+  // ---------- KPI ----------
+  const last = nights[nights.length - 1];
+  const pct = v => (isNum(v) ? Math.round(v * 100) : null);
+  const now = E.latest || {};
+  const kpis = [
+    {
+      l: `昨夜均温 ${last.date.slice(5)}`,
+      v: isNum(last.tempAvg) ? last.tempAvg.toFixed(1) : '—', u: '°C',
+      s: `波动 ${nf(last.tempMin, 1)}–${nf(last.tempMax, 1)}°C · 推荐 ${tBand[0]}–${tBand[1]}°C`,
+      ok: last.tempOk,
+    },
+    {
+      l: '昨夜湿度',
+      v: isNum(last.humAvg) ? last.humAvg.toFixed(0) : '—', u: '%',
+      s: `波动 ${nf(last.humMin, 0)}–${nf(last.humMax, 0)}% · 推荐 ${hBand[0]}–${hBand[1]}%`,
+      ok: last.humOk,
+    },
+    {
+      l: '温度达标时长',
+      v: pct(last.timeInTempBand) === null ? '—' : pct(last.timeInTempBand), u: '%',
+      s: `整夜落在 ${tBand[0]}–${tBand[1]}°C 的采样占比（${last.samples} 点）`,
+      ok: (last.timeInTempBand || 0) >= 0.7,
+    },
+    {
+      l: '此刻读数',
+      v: isNum(now.temp) ? now.temp.toFixed(1) : '—', u: '°C',
+      s: `${isNum(now.humidity) ? now.humidity.toFixed(0) + '% RH · ' : ''}${now.ts ? now.ts.slice(5, 16).replace('T', ' ') : '暂无'}`,
+      ok: null,
+    },
+  ];
+  $('#env-kpi').innerHTML = kpis.map(k => {
+    const col = k.ok === null ? '' : (k.ok ? ` style="color:${C.z[2]}"` : ` style="color:${C.pace}"`);
+    return `<div class="card kpi"><div class="label">${k.l}</div>` +
+      `<div class="value">${k.v}<span class="unit">${k.u}</span></div>` +
+      `<div class="delta flat"${col}>${k.s}</div></div>`;
+  }).join('');
+
+  // ---------- 图 1：近 14 晚 · 夜间均温（左轴）/ 睡眠评分（右轴） ----------
+  const recent = nights.slice(-14);
+  const x = recent.map(n => n.date.slice(5).replace('-', '/'));
+  lineChart($('#env-temp'), {
+    height: 240, x, dot: true, dotOpacity: 0.55,
+    series: [
+      { name: '夜间均温 °C', data: recent.map(n => n.tempAvg), color: C.accent, width: 2.1 },
+      { name: '睡眠评分', data: recent.map(n => n.sleepScore), color: '#7b8cff', width: 1.7, dash: '5 3', axis: 'y2' },
+    ],
+    yFmt: v => v.toFixed(0) + '°',
+    tip: i => {
+      const n = recent[i];
+      return `<b>${n.date}</b><br>均温 ${nf(n.tempAvg, 1)}°C（${nf(n.tempMin, 1)}–${nf(n.tempMax, 1)}）<br>` +
+        `湿度 ${nf(n.humAvg, 0)}% · 达标 ${pct(n.timeInTempBand)}%<br>` +
+        `睡眠 ${nf(n.sleepH, 2)}h / ${n.sleepScore ?? '—'} 分 · 夜醒 ${nf(n.awakeH, 2)}h`;
+    },
+  });
+  legend($('#env-temp-lg'), [
+    { name: '夜间均温（左轴）', color: C.accent },
+    { name: '睡眠评分（右轴）', color: '#7b8cff' },
+  ]);
+
+  // ---------- 图 2：散点 · 全部有效夜晚的 温度 × 睡眠评分 ----------
+  const pts = nights.filter(n => isNum(n.tempAvg) && isNum(n.sleepScore));
+  $('#env-scatter').innerHTML = '';
+  if (pts.length >= 3) {
+    scatter($('#env-scatter'), {
+      height: 240,
+      xLabel: '夜间均温 °C',
+      xFmt: v => v.toFixed(1),
+      points: pts.map(n => ({
+        x: n.tempAvg, y: n.sleepScore, r: 4.2,
+        color: (n.timeInTempBand || 0) >= 0.7 ? C.z[2] : C.accent,
+        label: `${n.date} · ${nf(n.tempAvg, 1)}°C / ${n.sleepScore} 分`,
+      })),
+    });
+    legend($('#env-scatter-lg'), [
+      { name: '整夜温度达标（≥70% 采样在推荐区间）', color: C.z[2] },
+      { name: '未达标', color: C.accent },
+    ]);
+  } else {
+    $('#env-scatter').innerHTML =
+      `<div style="height:240px;display:flex;align-items:center;justify-content:center;color:#647084;font-size:13px">
+        散点图需要至少 3 个同时具备温度与睡眠评分的夜晚（当前 ${pts.length} 个）
+      </div>`;
+    $('#env-scatter-lg').innerHTML = '';
+  }
+
+  // ---------- 相关性结论 ----------
+  const order = ['temp_score', 'temp_awake', 'temp_deep', 'hum_score', 'hum_awake'];
+  const items = order.map(k => (E.corr || {})[k]).filter(Boolean);
+  const fmtP = p => (!isNum(p) ? '—' : (p < 0.0001 ? '< 0.0001' : p.toFixed(4)));
+  $('#env-corr').innerHTML = `<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px">` +
+    items.map(c => {
+      const ready = isNum(c.r);
+      const strong = ready && Math.abs(c.r) >= 0.2;
+      const col = !ready ? C.dim : (Math.abs(c.r) >= 0.35 ? (c.r < 0 ? C.hr : C.z[2]) : C.pace);
+      return `<div style="border:1px solid #242c39;border-radius:10px;padding:10px 12px">
+        <div style="font-size:12px;color:#97a3b6">${c.name}</div>
+        <div style="display:flex;align-items:baseline;gap:8px;margin:4px 0 2px">
+          <b style="font-size:19px;color:${col};font-variant-numeric:tabular-nums">${ready ? (c.r > 0 ? '+' : '') + c.r.toFixed(3) : '待积累'}</b>
+          <span style="font-size:11.5px;color:#647084">r</span>
+        </div>
+        <div style="font-size:11.5px;color:#8b93a5;line-height:1.6">
+          ${ready
+            ? `p ${fmtP(c.p)} · <b style="color:${strong ? col : C.dim}">${c.label}</b> · n=${c.n} 夜`
+            : `样本不足，还差 ${c.need} 晚（当前 ${c.n} 夜）`}
+        </div>
+      </div>`;
+    }).join('') + `</div>`;
+
+  $('#env-note').innerHTML =
+    `参考区间：睡眠期室温 ${tBand[0]}–${tBand[1]}°C、相对湿度 ${hBand[0]}–${hBand[1]}% | ` +
+    `夜窗定义：${E.window || ''} | 每晚不足 ${(E.thresholds || {}).minSamplesPerNight || 4} 个采样点不计入 | ` +
+    `数据源：${E.source || '米家温湿度计'} | 聚合于 ${E.generatedAt ? new Date(E.generatedAt).toLocaleString('zh-CN') : '—'}`;
 }
 
 /* ---------------------------- 训练页：训练效果 + 负荷比 + 场地 ---------------------------- */
