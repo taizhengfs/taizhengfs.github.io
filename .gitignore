@@ -33,3 +33,5 @@ Temporary Items
 
 # debug file
 _site
+# 自动化运行时的工作记忆（内部文件，不进公开仓库）
+fitness/.workbuddy/
