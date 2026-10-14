@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-14T14:30:00",
+  "generatedAt": "2026-10-14T17:00:01",
   "source": "米家 miaomiaoce.sensor_ht.t2（卧室「温度计」）",
   "window": "睡眠日 D 的夜窗 = 前日 21:00 → 当日 09:00",
   "bands": {
@@ -17,7 +17,7 @@
     "minNightsForCorr": 10
   },
   "coverage": {
-    "rawSamples": 42,
+    "rawSamples": 45,
     "rawSpan": [
       "2026-10-13",
       "2026-10-14"
@@ -29,9 +29,9 @@
     ]
   },
   "latest": {
-    "ts": "2026-10-14T13:50:39",
-    "temp": 25.8,
-    "humidity": 56.9
+    "ts": "2026-10-14T16:50:45",
+    "temp": 25.6,
+    "humidity": 58.6
   },
   "today": {
     "date": "2026-10-14",
@@ -118,5 +118,5 @@
       "need": 9
     }
   },
-  "signature": "8db81cde29fff95948452aa3b07ba052"
+  "signature": "078edd0d258ac2118b46b8aa82864651"
 }
