@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-14T08:01:06",
+  "generatedAt": "2026-10-14T09:00:04",
   "source": "米家 miaomiaoce.sensor_ht.t2（卧室「温度计」）",
   "window": "睡眠日 D 的夜窗 = 前日 21:00 → 当日 09:00",
   "bands": {
@@ -17,7 +17,7 @@
     "minNightsForCorr": 10
   },
   "coverage": {
-    "rawSamples": 34,
+    "rawSamples": 37,
     "rawSpan": [
       "2026-10-13",
       "2026-10-14"
@@ -29,19 +29,19 @@
     ]
   },
   "latest": {
-    "ts": "2026-10-14T08:01:05",
-    "temp": 25.2,
-    "humidity": 68.5
+    "ts": "2026-10-14T08:50:28",
+    "temp": 25,
+    "humidity": 65.1
   },
   "today": {
     "date": "2026-10-14",
-    "tempAvg": 25.7,
+    "tempAvg": 25.6,
     "tempMin": 24.7,
     "tempMax": 26.0,
-    "humAvg": 70.0,
-    "humMin": 68.5,
+    "humAvg": 69.7,
+    "humMin": 65.1,
     "humMax": 71.8,
-    "samples": 34,
+    "samples": 37,
     "timeInTempBand": 0.0,
     "timeInHumBand": 0.0,
     "tempOk": false,
@@ -54,13 +54,13 @@
   "nights": [
     {
       "date": "2026-10-14",
-      "tempAvg": 25.7,
+      "tempAvg": 25.6,
       "tempMin": 24.7,
       "tempMax": 26.0,
-      "humAvg": 70.0,
-      "humMin": 68.5,
+      "humAvg": 69.7,
+      "humMin": 65.1,
       "humMax": 71.8,
-      "samples": 34,
+      "samples": 37,
       "timeInTempBand": 0.0,
       "timeInHumBand": 0.0,
       "tempOk": false,
@@ -118,5 +118,5 @@
       "need": 9
     }
   },
-  "signature": "e9475fd6597f1ae94792d8d138698f3f"
+  "signature": "f841496726359ed7e83e4b0575646b01"
 }
