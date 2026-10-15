@@ -1,14 +1,14 @@
 {
- "generatedAt": "2026-10-15T14:30:11",
+ "generatedAt": "2026-10-15T17:00:39",
  "asOf": "2026-10-15",
  "today": {
   "date": "2026-10-15",
   "rhr": 49,
   "rhr7": 48.6,
   "rhr30": 50.0,
-  "steps": 68,
-  "steps7": 4659.0,
-  "steps30": 5854.0,
+  "steps": 1718,
+  "steps7": 4895.0,
+  "steps30": 5909.0,
   "sleepH": 6.98,
   "sleepScore": 73,
   "deepH": 1.6,
@@ -50,7 +50,7 @@
    "sleepAvg": 6.6,
    "scoreAvg": 75.1,
    "rhrAvg": 48.6,
-   "stepsAvg": 4659.0,
+   "stepsAvg": 4895.0,
    "activeDays": 6
   },
   "prev": {
@@ -63,7 +63,7 @@
   "delta": {
    "sleepAvg": -0.49,
    "rhrAvg": -3.1,
-   "stepsAvg": -3600.0,
+   "stepsAvg": -3364.0,
    "scoreAvg": 4.4
   },
   "workouts": [
@@ -181,7 +181,7 @@
    "sleepH": 6.98,
    "sleepScore": 73,
    "rhr": 49,
-   "steps": 68
+   "steps": 1718
   }
  ],
  "restDays": 4,
@@ -209,7 +209,7 @@
   {
    "level": "warn",
    "title": "活动量偏低",
-   "text": "今日 68 步，仅为月均 5,854 步的 1%。"
+   "text": "今日 1,718 步，仅为月均 5,909 步的 29%。"
   },
   {
    "level": "warn",
@@ -1027,7 +1027,7 @@
   ]
  },
  "readiness": {
-  "score": 81,
+  "score": 82,
   "level": "good",
   "label": "状态良好",
   "comps": [
@@ -1070,10 +1070,10 @@
    {
     "key": "battery",
     "label": "身体电量",
-    "score": 73.0,
+    "score": 80.0,
     "weight": 0.05,
-    "value": "62",
-    "hint": "昨夜回充 62，白天消耗 1",
+    "value": "68",
+    "hint": "昨夜回充 68，白天消耗 58",
     "effective": 5.0
    },
    {
@@ -1745,15 +1745,15 @@
     "readinessLevel": "HIGH",
     "readinessFeedback": "WELL_RECOVERED",
     "acuteLoad": 3,
-    "bbCharged": 62,
-    "bbDrained": 1,
+    "bbCharged": 68,
+    "bbDrained": 58,
     "bbMin": 32,
-    "bbMax": 93,
+    "bbMax": 97,
     "respSleep": 16.0,
     "spo2SleepAvg": null,
-    "respAwake": null,
-    "respLow": 10.0,
-    "respHigh": 20.0,
+    "respAwake": 15.0,
+    "respLow": 8.0,
+    "respHigh": 24.0,
     "spo2Lowest": null
    }
   ],
@@ -1784,6 +1784,6 @@
    }
   }
  },
- "narrative": "昨晚睡了 6.98 小时、睡眠评分 73 分、其中深睡 1.6 小时、静息心率 49 bpm、走了 68 步。近 7 天共 1 次训练，累计 1.72 公里 / 58 分钟，最近一次是 2026-10-11 的徒步（1.72 公里）。需要留意的是：夜间易醒——夜间清醒 0.82 小时，睡眠连续性受影响，会降低睡眠评分的实际恢复价值；活动量偏低——今日 68 步，仅为月均 5,854 步的 1%。做得好的地方：静息心率平稳、深睡充足、HRV 处于基线内。",
+ "narrative": "昨晚睡了 6.98 小时、睡眠评分 73 分、其中深睡 1.6 小时、静息心率 49 bpm、走了 1,718 步。近 7 天共 1 次训练，累计 1.72 公里 / 58 分钟，最近一次是 2026-10-11 的徒步（1.72 公里）。需要留意的是：夜间易醒——夜间清醒 0.82 小时，睡眠连续性受影响，会降低睡眠评分的实际恢复价值；活动量偏低——今日 1,718 步，仅为月均 5,909 步的 29%。做得好的地方：静息心率平稳、深睡充足、HRV 处于基线内。",
  "narrativeSource": "rule"
 }

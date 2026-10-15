@@ -2140,7 +2140,70 @@
         "on": false,
         "power": 0
       }
+    },
+    {
+      "ts": "2026-10-15T14:52:11",
+      "minute": "2026-10-15 14:52",
+      "date": "2026-10-15",
+      "bedroom": {
+        "temp": 25.3,
+        "humidity": 65.2
+      },
+      "living": {
+        "temp": 24.4,
+        "humidity": 71
+      },
+      "fan": {
+        "on": false,
+        "speed": 2
+      },
+      "humidifier": {
+        "on": false,
+        "power": 0
+      }
+    },
+    {
+      "ts": "2026-10-15T15:52:13",
+      "minute": "2026-10-15 15:52",
+      "date": "2026-10-15",
+      "bedroom": {
+        "temp": 25.3,
+        "humidity": 65.7
+      },
+      "living": {
+        "temp": 24.2,
+        "humidity": 72.5
+      },
+      "fan": {
+        "on": false,
+        "speed": 2
+      },
+      "humidifier": {
+        "on": false,
+        "power": 0
+      }
+    },
+    {
+      "ts": "2026-10-15T16:52:15",
+      "minute": "2026-10-15 16:52",
+      "date": "2026-10-15",
+      "bedroom": {
+        "temp": 25.3,
+        "humidity": 67.6
+      },
+      "living": {
+        "temp": 24.2,
+        "humidity": 73
+      },
+      "fan": {
+        "on": false,
+        "speed": 2
+      },
+      "humidifier": {
+        "on": false,
+        "power": 0
+      }
     }
   ],
-  "updatedAt": "2026-10-15T13:52:09"
+  "updatedAt": "2026-10-15T16:52:15"
 }
