@@ -1,14 +1,14 @@
 {
- "generatedAt": "2026-10-15T17:00:39",
+ "generatedAt": "2026-10-15T22:00:43",
  "asOf": "2026-10-15",
  "today": {
   "date": "2026-10-15",
   "rhr": 49,
   "rhr7": 48.6,
   "rhr30": 50.0,
-  "steps": 1718,
-  "steps7": 4895.0,
-  "steps30": 5909.0,
+  "steps": 4518,
+  "steps7": 5295.0,
+  "steps30": 6002.0,
   "sleepH": 6.98,
   "sleepScore": 73,
   "deepH": 1.6,
@@ -50,8 +50,8 @@
    "sleepAvg": 6.6,
    "scoreAvg": 75.1,
    "rhrAvg": 48.6,
-   "stepsAvg": 4895.0,
-   "activeDays": 6
+   "stepsAvg": 5295.0,
+   "activeDays": 7
   },
   "prev": {
    "sleepAvg": 7.09,
@@ -63,7 +63,7 @@
   "delta": {
    "sleepAvg": -0.49,
    "rhrAvg": -3.1,
-   "stepsAvg": -3364.0,
+   "stepsAvg": -2964.0,
    "scoreAvg": 4.4
   },
   "workouts": [
@@ -181,7 +181,7 @@
    "sleepH": 6.98,
    "sleepScore": 73,
    "rhr": 49,
-   "steps": 1718
+   "steps": 4518
   }
  ],
  "restDays": 4,
@@ -208,11 +208,6 @@
   },
   {
    "level": "warn",
-   "title": "活动量偏低",
-   "text": "今日 1,718 步，仅为月均 5,909 步的 29%。"
-  },
-  {
-   "level": "warn",
    "title": "已 4 天没运动",
    "text": "接近一周未训练，心肺刺激开始衰减，建议安排一次中低强度有氧。"
   },
@@ -228,7 +223,7 @@
   },
   {
    "level": "good",
-   "title": "训练准备度 75 分 · 状态很好",
+   "title": "训练准备度 74 分 · 状态一般",
    "text": "腕表综合睡眠、HRV、压力与近期负荷给出的判断，可直接决定今天该练还是该歇。"
   }
  ],
@@ -1073,7 +1068,7 @@
     "score": 80.0,
     "weight": 0.05,
     "value": "68",
-    "hint": "昨夜回充 68，白天消耗 58",
+    "hint": "昨夜回充 68，白天消耗 87",
     "effective": 5.0
    },
    {
@@ -1741,18 +1736,18 @@
     "hrvStatus": "BALANCED",
     "hrvLow": 59,
     "hrvUpper": 72,
-    "readinessScore": 75,
-    "readinessLevel": "HIGH",
-    "readinessFeedback": "WELL_RECOVERED",
+    "readinessScore": 74,
+    "readinessLevel": "MODERATE",
+    "readinessFeedback": "GOOD_SLEEP_HISTORY",
     "acuteLoad": 3,
     "bbCharged": 68,
-    "bbDrained": 58,
-    "bbMin": 32,
+    "bbDrained": 87,
+    "bbMin": 13,
     "bbMax": 97,
     "respSleep": 16.0,
     "spo2SleepAvg": null,
     "respAwake": 15.0,
-    "respLow": 8.0,
+    "respLow": 7.0,
     "respHigh": 24.0,
     "spo2Lowest": null
    }
@@ -1784,6 +1779,6 @@
    }
   }
  },
- "narrative": "昨晚睡了 6.98 小时、睡眠评分 73 分、其中深睡 1.6 小时、静息心率 49 bpm、走了 1,718 步。近 7 天共 1 次训练，累计 1.72 公里 / 58 分钟，最近一次是 2026-10-11 的徒步（1.72 公里）。需要留意的是：夜间易醒——夜间清醒 0.82 小时，睡眠连续性受影响，会降低睡眠评分的实际恢复价值；活动量偏低——今日 1,718 步，仅为月均 5,909 步的 29%。做得好的地方：静息心率平稳、深睡充足、HRV 处于基线内。",
+ "narrative": "昨晚睡了 6.98 小时、睡眠评分 73 分、其中深睡 1.6 小时、静息心率 49 bpm、走了 4,518 步。近 7 天共 1 次训练，累计 1.72 公里 / 58 分钟，最近一次是 2026-10-11 的徒步（1.72 公里）。需要留意的是：夜间易醒——夜间清醒 0.82 小时，睡眠连续性受影响，会降低睡眠评分的实际恢复价值；已 4 天没运动——接近一周未训练，心肺刺激开始衰减，建议安排一次中低强度有氧。做得好的地方：静息心率平稳、深睡充足、HRV 处于基线内。",
  "narrativeSource": "rule"
 }
