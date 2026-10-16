@@ -721,6 +721,22 @@ function ensureToday(){
     d = { teacher: DB.teachers[0] || '', chars, history:chars.slice(), at:new Date().toISOString() };
     DB.days[k] = d;
     scheduleSave();
+    return d;
+  }
+  /* 不变量自愈：今日卡片上只能是「还没认识的字」。
+     旧版本换字被合并还原 / 异常数据会把认识的字留在卡片上，
+     导致打开满屏「已认识」没法学。这里直接把认识的换出、补入新字。 */
+  const stale = d.chars.filter(c => isKnown(c));
+  if(stale.length || d.chars.length < DB.perDay){
+    if(!d.history || !d.history.length) d.history = d.chars.slice();
+    d.chars = d.chars.filter(c => !isKnown(c));
+    const fresh = pickNew(DB.perDay - d.chars.length);
+    fresh.forEach(c => {
+      d.chars.push(c);
+      if(!d.history.includes(c)) d.history.push(c);
+    });
+    d.at = new Date().toISOString();   // 标记本方更新，合并时以自愈后为准
+    scheduleSave();
   }
   return d;
 }
@@ -1527,12 +1543,13 @@ async function boot(){
   try{ await loadChars(); }
   catch(e){ document.querySelector('.wrap').innerHTML = '<div class="card"><div class="empty">字库加载失败，请刷新重试。</div></div>'; return; }
 
-  // 先本地（离线也能立刻用），再与云端合并
+  // 先本地（离线也能立刻用），再与云端合并。
+  // 注意：云端处理完之前不要 renderAll —— ensureToday 会抢先创建当天的 5 个字，
+  // 其 at 比云端新，合并时就会把云端已有的当天进度顶掉（这是此前数据错乱的根源）。
   const cached = localStorage.getItem(LS_DATA + binId);
   DB = normalize(cached ? JSON.parse(cached) : null);
 
   bind();
-  renderAll();
   setSync('busy','读取云端…');
   try{
     const cloud = await loadCloud();
@@ -1544,14 +1561,13 @@ async function boot(){
       persistLocal();
       setSync('on','已同步');
       if(m.changed > 0) await saveCloud({silent:true});   // 本地有云端缺的，补回去
-      renderAll();
     }else{
       await saveCloud({silent:true});   // 首次：用固定 id 建一份
-      renderAll();
     }
   }catch(e){
     setSync('off','离线 · 已存本地，联网后自动补回');
   }
+  renderAll();          // 此时才渲染：ensureToday 创建/自愈当天卡片
   renderSnapRow();
 
   // 笔顺动画（CDN 可用时才出现按钮）
@@ -1566,7 +1582,8 @@ async function boot(){
 window.__lit = {
   get db(){ return DB; },
   quizTotal(){ return quizTotals(DB.quiz).total; },
-  syncPull, saveCloud, mergeDB, buildReport, buildCSV, snapshotRestore, snapList
+  syncPull, saveCloud, mergeDB, buildReport, buildCSV, snapshotRestore, snapList,
+  renderAll, ensureToday
 };
 boot();
 </script>

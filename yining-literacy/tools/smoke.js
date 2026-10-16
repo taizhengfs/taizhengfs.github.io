@@ -256,6 +256,23 @@ function ok(name, cond, extra) {
       Object.keys(L.db.learned).length + ' 字');
   }
 
+  console.log('--- 今日卡片自愈（坏数据修复）---');
+  {
+    const D = window.__lit;
+    const day = D.db.days[dayKey];
+    // 模拟线上真实坏数据：chars 里全是已认识的字（此前旧版本+合并竞态所致）
+    day.chars = Object.keys(D.db.learned).slice(0, 5);
+    D.renderAll();
+    await wait(100);
+    const nowChars = D.db.days[dayKey].chars;
+    ok('认识的字被自动换出', nowChars.every(c => !(D.db.learned[c] && D.db.learned[c].status === 'known')),
+      nowChars.join(''));
+    ok('今日仍是 5 个新字', nowChars.length === 5, nowChars.length + ' 个');
+    ok('换出的字留在 history 里', day.history.includes(dayKey ? Object.keys(D.db.learned)[0] : ''),
+      'history ' + day.history.length + ' 个');
+    ok('页面无「已认识」卡', $$('#tiles .acts .ok').every(b => b.textContent === '认识了'));
+  }
+
   console.log('\n--- 运行时错误 ---');
   if (errors.length) { errors.slice(0, 8).forEach(e => console.log('  ' + e)); fail += errors.length; }
   else console.log('  无');
