@@ -3463,7 +3463,175 @@
         "on": false,
         "power": 0
       }
+    },
+    {
+      "ts": "2026-10-16T17:53:46",
+      "minute": "2026-10-16 17:53",
+      "date": "2026-10-16",
+      "bedroom": {
+        "temp": 25.4,
+        "humidity": 77.3
+      },
+      "living": {
+        "temp": 24.4,
+        "humidity": 78.8
+      },
+      "fan": {
+        "on": false,
+        "speed": 2
+      },
+      "humidifier": {
+        "on": false,
+        "power": 0
+      }
+    },
+    {
+      "ts": "2026-10-16T18:53:48",
+      "minute": "2026-10-16 18:53",
+      "date": "2026-10-16",
+      "bedroom": {
+        "temp": 25.4,
+        "humidity": 76.9
+      },
+      "living": {
+        "temp": 24.4,
+        "humidity": 78.8
+      },
+      "fan": {
+        "on": false,
+        "speed": 2
+      },
+      "humidifier": {
+        "on": false,
+        "power": 0
+      }
+    },
+    {
+      "ts": "2026-10-16T19:53:50",
+      "minute": "2026-10-16 19:53",
+      "date": "2026-10-16",
+      "bedroom": {
+        "temp": 25.3,
+        "humidity": 76
+      },
+      "living": {
+        "temp": 24.5,
+        "humidity": 78.8
+      },
+      "fan": {
+        "on": false,
+        "speed": 2
+      },
+      "humidifier": {
+        "on": false,
+        "power": 0
+      }
+    },
+    {
+      "ts": "2026-10-16T20:53:52",
+      "minute": "2026-10-16 20:53",
+      "date": "2026-10-16",
+      "bedroom": {
+        "temp": 25.3,
+        "humidity": 76
+      },
+      "living": {
+        "temp": 24.5,
+        "humidity": 78.3
+      },
+      "fan": {
+        "on": false,
+        "speed": 2
+      },
+      "humidifier": {
+        "on": false,
+        "power": 0
+      }
+    },
+    {
+      "ts": "2026-10-16T21:08:54",
+      "minute": "2026-10-16 21:08",
+      "date": "2026-10-16",
+      "bedroom": {
+        "temp": 25.3,
+        "humidity": 76
+      },
+      "living": {
+        "temp": 24.4,
+        "humidity": 78.3
+      },
+      "fan": {
+        "on": false,
+        "speed": 2
+      },
+      "humidifier": {
+        "on": false,
+        "power": 0
+      }
+    },
+    {
+      "ts": "2026-10-16T21:23:55",
+      "minute": "2026-10-16 21:23",
+      "date": "2026-10-16",
+      "bedroom": {
+        "temp": 25.3,
+        "humidity": 76
+      },
+      "living": {
+        "temp": 24.4,
+        "humidity": 78.3
+      },
+      "fan": {
+        "on": false,
+        "speed": 2
+      },
+      "humidifier": {
+        "on": false,
+        "power": 0
+      }
+    },
+    {
+      "ts": "2026-10-16T21:38:56",
+      "minute": "2026-10-16 21:38",
+      "date": "2026-10-16",
+      "bedroom": {
+        "temp": 25.3,
+        "humidity": 76
+      },
+      "living": {
+        "temp": 24.5,
+        "humidity": 78.3
+      },
+      "fan": {
+        "on": false,
+        "speed": 2
+      },
+      "humidifier": {
+        "on": false,
+        "power": 0
+      }
+    },
+    {
+      "ts": "2026-10-16T21:53:58",
+      "minute": "2026-10-16 21:53",
+      "date": "2026-10-16",
+      "bedroom": {
+        "temp": 25.3,
+        "humidity": 76.5
+      },
+      "living": {
+        "temp": 24.4,
+        "humidity": 78.3
+      },
+      "fan": {
+        "on": false,
+        "speed": 2
+      },
+      "humidifier": {
+        "on": false,
+        "power": 0
+      }
     }
   ],
-  "updatedAt": "2026-10-16T16:53:44"
+  "updatedAt": "2026-10-16T21:53:58"
 }
