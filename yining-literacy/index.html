@@ -139,6 +139,28 @@ button{font-family:inherit;font-size:inherit;color:inherit;cursor:pointer;border
   display:flex;align-items:center;justify-content:center;box-shadow:0 2px 6px rgba(193,68,59,.3);
 }
 .tzwrap{position:relative}
+/* 换卡：旧字盖上印章后翻走，新字浮现 */
+.tile{will-change:transform,opacity}
+.tile.swap-out{animation:swapOut .24s cubic-bezier(.36,0,.66,-.2) forwards;pointer-events:none}
+.tile.swap-in{animation:swapIn .36s cubic-bezier(.21,.9,.3,1) both}
+.tile.swap-out .stamp{animation:stampIn .2s cubic-bezier(.2,1.5,.4,1) both}
+.tile.swap-in .stamp{animation:stampIn .3s cubic-bezier(.2,1.4,.4,1) .12s both}
+@keyframes swapOut{
+  0%{opacity:1;transform:none}
+  100%{opacity:0;transform:translateY(-12px) scale(.9)}
+}
+@keyframes swapIn{
+  0%{opacity:0;transform:translateY(16px) scale(.93)}
+  100%{opacity:1;transform:none}
+}
+@keyframes stampIn{
+  0%{opacity:0;transform:scale(2.2) rotate(-24deg)}
+  60%{opacity:1;transform:scale(.92) rotate(6deg)}
+  100%{opacity:1;transform:scale(1) rotate(0)}
+}
+@media(prefers-reduced-motion:reduce){
+  .tile.swap-out,.tile.swap-in,.tile.swap-out .stamp,.tile.swap-in .stamp{animation-duration:.01s}
+}
 .empty{text-align:center;padding:26px 10px;color:var(--muted);font-size:13.5px}
 
 /* ---------- 按钮 ---------- */
@@ -468,12 +490,21 @@ async function loadChars(){
 /* ============ 今日 ============ */
 function learnedCount(){ return Object.keys(DB.learned).length; }
 function isKnown(c){ const e = DB.learned[c]; return !!e && e.status === 'known'; }
+/* 今天实际搞定几个：卡片被换走后仍算数，所以按 history 统计 */
+function todayDone(){
+  const d = DB.days[todayKey()];
+  if(!d) return 0;
+  const seen = (d.history && d.history.length) ? d.history : d.chars;
+  return seen.filter(isKnown).length;
+}
 function pickNew(n){
   const out = [];
   for(const it of POOL){
     if(out.length >= n) break;
     if(DB.learned[it.c]) continue;
-    if(DB.days[todayKey()] && DB.days[todayKey()].chars.includes(it.c)) continue;
+    const t = DB.days[todayKey()];
+    const seen = t && (t.history && t.history.length ? t.history : t.chars);
+    if(seen && seen.includes(it.c)) continue;   // 今天露过面的字不再重复抽
     out.push(it.c);
   }
   return out;
@@ -483,7 +514,7 @@ function ensureToday(){
   let d = DB.days[k];
   if(!d){
     const chars = pickNew(DB.perDay);
-    d = { teacher: DB.teachers[0] || '', chars, at:new Date().toISOString() };
+    d = { teacher: DB.teachers[0] || '', chars, history:chars.slice(), at:new Date().toISOString() };
     DB.days[k] = d;
     scheduleSave();
   }
@@ -494,18 +525,34 @@ function mark(c, status){
   DB.learned[c] = { status, date:k, teacher:(DB.days[k]||{}).teacher||'' };
   scheduleSave();
 }
-function replace(c){
-  // 已经认识 → 归入已掌握，再从剩余字库补一个新字
-  DB.learned[c] = { status:'known', date:todayKey(), teacher:(DB.days[todayKey()]||{}).teacher||'', via:'replace' };
-  const k = todayKey();
-  const d = DB.days[k];
+/* 把当日卡片上的 c 换成新字，返回新字（null = 字库已空）。
+   history 记录当天出现过的每一个字，换掉的字不会从记录里消失 */
+function pull(c){
+  const d = DB.days[todayKey()];
+  if(!d) return null;
   const i = d.chars.indexOf(c);
+  if(i < 0) return null;
+  if(!d.history) d.history = d.chars.slice();
   const fresh = pickNew(1)[0];
-  if(fresh && i >= 0) d.chars[i] = fresh;
-  else if(i >= 0) d.chars.splice(i,1);
-  scheduleSave();
-  renderAll();
-  toast(fresh ? '换成「' + fresh + '」' : '已标记为认识');
+  if(fresh){ d.chars[i] = fresh; d.history.push(fresh); }
+  else d.chars.splice(i, 1);
+  return fresh || null;
+}
+/* 认识了 → 归入已掌握，卡片盖上「认」章后翻走，换上新字 */
+function replace(c){
+  DB.learned[c] = { status:'known', date:todayKey(), teacher:(DB.days[todayKey()]||{}).teacher||'', via:'ok' };
+  speak(c);
+  swapTile(todayIndexOf(c), pull(c), '认',
+    c => '认识了！换上「' + c + '」', '认识了！');
+}
+/* 换一个 → 只是跳过这个字，不计入已掌握 */
+function swapOnly(c){
+  swapTile(todayIndexOf(c), pull(c), null,
+    c => '换成「' + c + '」', '字库里没有新字了');
+}
+function todayIndexOf(c){
+  const d = DB.days[todayKey()];
+  return d ? d.chars.indexOf(c) : -1;
 }
 function reroll(){
   const k = todayKey();
@@ -514,6 +561,8 @@ function reroll(){
   // 未标记的字退回字库，重新抽
   d.chars = d.chars.filter(c => DB.learned[c]);
   d.chars = d.chars.concat(pickNew(DB.perDay - d.chars.length));
+  if(!d.history) d.history = [];
+  d.chars.forEach(c => { if(!d.history.includes(c)) d.history.push(c); });
   scheduleSave(); renderAll();
   toast('换了五个新字');
 }
@@ -524,9 +573,7 @@ function renderAll(){
   try{ document.title = DB.child + '的认字簿 · ' + learnedCount() + ' 字'; }catch(e){}
 }
 function renderTabs(){
-  const k = todayKey(); const d = DB.days[k];
-  const done = d ? d.chars.filter(isKnown).length : 0;
-  $('#n-today').textContent = done + '/' + (d ? d.chars.length : DB.perDay);
+  $('#n-today').textContent = todayDone() + '/' + DB.perDay;
   $('#n-quiz').textContent = DB.quiz.total;
   $('#n-lib').textContent = learnedCount();
   $('#n-log').textContent = Object.keys(DB.days).length;
@@ -544,22 +591,55 @@ function renderToday(){
   ).join('') + '<button class="chip ghost" id="t-add">+</button>';
 
   // 五个字
-  const tiles = d.chars.map(c => {
-    const it = MAP[c] || {c, p:'', w:[]};
-    const ok = isKnown(c);
-    return '<div class="tile' + (ok?' done':'') + '">'
-      + '<div class="py">' + esc(it.p) + '</div>'
-      + '<div class="tzwrap"><div class="tz lg" data-c="' + c + '"><span class="hz">' + c + '</span>'
-      + (ok ? '<span class="stamp">认</span>' : '') + '</div></div>'
-      + '<div class="w">' + (it.w.length ? it.w.map(w=>'<span>'+esc(w)+'</span>').join('') : '<span style="opacity:.45">—</span>') + '</div>'
-      + '<div class="acts">'
-      + '<button class="ok" data-act="ok" data-c="' + c + '">' + (ok?'已认识':'认识了') + '</button>'
-      + '<button class="sw" data-act="sw" data-c="' + c + '">换一个</button>'
-      + '</div></div>';
-  }).join('');
-  $('#tiles').innerHTML = tiles;
+  $('#tiles').innerHTML = d.chars.map(c => tileNode(c)).join('');
   $('#t-empty').style.display = d.chars.length ? 'none' : 'block';
-  $('#d-prog').textContent = d.chars.filter(isKnown).length + ' / ' + d.chars.length + ' 已认识';
+  $('#d-prog').textContent = todayDone() + ' / ' + DB.perDay + ' 已认识';
+}
+function tileClass(c){ return 'tile' + (isKnown(c) ? ' done' : ''); }
+function tileNode(c){ return '<div class="' + tileClass(c) + '">' + tileInner(c) + '</div>'; }
+function tileInner(c){
+  const it = MAP[c] || {c, p:'', w:[]};
+  const ok = isKnown(c);
+  return '<div class="py">' + esc(it.p) + '</div>'
+    + '<div class="tzwrap"><div class="tz lg" data-c="' + c + '"><span class="hz">' + c + '</span>'
+    + (ok ? '<span class="stamp">认</span>' : '') + '</div></div>'
+    + '<div class="w">' + (it.w.length ? it.w.map(w=>'<span>'+esc(w)+'</span>').join('') : '<span style="opacity:.45">—</span>') + '</div>'
+    + '<div class="acts">'
+    + '<button class="ok" data-act="ok" data-c="' + c + '">' + (ok?'已认识':'认识了') + '</button>'
+    + '<button class="sw" data-act="sw" data-c="' + c + '">换一个</button>'
+    + '</div>';
+}
+/* 只刷新一张卡：旧卡盖印章后翻走 → 原地浮现新卡，其余四张纹丝不动 */
+function swapTile(i, newC, stampText, msgWith, msgEmpty){
+  const el = (i >= 0 && $('#tiles').children[i]) ? $('#tiles').children[i] : null;
+  scheduleSave();
+  if(!el || !newC){ renderAll(); toast(newC ? msgWith(newC) : msgEmpty); return; }
+
+  // 印章先落到旧字上，再让它翻走
+  if(stampText){
+    const wrap = el.querySelector('.tzwrap');
+    if(wrap && !wrap.querySelector('.stamp')){
+      const s = document.createElement('span');
+      s.className = 'stamp'; s.textContent = stampText;
+      wrap.appendChild(s);
+    }
+  }
+  el.classList.add('swap-out');
+  const finish = () => {
+    el.className = tileClass(newC);
+    el.innerHTML  = tileInner(newC);
+    el.classList.add('swap-in');
+    setTimeout(() => el.classList.remove('swap-in'), 380);
+    refreshOthers();
+  };
+  const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+  reduce ? finish() : setTimeout(finish, 240);
+  toast(msgWith(newC));
+}
+/* 更新「今日」以外、不引起当前视图跳动的部分 */
+function refreshOthers(){
+  $('#d-prog').textContent = todayDone() + ' / ' + DB.perDay + ' 已认识';
+  renderTabs(); renderLib(); renderLog(); renderStats();
 }
 function renderQuizPane(){
   const scopes = [['learned','学过的'],['fuzzy','需巩固'],['known','已掌握'],['all','全部字库']];
@@ -668,14 +748,17 @@ function renderLog(){
   $('#log-list').innerHTML = keys.map(k => {
     const d = DB.days[k];
     const dd = new Date(k + 'T00:00:00');
-    const chars = d.chars.map(c => {
+    // 用 history：当天出现过的字全在，被换掉的也留痕
+    const seen = (d.history && d.history.length ? d.history : d.chars)
+      .filter((c, i, a) => a.indexOf(c) === i);
+    const chars = seen.map(c => {
       const e = DB.learned[c];
       return '<b class="' + (e && e.status==='known' ? 'k' : '') + '" data-c="' + c + '">' + c + '</b>';
     }).join('');
     return '<div class="e">'
       + '<div class="row" style="justify-content:space-between">'
       + '<div><div class="ed">' + (k===todayKey()?'今天 · ':'') + (dd.getMonth()+1) + '月' + dd.getDate() + '日 星期' + weekday(dd) + '</div>'
-      + '<div class="et">' + (d.teacher ? esc(d.teacher) + '教 · ' : '') + d.chars.length + ' 个字</div></div>'
+      + '<div class="et">' + (d.teacher ? esc(d.teacher) + '教 · ' : '') + seen.length + ' 个字</div></div>'
       + '<button class="btn ghost sm" data-del="' + k + '">删除</button></div>'
       + '<div class="ec">' + chars + '</div></div>';
   }).join('');
@@ -796,11 +879,12 @@ function bind(){
   $('#tiles').onclick = e => {
     const tz = e.target.closest('.tz'); if(tz){ openDetail(tz.dataset.c); return; }
     const b = e.target.closest('button[data-act]'); if(!b) return;
+    const c = b.dataset.c;
     if(b.dataset.act === 'ok'){
-      const c = b.dataset.c;
-      if(isKnown(c)){ delete DB.learned[c]; } else { mark(c,'known'); speak(c); }
-      scheduleSave(); renderAll();
-    }else if(b.dataset.act === 'sw'){ replace(b.dataset.c); }
+      // 已认识再点一次 = 撤销（退回字库，卡片保留）
+      if(isKnown(c)){ delete DB.learned[c]; scheduleSave(); renderAll(); return; }
+      replace(c);
+    }else if(b.dataset.act === 'sw'){ swapOnly(c); }
   };
 
   $('#teachers').onclick = e => {

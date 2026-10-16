@@ -78,28 +78,36 @@ function ok(name, cond, extra) {
   const dayKey = Object.keys(cloud.store.days)[0];
   ok('今日记录已写入', !!dayKey && cloud.store.days[dayKey].chars.length === 5, dayKey);
 
-  console.log('--- 交互：标记“认识了” ---');
+  console.log('--- 交互：认识了（卡片翻走换新的）---');
   const firstChar = tiles[0].querySelector('.hz').textContent;
   $$('#tiles .acts .ok')[0].click();
+  await wait(60);
+  ok('卡片播放了翻出动效', $$('#tiles .tile')[0].classList.contains('swap-out'));
   await wait(1100);
   const db1 = cloud.store;
   ok('已写入 learned', !!db1.learned[firstChar], firstChar);
   ok('状态为 known', db1.learned[firstChar] && db1.learned[firstChar].status === 'known');
   ok('记录了日期', db1.learned[firstChar] && !!db1.learned[firstChar].date);
-  ok('记录了教的大人', db1.learned[firstChar] && !!db1.learned[firstChar] ? db1.learned[firstChar].teacher : '(无)');
-  ok('卡片出现“认”印章', !!$('#tiles .tile.done .stamp'));
+  ok('记录了教的大人', !!(db1.learned[firstChar] && db1.learned[firstChar].teacher), db1.learned[firstChar].teacher);
+  ok('这张卡片已换上新字', $$('#tiles .hz')[0].textContent !== firstChar,
+     firstChar + ' → ' + $$('#tiles .hz')[0].textContent);
+  ok('新卡片带进场动效后归位', !$$('#tiles .tile')[0].classList.contains('swap-out'));
+  ok('今日仍是 5 个字', $$('#tiles .tile').length === 5);
+  ok('换掉的字仍留在当天记录里', db1.days[dayKey].history.includes(firstChar));
   ok('Tab 计数更新', $('#n-today').textContent === '1/5', $('#n-today').textContent);
 
-  console.log('--- 交互：换一个 ---');
+  console.log('--- 交互：换一个（只是跳过，不计入掌握）---');
   const before = $$('#tiles .hz').map(e => e.textContent);
   $$('#tiles .acts .sw')[1].click();
   await wait(1100);
   const after = $$('#tiles .hz').map(e => e.textContent);
   const db2 = cloud.store;
   ok('确实换掉了字', before[1] !== after[1], before[1] + ' → ' + after[1]);
-  ok('被换掉的字记为已认识', db2.learned[before[1]] && db2.learned[before[1]].via === 'replace');
+  ok('换一个不计入已掌握', !db2.learned[before[1]], before[1]);
   ok('新字来自剩余字库', !!after[1] && !db2.learned[after[1]]);
+  ok('跳过的字也留在记录里', db2.days[dayKey].history.includes(before[1]));
   ok('今日仍是 5 个字', after.length === 5);
+  ok('换一个不改变掌握进度', $('#n-today').textContent === '1/5', $('#n-today').textContent);
 
   console.log('--- 交互：切换大人 ---');
   const chips = $$('#teachers .chip');
@@ -129,7 +137,7 @@ function ok(name, cond, extra) {
   await wait(200);
   const cells = $$('#lib-grid .cell');
   ok('字库渲染出格子', cells.length > 100, cells.length + ' 个');
-  ok('已学的字标为已掌握', $$('#lib-grid .cell.k').length >= 2, $$('#lib-grid .cell.k').length + ' 个');
+  ok('已学的字标为已掌握', $$('#lib-grid .cell.k').length >= 1, $$('#lib-grid .cell.k').length + ' 个');
   ok('摘要显示三档统计', /已掌握.*需巩固.*剩余/.test($('#lib-sum').textContent), $('#lib-sum').textContent);
   $('#lib-status .chip[data-ls="k"]').click();
   await wait(150);
@@ -141,12 +149,15 @@ function ok(name, cond, extra) {
   await wait(200);
   ok('记录列表有条目', $$('#log-list .e').length === 1);
   ok('记录显示大人名', /教/.test($('#log-list .et').textContent), $('#log-list .et').textContent);
-  ok('记录显示当天 5 个字', $$('#log-list .ec b').length === 5);
+  const logChars = $$('#log-list .ec b').map(b => b.textContent);
+  ok('记录显示当天学过的 7 个字（含被换掉的）', logChars.length === 7, logChars.join(''));
+  ok('被换掉的字没从记录里消失', logChars.includes(firstChar) && logChars.includes(before[1]),
+     '含 ' + firstChar + ' 与 ' + before[1]);
 
   console.log('--- 统计 ---');
   $$('.tab')[4].click();
   await wait(200);
-  ok('学过字数 ≥ 2', +$('#k-learn').textContent >= 2, $('#k-learn').textContent);
+  ok('学过字数 ≥ 1', +$('#k-learn').textContent >= 1, $('#k-learn').textContent);
   ok('剩余字数合理', +$('#k-left').textContent > 1000, $('#k-left').textContent);
   ok('连续天数 = 1', $('#k-day').textContent === '1', $('#k-day').textContent);
   ok('进度条渲染', $$('#bars .bar').length === 5, $$('#bars .bar').length + ' 条');
