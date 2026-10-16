@@ -370,7 +370,17 @@ button{font-family:inherit;font-size:inherit;color:inherit;cursor:pointer;border
       <div class="setrow"><label for="s-new">添加大人</label><span class="row"><input id="s-new" maxlength="6" placeholder="如：外婆"><button class="btn sm" id="s-add">添加</button></span></div>
       <div class="setrow"><label>大人名单</label><span class="row" id="s-teachers"></span></div>
       <div class="setrow"><label>云端数据</label><span class="row"><code id="s-bin" style="font-size:12px;color:var(--muted)"></code><button class="btn ghost sm" id="s-copy">复制链接</button></span></div>
-      <div class="setrow"><label>数据备份</label><span class="row"><button class="btn ghost sm" id="s-export">导出</button><button class="btn ghost sm" id="s-import">导入</button></span></div>
+      <div class="setrow"><label>数据备份</label><span class="row">
+        <button class="btn ghost sm" id="s-export">导出备份</button>
+        <button class="btn ghost sm" id="s-import">导入备份</button>
+        <button class="btn sm" id="s-report">导出进度报告</button>
+        <button class="btn ghost sm" id="s-csv">导出明细 CSV</button>
+      </span></div>
+      <div class="setrow"><label>历史版本</label><span class="row" id="s-snaps"></span></div>
+      <div class="setrow"><label>手动同步</label><span class="row">
+        <button class="btn ghost sm" id="s-pull">从云端拉取</button>
+        <button class="btn ghost sm" id="s-push">立即上传</button>
+      </span><span class="hint" id="s-synctip"></span></div>
     </div>
   </section>
 
@@ -389,6 +399,9 @@ const API_BASE = 'https://time.taizhendong.com';
 const DEFAULT_BIN = 'yining-renzibu-v1';
 const LS_BIN = 'yining_renzibu_bin';
 const LS_DATA = 'yining_renzibu_data_';
+const LS_DEV  = 'yining_renzibu_device';
+const LS_SNAP = 'yining_renzibu_snap_';
+const SNAP_MAX = 5;
 const DEF_TEACHERS = ['妈妈','爸爸','奶奶','爷爷','老师'];
 
 /* ============ 状态 ============ */
@@ -399,6 +412,14 @@ let DB = null;          // 云端/本地数据
 let binId = null;
 let syncing = false, pending = false, timer = null;
 let hwReady = false;
+let DEVICE_ID = '';
+try{
+  DEVICE_ID = localStorage.getItem(LS_DEV);
+  if(!DEVICE_ID){
+    DEVICE_ID = 'd' + Date.now().toString(36) + Math.random().toString(36).slice(2,7);
+    localStorage.setItem(LS_DEV, DEVICE_ID);
+  }
+}catch(e){ DEVICE_ID = 'd' + Date.now().toString(36); }
 let libFilter = { status:'all', grade:'all' };
 let qScope = 'learned';
 let quiz = { list:[], i:0, right:0, total:0, revealed:false, cur:null };
@@ -412,21 +433,137 @@ function weekday(d){ return '日一二三四五六'[d.getDay()]; }
 
 /* ============ 数据骨架 ============ */
 function blankDB(){
-  return { version:1, child:'以宁', perDay:5, teachers:DEF_TEACHERS.slice(),
-           days:{}, learned:{}, quiz:{ right:0, total:0 }, createdAt:new Date().toISOString() };
+  return { version:2, child:'以宁', perDay:5, teachers:DEF_TEACHERS.slice(),
+           days:{}, learned:{}, quiz:{}, createdAt:new Date().toISOString(), rev:0 };
+}
+/* quiz 由裸计数 {right,total} 改为 「日期 → 设备 → [对,总]」。
+   同一台设备同一天取最大值（重复上传不会翻倍），不同设备相加（各答各的）。 */
+function quizTotals(q){
+  let right = 0, total = 0;
+  for(const day of Object.keys(q || {})){
+    const per = q[day];
+    if(!per || typeof per !== 'object') continue;
+    const vals = Array.isArray(per) ? [per] : Object.values(per);
+    vals.forEach(v => { if(Array.isArray(v)){ right += (+v[0]||0); total += (+v[1]||0); } });
+  }
+  return { right, total };
+}
+function bumpQuiz(isRight){
+  const k = todayKey();
+  if(!DB.quiz || Array.isArray(DB.quiz) || typeof DB.quiz !== 'object') DB.quiz = {};
+  if(!DB.quiz[k] || Array.isArray(DB.quiz[k])) DB.quiz[k] = {};
+  const v = DB.quiz[k][DEVICE_ID] || [0,0];
+  v[1]++; if(isRight) v[0]++;
+  DB.quiz[k][DEVICE_ID] = v;
+}
+function cloneJSON(v){ try{ return JSON.parse(JSON.stringify(v)); }catch(e){ return {}; } }
+function migrateQuiz(q){
+  const out = {};
+  if(!q || typeof q !== 'object' || Array.isArray(q)) return out;
+  if(typeof q.total === 'number'){                       // v1：{right,total}
+    if(q.total) out['1970-01-01'] = { legacy:[+q.right||0, +q.total||0] };
+    return out;
+  }
+  for(const day of Object.keys(q)){
+    const v = q[day];
+    if(!v || typeof v !== 'object') continue;
+    out[day] = Array.isArray(v) ? { legacy:[+v[0]||0, +v[1]||0] } : v;
+  }
+  return out;
 }
 function normalize(d){
   const b = blankDB();
   if(!d || typeof d!=='object') return b;
   const o = Object.assign(b, d);
-  o.days = (d.days && typeof d.days==='object') ? d.days : {};
-  o.learned = (d.learned && typeof d.learned==='object') ? d.learned : {};
-  o.quiz = Object.assign({right:0,total:0}, d.quiz||{});
+  o.version = 2;
+  // 深拷贝：normalize 的结果会被 mergeDB 就地改写，共享引用会污染入参
+  o.days = (d.days && typeof d.days==='object') ? cloneJSON(d.days) : {};
+  o.learned = (d.learned && typeof d.learned==='object') ? cloneJSON(d.learned) : {};
+  // 旧结构迁移：裸计数 / 扁平按天数组 都归到 legacy 名下，总量不丢
+  o.quiz = migrateQuiz(d && d.quiz);
+  // 老数据里按天记的 [right,total] 也归到 legacy
+  for(const day of Object.keys(o.quiz)){
+    if(Array.isArray(o.quiz[day])) o.quiz[day] = { legacy: o.quiz[day] };
+  }
   if(!Array.isArray(o.teachers) || !o.teachers.length) o.teachers = DEF_TEACHERS.slice();
   o.perDay = Math.min(20, Math.max(1, parseInt(o.perDay,10)||5));
-  // 清理字库里已不存在的字
-  for(const k of Object.keys(o.learned)) if(!MAP[k]) delete o.learned[k];
+  o.rev = parseInt(o.rev, 10) || 0;
+  if(!o.createdAt) o.createdAt = new Date().toISOString();
+  // 清理字库里已不存在的字（字库加载完成后才做，缺字库时不误删）
+  if(MAP && Object.keys(MAP).length){
+    for(const k of Object.keys(o.learned)) if(!MAP[k]) delete o.learned[k];
+    for(const dk of Object.keys(o.days)){
+      const dd = o.days[dk];
+      if(dd && Array.isArray(dd.chars)) dd.chars = dd.chars.filter(c => !c || MAP[c]);
+    }
+  }
   return o;
+}
+
+/* ============ 合并：多端同时记录时取并集，不覆盖 ============ */
+const RANK = { known:2, fuzzy:1 };
+function mergeLearn(a, b){
+  if(!a) return b; if(!b) return a;
+  // 认了就不会退回去：known 优先；同级保留更早的学会日期
+  const ra = RANK[a.status] || 0, rb = RANK[b.status] || 0;
+  if(rb > ra) return b;
+  if(ra > rb) return a;
+  return (String(a.date||'') <= String(b.date||'')) ? a : b;
+}
+function mergeDay(a, b){
+  if(!a) return b; if(!b) return a;
+  const uniq = arr => (arr || []).filter((x, i, s) => x && s.indexOf(x) === i);
+  const charsA = a.chars || [], charsB = b.chars || [];
+  // history 取并集：当天露过面的字一个都不能少，用于记录和防止重复抽到
+  const history = uniq((a.history || charsA).concat(b.history || charsB));
+  // chars 是当前待学的卡片，**取更晚操作过的那一方**，不能取并集——
+  // 否则两台设备各 5 张卡一合并就变成 10 张，永远学不完
+  const atA = String(a.at || ''), atB = String(b.at || '');
+  let win = a;
+  if(atB > atA) win = b;
+  else if(atA === atB && charsB.length > charsA.length) win = b;
+  return { teacher: win.teacher || a.teacher || b.teacher || '',
+           chars: (win.chars || []).slice(),
+           history,
+           at: (atB > atA ? atB : atA) || a.at || b.at };
+}
+/* 把 incoming 并进 base，返回 {db, changed} */
+function mergeDB(base, incoming){
+  const b = normalize(base), i = normalize(incoming);
+  const out = normalize(base);
+  let changed = 0;
+
+  for(const k of Object.keys(i.days)){
+    const m = mergeDay(b.days[k], i.days[k]);
+    if(JSON.stringify(m) !== JSON.stringify(b.days[k] || null)) changed++;
+    out.days[k] = m;
+  }
+  for(const c of Object.keys(i.learned)){
+    const m = mergeLearn(b.learned[c], i.learned[c]);
+    if(JSON.stringify(m) !== JSON.stringify(b.learned[c] || null)) changed++;
+    out.learned[c] = m;
+  }
+  // 抽查：同一台设备同一天取最大值（防止重复上传把次数翻倍），不同设备相加
+  for(const day of Object.keys(i.quiz)){
+    const pa = b.quiz[day] || {}, pb = i.quiz[day] || {}, m = {};
+    for(const dev of new Set(Object.keys(pa).concat(Object.keys(pb)))){
+      const va = pa[dev] || [0,0], vb = pb[dev] || [0,0];
+      m[dev] = [Math.max(+va[0]||0, +vb[0]||0), Math.max(+va[1]||0, +vb[1]||0)];
+    }
+    if(JSON.stringify(m) !== JSON.stringify(pa)) changed++;
+    out.quiz[day] = m;
+  }
+  // 标量取「更晚更新」的一方
+  if(i.updatedAt && String(i.updatedAt) > String(b.updatedAt || '')){
+    if(i.child && i.child !== b.child){ out.child = i.child; changed++; }
+    if(i.perDay && i.perDay !== b.perDay){ out.perDay = i.perDay; changed++; }
+  }
+  // 大人名单取并集
+  const tn = (b.teachers || []).concat(i.teachers || []).filter((x, idx, s) => x && s.indexOf(x) === idx);
+  if(tn.length !== (out.teachers || []).length){ out.teachers = tn; changed++; }
+  out.createdAt = [b.createdAt, i.createdAt].filter(Boolean).sort()[0] || out.createdAt;
+  out.rev = Math.max(b.rev || 0, i.rev || 0);
+  return { db: out, changed };
 }
 
 /* ============ 云同步 ============ */
@@ -441,24 +578,47 @@ function persistLocal(){
   try{ localStorage.setItem(k, JSON.stringify(DB)); }catch(e){}
 }
 async function loadCloud(){
-  const r = await fetch(API_BASE + '/data/' + encodeURIComponent(binId));
+  const r = await fetch(API_BASE + '/data/' + encodeURIComponent(binId), { cache:'no-store' });
   if(r.status === 404) return null;
   if(!r.ok) throw new Error('读取失败 ' + r.status);
   return r.json();
 }
-async function saveCloud(){
+/* 保存前先取云端最新，合并后再写回。
+   这样两台设备交替操作也不会互相抹掉对方，离线期间的记录也补得回来 */
+async function saveCloud(opt){
+  opt = opt || {};
   if(!binId || !DB) return;
-  DB.updatedAt = new Date().toISOString();
   if(syncing){ pending = true; return; }
   syncing = true; setSync('busy','同步中…');
   try{
+    let remote = null;
+    try{ remote = await loadCloud(); }
+    catch(e){ remote = null; throw e; }
+
+    if(remote && remote !== null){
+      const m = mergeDB(remote, DB);        // 云端为底，并入本地改动
+      if(m.changed > 0){
+        DB = m.db;
+        persistLocal();
+        if(!opt.silent) renderAll();
+      }
+      DB.rev = Math.max(remote.rev || 0, DB.rev || 0) + 1;
+    }else{
+      DB.rev = (DB.rev || 0) + 1;
+    }
+    DB.updatedAt = new Date().toISOString();
+    DB.device = DEVICE_ID;
+
+    snapshotPush();                          // 写回前留一份快照
     const r = await fetch(API_BASE + '/data/' + encodeURIComponent(binId), {
       method:'PUT', headers:{'Content-Type':'application/json'}, body: JSON.stringify(DB)
     });
     if(!r.ok) throw new Error('保存失败');
-    persistLocal(); setSync('on','已同步 · ' + new Date().toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'}));
+    persistLocal();
+    setSync('on','已同步 · ' + new Date().toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'}));
   }catch(e){
-    persistLocal(); setSync('off','离线 · 已存本地');
+    persistLocal();
+    setSync('off','离线 · 已存本地，联网后自动补回');
   }finally{
     syncing = false;
     if(pending){ pending = false; saveCloud(); }
@@ -468,6 +628,50 @@ function scheduleSave(){
   persistLocal();
   clearTimeout(timer);
   timer = setTimeout(saveCloud, 700);
+}
+/* 页面切后台/关闭前把待写入的改动立刻落盘，别等 700ms 防抖 */
+function flushSave(){
+  if(timer){ clearTimeout(timer); timer = null; }
+  if(DB && !syncing) saveCloud({silent:true});
+}
+
+/* ============ 本地快照：写回云端前留一份，误删/异常时可回滚 ============ */
+function snapKey(){ return binId ? LS_SNAP + binId : null; }
+function snapList(){
+  const k = snapKey(); if(!k) return [];
+  try{
+    const arr = JSON.parse(localStorage.getItem(k) || '[]');
+    return Array.isArray(arr) ? arr : [];
+  }catch(e){ return []; }
+}
+function snapshotPush(){
+  const k = snapKey(); if(!k || !DB) return;
+  try{
+    const arr = snapList();
+    const now = Date.now();
+    const last = arr[0];
+    const n = Object.keys(DB.learned || {}).length;
+    // 字数变了就留档（回滚才有意义）；没变的话 5 分钟留一次，避免刷屏
+    if(last && last.learned === n && now - last.t < 300000) return;
+    arr.unshift({ t:now, learned:n, rev:DB.rev||0, db:JSON.stringify(DB) });
+    while(arr.length > SNAP_MAX) arr.pop();
+    localStorage.setItem(k, JSON.stringify(arr));
+  }catch(e){
+    // 配额不够就只留最近一份
+    try{
+      localStorage.setItem(k, JSON.stringify([{ t:Date.now(), learned:Object.keys(DB.learned||{}).length,
+        rev:DB.rev||0, db:JSON.stringify(DB) }]));
+    }catch(e2){}
+  }
+}
+function snapshotRestore(i){
+  const arr = snapList();
+  const s = arr[i]; if(!s) return false;
+  try{
+    DB = normalize(JSON.parse(s.db));
+    persistLocal(); scheduleSave(); renderAll();
+    return true;
+  }catch(e){ return false; }
 }
 
 /* ============ 字库 ============ */
@@ -536,6 +740,7 @@ function pull(c){
   const fresh = pickNew(1)[0];
   if(fresh){ d.chars[i] = fresh; d.history.push(fresh); }
   else d.chars.splice(i, 1);
+  d.at = new Date().toISOString();   // 换过卡片 → 这一方更新，合并时优先采用
   return fresh || null;
 }
 /* 认识了 → 归入已掌握，卡片盖上「认」章后翻走，换上新字 */
@@ -574,7 +779,7 @@ function renderAll(){
 }
 function renderTabs(){
   $('#n-today').textContent = todayDone() + '/' + DB.perDay;
-  $('#n-quiz').textContent = DB.quiz.total;
+  $('#n-quiz').textContent = quizTotals(DB.quiz).total;
   $('#n-lib').textContent = learnedCount();
   $('#n-log').textContent = Object.keys(DB.days).length;
   $('#n-stat').textContent = Math.round(learnedCount() / POOL.length * 100) + '%';
@@ -645,8 +850,9 @@ function renderQuizPane(){
   const scopes = [['learned','学过的'],['fuzzy','需巩固'],['known','已掌握'],['all','全部字库']];
   $('#q-scope').innerHTML = scopes.map(s =>
     '<button class="chip" data-q="' + s[0] + '" aria-pressed="' + (qScope===s[0]) + '">' + s[1] + '</button>').join('');
-  $('#q-right').textContent = DB.quiz.right;
-  $('#q-rate').textContent = DB.quiz.total ? Math.round(DB.quiz.right / DB.quiz.total * 100) + '%' : '—';
+  const qt = quizTotals(DB.quiz);
+  $('#q-right').textContent = qt.right;
+  $('#q-rate').textContent = qt.total ? Math.round(qt.right / qt.total * 100) + '%' : '—';
   $('#q-cur').textContent = quiz.total;
   if(!quiz.cur){ nextQuiz(); return; }
   renderQuizCard();
@@ -699,9 +905,9 @@ function renderQuizCard(){
 function answer(ok){
   if(quiz.revealed) return;
   quiz.revealed = true; quiz.total++;
-  DB.quiz.total++;
+  bumpQuiz(!!ok);
   if(ok){
-    quiz.right++; DB.quiz.right++;
+    quiz.right++;
     const e = DB.learned[quiz.cur];
     if(e && e.status === 'fuzzy'){ e.hit = (e.hit||0)+1; if(e.hit >= 2) e.status = 'known'; }
   }else{
@@ -862,6 +1068,31 @@ function speak(text){
 
 /* ============ 工具 ============ */
 function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
+function download(blob, name){
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob); a.download = name;
+  document.body.appendChild(a); a.click();
+  setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1000);
+}
+function renderSnapRow(){
+  const box = $('#s-snaps'); if(!box) return;
+  const arr = snapList();
+  if(!arr.length){ box.innerHTML = '<span class="hint">暂无（同步后自动生成）</span>'; return; }
+  box.innerHTML = arr.map((s, i) => {
+    const d = new Date(s.t);
+    const hm = String(d.getHours()).padStart(2,'0') + ':' + String(d.getMinutes()).padStart(2,'0');
+    return '<button class="btn ghost sm" data-snap="' + i + '">'
+      + (d.getMonth()+1) + '/' + d.getDate() + ' ' + hm + ' · ' + (s.learned||0) + '字</button>';
+  }).join('');
+  box.onclick = e => {
+    const b = e.target.closest('button[data-snap]'); if(!b) return;
+    const i = +b.dataset.snap;
+    if(!confirm('回到这个版本？当前进度会先存成一份新快照。')) return;
+    snapshotPush();
+    if(snapshotRestore(i + 1)){ toast('已回滚'); renderSnapRow(); }
+    else toast('回滚失败');
+  };
+}
 let tToast = null;
 function toast(msg){
   const t = $('#toast'); t.textContent = msg; t.classList.add('on');
@@ -958,11 +1189,35 @@ function bind(){
     else prompt('复制这个链接', url);
   };
   $('#s-export').onclick = () => {
-    const blob = new Blob([JSON.stringify(DB, null, 1)], {type:'application/json'});
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(blob);
-    a.download = 'yining-literacy-' + todayKey() + '.json';
-    a.click();
+    download(new Blob([JSON.stringify(DB, null, 1)], {type:'application/json'}),
+             '认字簿备份-' + DB.child + '-' + todayKey() + '.json');
+    toast('备份已下载');
+  };
+  $('#s-report').onclick = () => {
+    download(new Blob([buildReport()], {type:'text/html;charset=utf-8'}),
+             '以宁的认字进度-' + todayKey() + '.html');
+    toast('报告已下载，双击即可打开');
+  };
+  $('#s-csv').onclick = () => {
+    download(new Blob(['\ufeff' + buildCSV()], {type:'text/csv;charset=utf-8'}),
+             '认字明细-' + DB.child + '-' + todayKey() + '.csv');
+    toast('明细已下载');
+  };
+  $('#s-pull').onclick = async () => {
+    setSync('busy','拉取中…');
+    try{
+      const cloud = await loadCloud();
+      if(!cloud){ toast('云端还没有数据'); setSync('off','云端为空'); return; }
+      const m = mergeDB(DB, cloud);
+      DB = m.db; persistLocal(); renderAll();
+      toast(m.changed ? '已并入 ' + m.changed + ' 处云端更新' : '已是最新');
+      setSync('on','已同步');
+    }catch(e){ toast('拉取失败，稍后再试'); setSync('off','离线'); }
+  };
+  $('#s-push').onclick = async () => {
+    setSync('busy','上传中…');
+    await saveCloud({silent:true});
+    renderAll(); toast('已上传到云端');
   };
   $('#s-import').onclick = () => {
     const i = document.createElement('input'); i.type = 'file'; i.accept = '.json';
@@ -982,6 +1237,285 @@ function bind(){
 
   $('#mask').onclick = e => { if(e.target.id === 'mask') closeDetail(); };
   document.addEventListener('keydown', e => { if(e.key === 'Escape') closeDetail(); });
+
+  /* 切后台 / 关页面 / 断网恢复：都把待写入的改动补回云端 */
+  const flush = () => flushSave();
+  document.addEventListener('visibilitychange', () => { if(document.hidden) flush(); });
+  window.addEventListener('pagehide', flush);
+  window.addEventListener('beforeunload', flush);
+  window.addEventListener('online', () => { setSync('busy','重新连接…'); flushSave(); });
+  // 每 2 分钟兜底同步一次：多端同时用的时候，这台也能看到别的设备刚教的字
+  setInterval(() => { if(!document.hidden && !syncing) syncPull(); }, 120000);
+}
+/* 只拉不合：定时把云端新内容并进来（本地未上传的不会丢，saveCloud 会带上去） */
+async function syncPull(){
+  if(!binId || syncing) return;
+  try{
+    const cloud = await loadCloud();
+    if(!cloud) return;
+    const m = mergeDB(DB, cloud);
+    if(m.changed > 0){
+      DB = m.db; persistLocal(); renderAll();
+      toast('已同步其他设备的新记录');
+    }
+  }catch(e){}
+}
+
+/* ============ 报告数据 ============ */
+function reportData(){
+  const ks = Object.keys(DB.learned);
+  const known = ks.filter(c => DB.learned[c].status === 'known');
+  const fuzzy = ks.filter(c => DB.learned[c].status === 'fuzzy');
+  const left  = POOL.length - ks.length;
+
+  let streak = 0;
+  const cur = new Date();
+  for(let i=0;i<400;i++){
+    const k = fmtDate(cur);
+    if(DB.days[k]) streak++;
+    else if(i > 0) break;
+    cur.setDate(cur.getDate()-1);
+  }
+
+  // 按日期升序：累计掌握曲线 + 明细
+  const dayKeys = Object.keys(DB.days).sort();
+  const cum = [];
+  const acc = new Set();
+  dayKeys.forEach(k => {
+    const d = DB.days[k];
+    const seen = ((d.history && d.history.length) ? d.history : d.chars) || [];
+    seen.forEach(c => { if(DB.learned[c]) acc.add(c); });
+    cum.push({ k, n: acc.size });
+  });
+
+  const grades = GRADES.map((g, i) => {
+    const tot = POOL.filter(x => x.gi === i).length || 1;
+    const kn  = known.filter(c => (MAP[c] && MAP[c].gi === i)).length;
+    return { name:g.name, tot:POOL.filter(x => x.gi === i).length, known:kn, pct: kn/tot*100 };
+  });
+
+  const qt = quizTotals(DB.quiz);
+  // 每位大人教了多少字（按 learned 记录的 teacher）
+  const byTeacher = {};
+  Object.keys(DB.learned).forEach(c => {
+    const t = DB.learned[c].teacher || '未记录';
+    byTeacher[t] = (byTeacher[t] || 0) + 1;
+  });
+  return {
+    child:DB.child, known:known.slice().sort(), fuzzy:fuzzy.slice().sort(), left,
+    learned:ks.length, streak, days:dayKeys.length, cum, grades,
+    qt, byTeacher, perDay:DB.perDay, pool:POOL.length
+  };
+}
+
+/* ============ 学习进度报告（自包含 HTML，可打印成 PDF） ============ */
+function buildReport(){
+  const R = reportData();
+  const now = new Date();
+  const genAt = now.getFullYear() + '-' + String(now.getMonth()+1).padStart(2,'0') + '-'
+    + String(now.getDate()).padStart(2,'0') + ' '
+    + String(now.getHours()).padStart(2,'0') + ':' + String(now.getMinutes()).padStart(2,'0');
+  const first = R.cum.length ? R.cum[0].k : '—';
+
+  /* --- 累计掌握曲线（内联 SVG，无外部依赖） --- */
+  let curve = '';
+  if(R.cum.length >= 1){
+    const W = 680, H = 190, PL = 44, PR = 14, PT = 16, PB = 30;
+    const maxN = Math.max(1, R.cum[R.cum.length-1].n);
+    const x = i => PL + (W-PL-PR) * (R.cum.length===1 ? .5 : i/(R.cum.length-1));
+    const y = n => PT + (H-PT-PB) * (1 - n/maxN);
+    const pts = R.cum.map((p,i) => x(i).toFixed(1) + ',' + y(p.n).toFixed(1)).join(' ');
+    const area = pts + ' ' + x(R.cum.length-1).toFixed(1) + ',' + (H-PB) + ' ' + x(0).toFixed(1) + ',' + (H-PB);
+    let grid = '', ticks = '';
+    for(let g=0; g<=4; g++){
+      const v = Math.round(maxN * g/4), gy = y(v).toFixed(1);
+      grid += '<line x1="'+PL+'" y1="'+gy+'" x2="'+(W-PR)+'" y2="'+gy+'" stroke="#E7DFD0" stroke-width="1"'
+            + (g===0 ? '' : ' stroke-dasharray="3 4"') + '/>';
+      ticks += '<text x="'+(PL-8)+'" y="'+(+gy+4)+'" text-anchor="end" font-size="11" fill="#9A9083">'+v+'</text>';
+    }
+    let labels = '';
+    [0, Math.floor((R.cum.length-1)/2), R.cum.length-1].forEach((i, idx) => {
+      if(idx === 1 && R.cum.length < 3) return;
+      labels += '<text x="'+x(i).toFixed(1)+'" y="'+(H-9)+'" text-anchor="middle" font-size="11" fill="#9A9083">'
+              + R.cum[i].k.slice(5) + '</text>';
+    });
+    curve = '<svg viewBox="0 0 '+W+' '+H+'" width="100%" height="'+H+'" role="img" aria-label="累计掌握字数曲线">'
+      + grid + ticks
+      + '<polygon points="'+area+'" fill="#C1443B" opacity=".10"/>'
+      + '<polyline points="'+pts+'" fill="none" stroke="#C1443B" stroke-width="2.4" '
+      + 'stroke-linejoin="round" stroke-linecap="round"/>'
+      + R.cum.map((p,i) => '<circle cx="'+x(i).toFixed(1)+'" cy="'+y(p.n).toFixed(1)+'" r="2.6" fill="#C1443B"/>').join('')
+      + labels + '</svg>';
+  }else{
+    curve = '<p class="muted">还没有足够的数据画出曲线，学满两天后就会出现。</p>';
+  }
+
+  /* --- 12 周打卡热力图 --- */
+  const todayK = todayKey();
+  const end = new Date(todayK + 'T00:00:00');
+  end.setDate(end.getDate() + (6 - ((end.getDay()+6)%7)));   // 补到本周日
+  const cells = [];
+  for(let i=83; i>=0; i--){
+    const dt = new Date(end); dt.setDate(dt.getDate()-i);
+    const k = fmtDate(dt);
+    const d = DB.days[k];
+    const cnt = d ? (((d.history&&d.history.length)?d.history:d.chars)||[]).filter(c=>DB.learned[c]).length : 0;
+    cells.push({ k, cnt, future: k > todayK, day:dt.getDay() });
+  }
+  const maxCnt = Math.max(1, ...cells.map(c => c.cnt));
+  const lvl = c => c.cnt === 0 ? 0 : (c.cnt >= maxCnt ? 4 : (c.cnt >= maxCnt*.66 ? 3 : (c.cnt >= maxCnt*.33 ? 2 : 1)));
+  const HBG = ['#EFEAE0','#F2D9D2','#E9B6AB','#DC8B7C','#C1443B'];
+  let heat = '<div class="heat">';
+  for(let w=0; w<12; w++){
+    heat += '<div class="hcol">';
+    for(let dd=0; dd<7; dd++){
+      const c = cells[w*7+dd];
+      const bg = c.future ? 'transparent' : HBG[lvl(c)];
+      const title = c.future ? '' : (c.k + '：' + (c.cnt ? '学会 ' + c.cnt + ' 字' : '休息'));
+      heat += '<i style="background:' + bg + '" title="' + title + '"></i>';
+    }
+    heat += '</div>';
+  }
+  heat += '</div>';
+
+  /* --- 每日明细 --- */
+  const rows = Object.keys(DB.days).sort().reverse().map(k => {
+    const d = DB.days[k];
+    const dd = new Date(k + 'T00:00:00');
+    const seen = ((d.history&&d.history.length) ? d.history : d.chars) || [];
+    const got = seen.filter(c => DB.learned[c] && DB.learned[c].status === 'known');
+    return '<tr><td class="nowrap">' + k + '</td>'
+      + '<td class="nowrap">' + (dd.getMonth()+1) + '/' + dd.getDate() + ' 周' + weekday(dd) + '</td>'
+      + '<td class="nowrap">' + esc(d.teacher || '—') + '</td>'
+      + '<td class="nowrap">' + seen.length + '</td>'
+      + '<td class="nowrap"><b>' + got.length + '</b></td>'
+      + '<td class="hzline">' + seen.map(c => '<span class="' + (DB.learned[c] && DB.learned[c].status==='known' ? 'k' : 'f') + '">' + c + '</span>').join('') + '</td></tr>';
+  }).join('');
+
+  const chip = arr => arr.length
+    ? arr.map(c => '<span class="cc k">' + c + '</span>').join('')
+    : '<span class="muted">暂无</span>';
+
+  return '<!DOCTYPE html>\n<html lang="zh-CN"><head><meta charset="utf-8">'
+  + '<meta name="viewport" content="width=device-width,initial-scale=1">'
+  + '<title>' + esc(R.child) + '的认字进度报告 · ' + genAt.slice(0,10) + '</title>'
+  + '<style>' + REPORT_CSS + '</style></head><body><div class="pg">'
+  + '<header><div><h1>' + esc(R.child) + '的认字进度报告</h1>'
+  + '<p class="sub">统计区间 ' + first + ' 至 ' + todayK + ' · 生成于 ' + genAt + '</p></div>'
+  + '<div class="seal">认</div></header>'
+
+  + '<section class="kpis">'
+  + kpi(R.known.length, '已掌握', '字') + kpi(R.fuzzy.length, '需巩固', '字')
+  + kpi(R.left, '剩余', '字') + kpi(R.streak, '连续打卡', '天')
+  + kpi(R.days, '累计打卡', '天')
+  + kpi(R.qt.total ? Math.round(R.qt.right/R.qt.total*100) + '%' : '—', '抽查正确率',
+        R.qt.total ? '答 ' + R.qt.total + ' 题' : '还没抽查')
+  + '</section>'
+
+  + '<section class="card"><h2>学习曲线</h2>'
+  + '<p class="muted">纵轴是累计学会的字数，横轴是日期。</p>' + curve + '</section>'
+
+  + '<section class="card"><h2>打卡日历（最近 12 周）</h2>'
+  + heat
+  + '<p class="legend"><span>少</span>'
+  + HBG.map(b => '<i style="background:' + b + '"></i>').join('')
+  + '<span>多</span><em>灰色表示这天还没到 / 休息</em></p></section>'
+
+  + '<section class="card"><h2>分册进度</h2>'
+  + R.grades.map(g => '<div class="bar"><div class="l"><span>' + esc(g.name)
+      + '</span><span>' + g.known + ' / ' + g.tot + '</span></div>'
+      + '<div class="t"><i style="width:' + g.pct.toFixed(1) + '%"></i></div></div>').join('')
+  + '<div class="bar total"><div class="l"><span><b>总进度</b></span><span><b>'
+      + R.learned + ' / ' + R.pool + '</b></span></div>'
+      + '<div class="t"><i style="width:' + (R.learned/R.pool*100).toFixed(1) + '%"></i></div></div>'
+  + '</section>'
+
+  + (Object.keys(R.byTeacher).length ? '<section class="card"><h2>谁教得多</h2><div class="tea">'
+      + Object.keys(R.byTeacher).sort((a,b)=>R.byTeacher[b]-R.byTeacher[a])
+        .map(t => '<div class="ti"><b>' + esc(t) + '</b><span>' + R.byTeacher[t] + ' 字</span>'
+        + '<div class="t"><i style="width:' + (R.byTeacher[t]/R.learned*100).toFixed(1) + '%"></i></div></div>').join('')
+      + '</div></section>' : '')
+
+  + '<section class="card"><h2>每日明细</h2>'
+  + (rows ? '<table><thead><tr><th>日期</th><th>星期</th><th>教的人</th><th>学</th><th>会</th><th>当天学的字</th></tr></thead><tbody>' + rows + '</tbody></table>'
+         : '<p class="muted">还没有记录。</p>')
+  + '</section>'
+
+  + '<section class="card"><h2>已掌握（' + R.known.length + ' 字）</h2><div class="chips">' + chip(R.known) + '</div></section>'
+  + (R.fuzzy.length ? '<section class="card"><h2>需要巩固（' + R.fuzzy.length + ' 字）</h2><div class="chips">'
+      + R.fuzzy.map(c => '<span class="cc f">' + c + '</span>').join('') + '</div></section>' : '')
+
+  + '<footer>由「' + esc(R.child) + '的认字簿」生成 · 数据源自云端同步记录'
+  + (R.qt.total ? ' · 累计抽查 ' + R.qt.total + ' 次' : '') + '</footer>'
+  + '</div></body></html>';
+}
+function kpi(v, label, unit){
+  return '<div class="kpi"><b>' + v + '</b><span>' + esc(label) + '</span><em>' + esc(unit) + '</em></div>';
+}
+const REPORT_CSS = [
+':root{--paper:#FAF6EE;--ink:#2E2A24;--ink2:#6B6357;--muted:#9A9083;--line:#E7DFD0;--red:#C1443B;--green:#4F7A54}',
+'*{box-sizing:border-box}',
+'body{margin:0;background:#F2EDE3;color:var(--ink);',
+'font-family:"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;line-height:1.6;-webkit-font-smoothing:antialiased}',
+'.pg{max-width:760px;margin:0 auto;padding:36px 22px 60px}',
+'header{display:flex;align-items:center;justify-content:space-between;gap:16px;',
+'border-bottom:2px solid var(--ink);padding-bottom:16px;margin-bottom:22px}',
+'h1{margin:0;font-size:25px;letter-spacing:.02em}',
+'.sub{margin:5px 0 0;color:var(--muted);font-size:13px}',
+'.seal{width:50px;height:50px;flex:0 0 50px;border:2px solid var(--red);border-radius:8px;color:var(--red);',
+'display:flex;align-items:center;justify-content:center;font-size:24px;',
+'font-family:"Kaiti SC","STKaiti",serif;transform:rotate(-6deg)}',
+'.kpis{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;margin-bottom:22px}',
+'.kpi{background:#fff;border:1px solid var(--line);border-radius:12px;padding:13px 8px;text-align:center}',
+'.kpi b{display:block;font-size:24px;line-height:1.15;color:var(--red)}',
+'.kpi span{display:block;font-size:12px;color:var(--ink2);margin-top:3px}',
+'.kpi em{display:block;font-size:10px;color:var(--muted);font-style:normal}',
+'.card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:20px 22px;margin-bottom:18px;',
+'break-inside:avoid}',
+'.card h2{margin:0 0 12px;font-size:16px;letter-spacing:.03em}',
+'.muted{color:var(--muted);font-size:13px;margin:0 0 10px}',
+'.heat{display:flex;gap:4px;overflow-x:auto;padding-bottom:4px}',
+'.hcol{display:flex;flex-direction:column;gap:4px}',
+'.heat i{width:13px;height:13px;border-radius:3px;display:block;background:#EFEAE0}',
+'.legend{display:flex;align-items:center;gap:5px;margin:12px 0 0;font-size:11px;color:var(--muted)}',
+'.legend i{width:11px;height:11px;border-radius:3px;display:inline-block}',
+'.legend em{margin-left:8px;font-style:normal}',
+'.bar{margin-bottom:12px}.bar .l{display:flex;justify-content:space-between;font-size:13px;margin-bottom:5px;color:var(--ink2)}',
+'.bar .t{height:9px;background:#EFEAE0;border-radius:6px;overflow:hidden}',
+'.bar .t i{display:block;height:100%;background:var(--red);border-radius:6px}',
+'.bar.total{margin-top:16px;padding-top:14px;border-top:1px dashed var(--line)}',
+'.tea{display:grid;grid-template-columns:1fr 1fr;gap:14px}',
+'.ti{font-size:13px}.ti b{color:var(--ink)}.ti span{color:var(--muted);margin-left:6px}',
+'.ti .t{height:7px;background:#EFEAE0;border-radius:5px;overflow:hidden;margin-top:5px}',
+'.ti .t i{display:block;height:100%;background:#4F7A54;border-radius:5px}',
+'table{width:100%;border-collapse:collapse;font-size:13px}',
+'th,td{padding:8px 6px;text-align:left;border-bottom:1px solid var(--line);vertical-align:top}',
+'th{font-size:11px;color:var(--muted);font-weight:600;letter-spacing:.04em}',
+'.nowrap{white-space:nowrap}',
+'.hzline{font-family:"Kaiti SC","STKaiti",serif;font-size:16px;line-height:1.9}',
+'.hzline span{display:inline-block;width:22px;text-align:center}',
+'.hzline .k{color:var(--green)}.hzline .f{color:#C08A2E}',
+'.chips{display:flex;flex-wrap:wrap;gap:6px}',
+'.cc{font-family:"Kaiti SC","STKaiti",serif;font-size:19px;width:31px;height:31px;line-height:31px;',
+'text-align:center;border-radius:7px;background:#F5F1E8}',
+'.cc.k{background:#E8F0E7;color:var(--green)}.cc.f{background:#FBF0DA;color:#B07D1F}',
+'footer{margin-top:26px;padding-top:14px;border-top:1px solid var(--line);font-size:11px;color:var(--muted);text-align:center}',
+'@media(max-width:640px){.kpis{grid-template-columns:repeat(3,1fr)}.tea{grid-template-columns:1fr}}',
+'@media print{body{background:#fff}.pg{padding:0;max-width:none}',
+'.card{border-color:#DDD;page-break-inside:avoid}}'
+].join('');
+
+function buildCSV(){
+  const head = ['字','拼音','册次','状态','学会日期','教的人','来源'];
+  const lines = [head.join(',')];
+  const q = s => '"' + String(s==null?'':s).replace(/"/g,'""') + '"';
+  Object.keys(DB.learned).sort().forEach(c => {
+    const e = DB.learned[c], it = MAP[c] || {};
+    lines.push([q(c), q(it.p||''), q(it.g||''),
+      q(e.status === 'known' ? '已掌握' : '需巩固'),
+      q(e.date||''), q(e.teacher||''), q(e.via === 'ok' ? '今日卡片' : (e.via || '抽查'))].join(','));
+  });
+  return lines.join('\n');
 }
 
 /* ============ 启动 ============ */
@@ -993,7 +1527,7 @@ async function boot(){
   try{ await loadChars(); }
   catch(e){ document.querySelector('.wrap').innerHTML = '<div class="card"><div class="empty">字库加载失败，请刷新重试。</div></div>'; return; }
 
-  // 先本地，后云端
+  // 先本地（离线也能立刻用），再与云端合并
   const cached = localStorage.getItem(LS_DATA + binId);
   DB = normalize(cached ? JSON.parse(cached) : null);
 
@@ -1003,16 +1537,22 @@ async function boot(){
   try{
     const cloud = await loadCloud();
     if(cloud){
-      DB = normalize(cloud);
+      // 关键：以云端为底并入本地，而不是拿云端整体覆盖本地。
+      // 否则离线期间教的字会被云端旧数据抹掉。
+      const m = mergeDB(cloud, DB);
+      DB = m.db;
       persistLocal();
       setSync('on','已同步');
+      if(m.changed > 0) await saveCloud({silent:true});   // 本地有云端缺的，补回去
+      renderAll();
     }else{
-      await saveCloud();   // 首次：用固定 id 建一份
+      await saveCloud({silent:true});   // 首次：用固定 id 建一份
+      renderAll();
     }
   }catch(e){
-    setSync('off','离线 · 用本地数据');
+    setSync('off','离线 · 已存本地，联网后自动补回');
   }
-  renderAll();
+  renderSnapRow();
 
   // 笔顺动画（CDN 可用时才出现按钮）
   const s = document.createElement('script');
@@ -1021,6 +1561,13 @@ async function boot(){
   s.onerror = () => { hwReady = false; };
   document.head.appendChild(s);
 }
+
+/* 自动化测试用的观察口（只读，不改变任何行为） */
+window.__lit = {
+  get db(){ return DB; },
+  quizTotal(){ return quizTotals(DB.quiz).total; },
+  syncPull, saveCloud, mergeDB, buildReport, buildCSV, snapshotRestore, snapList
+};
 boot();
 </script>
 </body>

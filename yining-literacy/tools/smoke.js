@@ -127,7 +127,7 @@ function ok(name, cond, extra) {
   $$('#q-body [data-qa="right"]')[0].click();
   await wait(1100);
   ok('答对后显示拼音', !!$('#q-body .py'), $('#q-body .py') ? $('#q-body .py').textContent : '');
-  ok('抽查计数 +1', cloud.store.quiz.total === 1, JSON.stringify(cloud.store.quiz));
+  ok('抽查计数 +1', window.__lit.quizTotal() === 1, JSON.stringify(cloud.store.quiz));
   $$('#q-body [data-qa="next"]')[0].click();
   await wait(300);
   ok('可切换到下一个字', $('#q-body .tz .hz').textContent !== qc || true);
@@ -172,6 +172,89 @@ function ok(name, cond, extra) {
   ok('详情含拼音', !!$('#sheet .dpy').textContent.trim(), $('#sheet .dpy').textContent);
   ok('详情含组词或占位', !!$('#sheet .dws'));
   ok('详情含册次', /年级/.test($('#sheet .dmeta').textContent), $('#sheet .dmeta').textContent);
+
+  console.log('--- 导出 ---');
+  let dl = null;
+  window.URL.createObjectURL = b => { dl = b; return 'blob:mock'; };
+  window.URL.revokeObjectURL = () => {};
+  const origCreate = doc.createElement.bind(doc);
+  doc.createElement = tag => {
+    const el = origCreate(tag);
+    if (String(tag).toLowerCase() === 'a') el.click = () => { dl = dl || { __clicked: true }; };
+    return el;
+  };
+  $$('.tab')[4].click();
+  await wait(150);
+  $('#s-report').click();
+  await wait(60);
+  ok('报告文件已生成', !!dl && dl.size > 2000, dl ? dl.size + ' 字节' : '未生成');
+  const rpt = dl ? await dl.text() : '';
+  ok('报告含孩子名字', rpt.includes('以宁'));
+  ok('报告含 KPI 区块', /已掌握[\s\S]*需巩固[\s\S]*剩余/.test(rpt));
+  ok('报告含内联曲线 SVG', rpt.includes('<svg') && rpt.includes('polyline'));
+  ok('报告含 12 周热力图', rpt.includes('class="heat"') && (rpt.match(/<i style="background:/g) || []).length >= 80);
+  ok('报告含每日明细表', rpt.includes('<table') && rpt.includes('当天学的字'));
+  ok('报告含已掌握字表', rpt.includes('已掌握（'));
+  ok('报告自包含（不引外部资源）', !/src="https?:|href="https?:/.test(rpt));
+  ok('报告无 JS 依赖', !/<script/i.test(rpt));
+
+  dl = null;
+  $('#s-csv').click();
+  await wait(60);
+  const csv = dl ? await dl.text() : '';
+  const csvHead = (csv.split('\n')[0] || '').replace(/^\ufeff/, '');
+  ok('CSV 已生成带表头', csvHead === '字,拼音,册次,状态,学会日期,教的人,来源', JSON.stringify(csvHead));
+  ok('CSV 行数 = 表头 + 已学字', (csv.trim().split('\n')).length === Object.keys(window.__lit.db.learned).length + 1,
+    (csv.trim().split('\n')).length + ' 行');
+  ok('CSV 含学到的字', csv.includes('一'));
+
+  console.log('--- 多端合并同步 ---');
+  const L = window.__lit;
+  const mineBefore = Object.keys(L.db.learned).length;
+  const quizBefore = L.quizTotal();
+
+  // 模拟「另一台设备」：它整份覆盖式 PUT 回云端，且不含本机的任何改动
+  const other = JSON.parse(JSON.stringify(cloud.store));
+  delete other.learned[firstChar];                       // 那台设备不知道本机教过的字
+  const poolChars = JSON.parse(charsRaw).grades.flatMap(g => g.chars.map(a => a[0]));
+  const otherChar = poolChars.find(c => !other.learned[c]
+    && !(other.days[dayKey].history || []).includes(c));
+  other.learned[otherChar] = { status: 'known', date: dayKey, teacher: '奶奶' };
+  other.days[dayKey].history = (other.days[dayKey].history || []).concat([otherChar]);
+  other.quiz[dayKey] = [7, 9];                            // 那台设备答了 9 题对 7
+  cloud.store = other;
+
+  await L.syncPull();
+  await wait(200);
+  ok('合并后本机教的字还在（没被覆盖）', !!L.db.learned[firstChar], firstChar);
+  ok('合并后拿到了另一台设备教的字', !!L.db.learned[otherChar], otherChar);
+  ok('两边记录都在', Object.keys(L.db.learned).length >= mineBefore + 1,
+    mineBefore + ' → ' + Object.keys(L.db.learned).length);
+  ok('抽查计数累加而非覆盖', L.quizTotal() >= quizBefore + 9,
+    quizBefore + ' → ' + L.quizTotal() + ' 题');
+  ok('另一台设备的字记着是谁教的', L.db.learned[otherChar].teacher === '奶奶',
+    L.db.learned[otherChar].teacher);
+
+  // 合并结果再上传，云端应当同时含两边
+  await L.saveCloud({ silent: true });
+  await wait(300);
+  ok('云端同时含两边的记录',
+    !!(cloud.store.learned[firstChar] && cloud.store.learned[otherChar]),
+    Object.keys(cloud.store.learned).join(''));
+
+  console.log('--- 快照回滚 ---');
+  const snaps = L.snapList();
+  ok('已生成本地快照', snaps.length >= 1, snaps.length + ' 份');
+  if (snaps.length) {
+    const before = Object.keys(L.db.learned).length;
+    L.db.learned['测'] = { status: 'known', date: dayKey, teacher: '' };   // 造一条脏数据
+    const okRoll = L.snapshotRestore(0);
+    await wait(100);
+    ok('回滚成功', okRoll);
+    ok('回滚后脏数据消失', !L.db.learned['测']);
+    ok('回滚后字数回到快照值', Object.keys(L.db.learned).length === (snaps[0].learned || before),
+      Object.keys(L.db.learned).length + ' 字');
+  }
 
   console.log('\n--- 运行时错误 ---');
   if (errors.length) { errors.slice(0, 8).forEach(e => console.log('  ' + e)); fail += errors.length; }
