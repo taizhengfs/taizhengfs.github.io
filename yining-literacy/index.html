@@ -529,10 +529,6 @@ function normalize(d){
   o.version = 3;
   // 深拷贝：normalize 的结果会被 mergeDB 就地改写，共享引用会污染入参
   o.days = (d.days && typeof d.days==='object') ? cloneJSON(d.days) : {};
-  // v3 起每天分「筛选 / 学习」两阶段，与 v2 的单卡片模型不兼容，
-  // 且旧数据口径（本来就认识 vs 当天学会）无法还原。
-  // 旧记录整体作废，翻开干净的一页 —— 这样连旧缓存也会自动丢弃。
-  if((parseInt(d.version, 10) || 0) < 3){ o.days = {}; o.learned = {}; }
   for(const dk of Object.keys(o.days)){
     const dd = o.days[dk];
     if(!dd || typeof dd !== 'object'){ delete o.days[dk]; continue; }
@@ -549,6 +545,11 @@ function normalize(d){
     o.days[dk]   = base;
   }
   o.learned = (d.learned && typeof d.learned==='object') ? cloneJSON(d.learned) : {};
+  // v3 起每天分「筛选 / 学习」两阶段，与 v2 的单卡片模型不兼容，
+  // 且旧数据口径（本来就认识 vs 当天学会）无法还原。
+  // 旧记录整体作废，翻开干净的一页 —— 这样连旧缓存也会被自动丢弃。
+  // 必须放在 days/learned 赋值之后，否则清了又被填回来。
+  if((parseInt(d.version, 10) || 0) < 3){ o.days = {}; o.learned = {}; }
   // 旧结构迁移：裸计数 / 扁平按天数组 都归到 legacy 名下，总量不丢
   o.quiz = migrateQuiz(d && d.quiz);
   // 老数据里按天记的 [right,total] 也归到 legacy
