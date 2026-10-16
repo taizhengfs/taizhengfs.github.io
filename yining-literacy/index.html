@@ -587,21 +587,36 @@ function mergeLearn(a, b){
 function mergeDay(a, b){
   if(!a) return b; if(!b) return a;
   const uniq = arr => (arr || []).filter((x, i, s) => x && s.indexOf(x) === i);
+  const perDay = (DB && DB.perDay) || 5;
   // history 取并集：当天露过面的字一个都不能少，用于记录和防止重复抽到
   const history = uniq((a.history || []).concat(b.history || []));
-  // chars 是当前待学的卡片，**取更晚操作过的那一方**，不能取并集——
-  // 否则两台设备各 5 张卡一合并就变成 10 张，永远学不完
   const atA = String(a.at || ''), atB = String(b.at || '');
   let win = a;
   if(atB > atA) win = b;
   // 有一方已经进入学习阶段就跟着它：锁定比筛选更「新」
   else if(a.phase === 'sift' && b.phase === 'learn') win = b;
   const at = (atB > atA ? atB : atA) || a.at || b.at;
+
+  // 关键：pool 与 sifted 必须同源，且不靠时间戳互相顶掉。
+  // 此前 pool 取「更新的那台」、sifted 取并集，结果另一台选中的字会被顶
+  // 出 pool —— 用户换设备打开就发现「选好的字不见了，换成别的字」。
+  // 现在：双方选中的字一律先占位，再用两台的卡片补齐，不丢任何一方的成果。
+  const phase = win.phase === 'learn' ? 'learn' : 'sift';
+  const sifted = uniq((a.sifted || []).concat(b.sifted || []));
+  let pool = [], sift = sifted;
+  if(phase === 'sift'){
+    // 已进入学习阶段的当天不再有筛选池，别把 pool 又填出来
+    pool = sifted.slice(0, perDay);
+    for(const c of uniq((a.pool || []).concat(b.pool || []))){
+      if(pool.length >= perDay) break;
+      if(!pool.includes(c)) pool.push(c);
+    }
+    sift = sifted.filter(c => pool.includes(c));   // sifted 必须是 pool 的子集
+  }
+
   return { teacher: win.teacher || a.teacher || b.teacher || '',
-           phase: win.phase === 'learn' ? 'learn' : 'sift',
-           pool: uniq((win.pool || []).concat([])),
-           sifted: uniq((a.sifted || []).concat(b.sifted || [])),   // 各选各的，取并集
-           picked: (win.picked || []).slice(),
+           phase, pool, sifted: sift,
+           picked: phase === 'learn' ? (win.picked || []).slice() : [],
            history,
            at };
 }

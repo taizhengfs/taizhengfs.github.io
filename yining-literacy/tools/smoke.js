@@ -239,6 +239,40 @@ const btn = (act, i) => $$('#tiles [data-act="' + act + '"]')[i || 0];
   ok('抽查计数累加', L.quizTotal() >= 10, L.quizTotal() + ' 题');
   ok('合并后仍是学习阶段', L.db.days[k].phase === 'learn');
 
+  console.log('--- 跨设备：选中的字不能被顶掉 ---');
+  {
+    const D = L.db.days[k];
+    // 构造线上真实坏数据：sifted 里的字被挤出 pool（旧合并规则的产物）
+    // 必须用字库里真实存在的字，否则会被 normalize 的缺字清理掉
+    const PICK = JSON.parse(charsRaw).grades.flatMap(g => g.chars.map(a => a[0]));
+    const pick = i => PICK[200 + i];
+    const fakePool = [0, 1, 2, 3, 4].map(pick);
+    const fakeSift = [5, 6].map(pick);
+    D.pool = fakePool.slice();
+    D.sifted = fakeSift.slice();
+    D.history = D.history.concat(fakePool, fakeSift);
+    D.phase = 'sift';
+    // base 是「另一台设备」的数据（卡片完全不同），incoming 是本机坏数据
+    const mk = (pool, sifted, at) => ({
+      teacher: '妈妈', phase: 'sift', pool: pool, sifted: sifted, picked: [],
+      history: pool.concat(sifted), at: at
+    });
+    const base = { version: 3, days: {}, learned: {}, quiz: {} };
+    base.days[k] = mk([5, 6, 7, 8, 9].map(pick), [], '2026-10-16T01:00:00.000Z');
+    const incoming = { version: 3, days: {}, learned: {}, quiz: {} };
+    incoming.days[k] = mk(fakePool, fakeSift, '2026-10-16T02:00:00.000Z');
+    const m = window.__lit.mergeDB(base, incoming);
+    const md = m.db.days[k];
+    ok('合并后 sifted ⊆ pool（不同源会被自愈）',
+      md.sifted.every(c => md.pool.includes(c)),
+      'sifted=' + md.sifted.join('') + ' pool=' + md.pool.join(''));
+    ok('选中的字被保留下来', md.sifted.length === 2, md.sifted.join(''));
+    ok('卡片仍是 5 张', md.pool.length === 5, md.pool.join(''));
+    // 还原
+    D.pool = fakePool.slice();
+    D.sifted = [];
+  }
+
   console.log('--- 重新挑一遍 ---');
   L.reopenSift();
   await wait(400);
