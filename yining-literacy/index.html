@@ -1,0 +1,943 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#FAF6EE">
+<meta name="description" content="以宁的认字簿 · 统编版一二年级识字表，每天五个字">
+<title>以宁的认字簿 - Warden's Life</title>
+<style>
+:root{
+  --paper:#FAF6EE;
+  --paper-2:#F3EDE1;
+  --card:#FFFFFF;
+  --ink:#241F1A;
+  --ink-2:#5C5348;
+  --muted:#9A9083;
+  --line:rgba(36,31,26,.10);
+  --line-2:rgba(36,31,26,.16);
+  --grid:#E3C9BE;
+  --grid-2:#F0DED6;
+  --red:#C1443B;
+  --red-soft:#FBEDEB;
+  --green:#3F6F63;
+  --green-soft:#EAF2EF;
+  --amber:#C8892F;
+  --amber-soft:#FBF2E2;
+  --shadow:0 1px 2px rgba(36,31,26,.04),0 8px 24px rgba(36,31,26,.06);
+  --shadow-lg:0 2px 6px rgba(36,31,26,.06),0 18px 48px rgba(36,31,26,.12);
+  --r:16px;
+  --kai:"Kaiti SC","STKaiti","KaiTi","楷体","Songti SC","STSong",serif;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0}
+body{
+  background:var(--paper);
+  color:var(--ink);
+  font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+  font-size:15px;line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+  padding-bottom:env(safe-area-inset-bottom);
+}
+button{font-family:inherit;font-size:inherit;color:inherit;cursor:pointer;border:0;background:none}
+.wrap{max-width:880px;margin:0 auto;padding:0 18px 72px}
+
+/* ---------- 头部 ---------- */
+.hd{padding:26px 0 14px;display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+.hd h1{margin:0;font-size:26px;letter-spacing:.06em;font-weight:600}
+.hd .sub{margin:4px 0 0;font-size:12.5px;color:var(--muted);letter-spacing:.04em}
+.seal{
+  flex:none;width:46px;height:46px;border-radius:12px;background:var(--red);
+  color:#fff;display:flex;align-items:center;justify-content:center;
+  font-family:var(--kai);font-size:24px;letter-spacing:0;
+  box-shadow:0 4px 12px rgba(193,68,59,.28);
+}
+.sync{display:flex;align-items:center;gap:6px;font-size:11.5px;color:var(--muted);margin-top:8px}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--muted);flex:none}
+.dot.on{background:var(--green)}.dot.busy{background:var(--amber);animation:pulse 1s infinite}
+.dot.off{background:#C9C2B6}
+@keyframes pulse{50%{opacity:.35}}
+
+/* ---------- Tab ---------- */
+.tabs{
+  display:grid;grid-template-columns:repeat(5,1fr);gap:4px;background:var(--paper-2);
+  padding:4px;border-radius:14px;margin:8px 0 20px;position:sticky;top:8px;z-index:30;
+  box-shadow:0 1px 0 rgba(36,31,26,.04);
+}
+.tab{
+  padding:9px 4px;border-radius:11px;font-size:13.5px;color:var(--ink-2);
+  text-align:center;transition:all .18s;font-weight:500;
+}
+.tab[aria-selected="true"]{background:var(--card);color:var(--ink);box-shadow:0 1px 3px rgba(36,31,26,.10)}
+.tab .tnum{display:block;font-size:10.5px;color:var(--muted);font-variant-numeric:tabular-nums}
+.tab[aria-selected="true"] .tnum{color:var(--red)}
+
+/* ---------- 卡片 ---------- */
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow);padding:18px;margin-bottom:16px}
+.card.tight{padding:14px 16px}
+.ttl{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin:0 0 12px}
+.ttl h2{margin:0;font-size:15px;font-weight:600;letter-spacing:.02em}
+.ttl .hint{font-size:12px;color:var(--muted)}
+.row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+
+/* ---------- 田字格 ---------- */
+.tz{
+  position:relative;background:#fff;border:2px solid var(--grid);border-radius:8px;
+  aspect-ratio:1;width:100%;display:flex;align-items:center;justify-content:center;overflow:hidden;
+}
+.tz.lg{border-radius:12px;border-width:2.5px}
+.tz::before,.tz::after{content:'';position:absolute;inset:0;pointer-events:none}
+.tz::before{
+  background:
+    linear-gradient(to right,transparent calc(50% - .5px),var(--grid-2) calc(50% - .5px),var(--grid-2) calc(50% + .5px),transparent calc(50% + .5px)),
+    linear-gradient(to bottom,transparent calc(50% - .5px),var(--grid-2) calc(50% - .5px),var(--grid-2) calc(50% + .5px),transparent calc(50% + .5px));
+}
+.tz::after{
+  background:
+    linear-gradient(45deg,transparent calc(50% - .4px),var(--grid-2) calc(50% - .4px),var(--grid-2) calc(50% + .4px),transparent calc(50% + .4px)),
+    linear-gradient(-45deg,transparent calc(50% - .4px),var(--grid-2) calc(50% - .4px),var(--grid-2) calc(50% + .4px),transparent calc(50% + .4px));
+  opacity:.75;
+}
+.hz{font-family:var(--kai);font-weight:400;line-height:1;position:relative;z-index:1;user-select:none}
+
+/* ---------- 今日 ---------- */
+.daybar{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:14px}
+.daybar .d{font-size:19px;font-weight:600;letter-spacing:.02em}
+.daybar .d small{font-size:12px;color:var(--muted);font-weight:400;margin-left:8px}
+.teacher{display:flex;gap:7px;flex-wrap:wrap;align-items:center}
+.chip{
+  padding:6px 13px;border-radius:20px;border:1px solid var(--line-2);background:#fff;
+  font-size:13px;color:var(--ink-2);transition:all .16s;
+}
+.chip[aria-pressed="true"]{background:var(--red);border-color:var(--red);color:#fff}
+.chip.ghost{border-style:dashed;color:var(--muted)}
+.tiles{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
+@media(max-width:560px){.tiles{grid-template-columns:repeat(2,1fr);gap:12px}}
+.tile{text-align:center}
+.tile .py{
+  font-size:12px;color:var(--red);letter-spacing:.04em;height:19px;line-height:19px;
+  margin-bottom:5px;font-family:"PingFang SC",sans-serif;
+}
+.tile .py.hide{visibility:hidden}
+.tile .tz .hz{font-size:min(13vw,58px)}
+@media(max-width:560px){.tile .tz .hz{font-size:min(22vw,86px)}}
+.tile .w{margin-top:9px;font-size:11.5px;color:var(--ink-2);min-height:32px;line-height:1.45}
+.tile .w span{display:inline-block;padding:1px 6px;background:var(--paper-2);border-radius:5px;margin:1px}
+.tile .acts{display:flex;gap:6px;margin-top:8px;justify-content:center}
+.tile .acts button{
+  flex:1;padding:6px 4px;border-radius:9px;font-size:12px;border:1px solid var(--line-2);
+  background:#fff;color:var(--ink-2);transition:all .16s;
+}
+.tile .acts button:active{transform:scale(.96)}
+.tile .acts .ok:hover{border-color:var(--green);color:var(--green);background:var(--green-soft)}
+.tile .acts .sw:hover{border-color:var(--amber);color:var(--amber);background:var(--amber-soft)}
+.tile.done .tz{border-color:var(--green);background:var(--green-soft)}
+.tile.done .acts .ok{background:var(--green);border-color:var(--green);color:#fff}
+.tile .stamp{
+  position:absolute;right:-4px;bottom:-4px;z-index:2;width:26px;height:26px;border-radius:50%;
+  background:var(--red);color:#fff;font-family:var(--kai);font-size:13px;
+  display:flex;align-items:center;justify-content:center;box-shadow:0 2px 6px rgba(193,68,59,.3);
+}
+.tzwrap{position:relative}
+.empty{text-align:center;padding:26px 10px;color:var(--muted);font-size:13.5px}
+
+/* ---------- 按钮 ---------- */
+.btn{
+  padding:9px 16px;border-radius:11px;background:var(--ink);color:#fff;font-size:13.5px;
+  transition:all .16s;border:1px solid var(--ink);font-weight:500;
+}
+.btn:hover{opacity:.88}
+.btn.ghost{background:#fff;color:var(--ink-2);border-color:var(--line-2)}
+.btn.ghost:hover{background:var(--paper-2)}
+.btn.red{background:var(--red);border-color:var(--red)}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+.btn.sm{padding:6px 12px;font-size:12.5px;border-radius:9px}
+
+/* ---------- 抽查 ---------- */
+.quiz{text-align:center;padding:8px 0 4px}
+.quiz .qwrap{max-width:270px;margin:0 auto}
+.quiz .tz .hz{font-size:min(30vw,150px)}
+.quiz .meta{margin-top:14px;min-height:56px}
+.quiz .py{font-size:22px;color:var(--red);letter-spacing:.06em;font-weight:500}
+.quiz .ws{margin-top:6px;font-size:14px;color:var(--ink-2)}
+.quiz .ws span{display:inline-block;margin:0 3px;padding:2px 9px;background:var(--paper-2);border-radius:6px}
+.qbtns{display:flex;gap:10px;max-width:340px;margin:16px auto 0}
+.qbtns button{flex:1;padding:14px 0;border-radius:13px;font-size:15px;font-weight:500;border:1px solid var(--line-2);background:#fff;transition:all .18s}
+.qbtns .yes:hover{border-color:var(--green);background:var(--green-soft);color:var(--green)}
+.qbtns .no:hover{border-color:var(--red);background:var(--red-soft);color:var(--red)}
+.qstat{display:flex;justify-content:center;gap:22px;margin-top:18px;font-size:12.5px;color:var(--muted)}
+.qstat b{display:block;font-size:19px;color:var(--ink);font-weight:600;font-variant-numeric:tabular-nums}
+
+/* ---------- 字库 ---------- */
+.filters{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+.filters .chip{padding:5px 11px;font-size:12.5px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(58px,1fr));gap:8px}
+.cell{
+  position:relative;aspect-ratio:1;border-radius:8px;border:1px solid var(--grid);background:#fff;
+  display:flex;align-items:center;justify-content:center;font-family:var(--kai);font-size:26px;
+  transition:all .14s;color:var(--ink);
+}
+.cell:hover{transform:translateY(-2px);box-shadow:var(--shadow)}
+.cell.k{border-color:var(--green);background:var(--green-soft);color:var(--green)}
+.cell.f{border-color:var(--amber);background:var(--amber-soft);color:var(--amber)}
+.cell.n{color:var(--muted);border-color:var(--line);background:#FCFAF6}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:11.5px;color:var(--muted);margin-top:12px}
+.legend i{display:inline-block;width:9px;height:9px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+
+/* ---------- 记录 ---------- */
+.log{border-left:2px solid var(--line);padding-left:16px;margin-left:6px}
+.log .e{position:relative;padding-bottom:20px}
+.log .e::before{
+  content:'';position:absolute;left:-22px;top:6px;width:10px;height:10px;border-radius:50%;
+  background:var(--red);box-shadow:0 0 0 3px var(--paper);
+}
+.log .ed{font-size:13.5px;font-weight:600}
+.log .et{font-size:12px;color:var(--muted);margin-top:1px}
+.log .ec{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.log .ec b{
+  font-family:var(--kai);font-weight:400;font-size:20px;width:34px;height:34px;border-radius:7px;
+  border:1px solid var(--grid);background:#fff;display:flex;align-items:center;justify-content:center;
+}
+.log .ec b.k{border-color:var(--green);background:var(--green-soft);color:var(--green)}
+
+/* ---------- 统计 ---------- */
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(88px,1fr));gap:10px}
+.kpi{background:var(--paper-2);border-radius:12px;padding:12px 10px;text-align:center}
+.kpi b{display:block;font-size:24px;font-weight:600;font-variant-numeric:tabular-nums;line-height:1.2}
+.kpi span{font-size:11.5px;color:var(--muted)}
+.bar{margin:10px 0 0}
+.bar .l{display:flex;justify-content:space-between;font-size:12.5px;margin-bottom:5px}
+.bar .t{height:7px;border-radius:4px;background:var(--paper-2);overflow:hidden}
+.bar .t i{display:block;height:100%;background:var(--green);border-radius:4px;transition:width .5s}
+.bar .t i.g2{background:var(--amber)}
+.setrow{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:9px 0;border-bottom:1px solid var(--line)}
+.setrow:last-child{border-bottom:0}
+.setrow label{font-size:13.5px;color:var(--ink-2)}
+.setrow input,.setrow select{
+  padding:6px 10px;border:1px solid var(--line-2);border-radius:9px;background:#fff;
+  font-size:13.5px;max-width:170px;font-family:inherit;color:var(--ink);
+}
+
+/* ---------- 详情弹层 ---------- */
+.mask{
+  position:fixed;inset:0;background:rgba(36,31,26,.42);z-index:60;display:none;
+  align-items:flex-end;justify-content:center;backdrop-filter:blur(3px);
+}
+.mask.on{display:flex}
+.sheet{
+  width:100%;max-width:460px;background:var(--card);border-radius:22px 22px 0 0;
+  padding:22px 20px calc(26px + env(safe-area-inset-bottom));animation:up .26s cubic-bezier(.2,.9,.3,1);
+  max-height:88vh;overflow:auto;
+}
+@keyframes up{from{transform:translateY(28px);opacity:.5}}
+.sheet .cls{position:absolute;right:16px;top:14px;font-size:22px;color:var(--muted);line-height:1}
+.dtl{text-align:center;position:relative}
+.dtl .big{width:180px;margin:6px auto 0}
+.dtl .big .hz{font-size:118px}
+.dtl .dpy{font-size:20px;color:var(--red);letter-spacing:.08em;margin-bottom:2px}
+.dtl .dws{margin:14px 0 0}
+.dtl .dws span{display:inline-block;padding:4px 11px;background:var(--paper-2);border-radius:8px;margin:3px;font-size:14px}
+.dtl .dmeta{margin-top:12px;font-size:12px;color:var(--muted)}
+.dact{display:flex;gap:8px;margin-top:16px;justify-content:center;flex-wrap:wrap}
+#hw{width:180px;height:180px;margin:10px auto 0}
+#hw svg{width:100%;height:100%}
+
+/* ---------- toast ---------- */
+.toast{
+  position:fixed;left:50%;bottom:34px;transform:translateX(-50%) translateY(14px);
+  background:var(--ink);color:#fff;padding:10px 18px;border-radius:11px;font-size:13.5px;
+  opacity:0;pointer-events:none;transition:all .24s;z-index:80;box-shadow:var(--shadow-lg);
+  max-width:86vw;text-align:center;
+}
+.toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+.foot{text-align:center;font-size:11.5px;color:var(--muted);padding:14px 0 0;line-height:1.7}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="hd">
+    <div>
+      <h1>以宁的认字簿</h1>
+      <p class="sub">统编版一二年级识字表 · 每天五个字</p>
+      <div class="sync"><span class="dot" id="dot"></span><span id="synctxt">正在连接…</span></div>
+    </div>
+    <div class="seal">宁</div>
+  </div>
+
+  <div class="tabs" role="tablist">
+    <button class="tab" role="tab" data-tab="today" aria-selected="true">今日<span class="tnum" id="n-today">0/5</span></button>
+    <button class="tab" role="tab" data-tab="quiz" aria-selected="false">抽查<span class="tnum" id="n-quiz">0</span></button>
+    <button class="tab" role="tab" data-tab="lib" aria-selected="false">字库<span class="tnum" id="n-lib">0</span></button>
+    <button class="tab" role="tab" data-tab="log" aria-selected="false">记录<span class="tnum" id="n-log">0</span></button>
+    <button class="tab" role="tab" data-tab="stat" aria-selected="false">统计<span class="tnum" id="n-stat">0%</span></button>
+  </div>
+
+  <!-- 今日 -->
+  <section id="p-today">
+    <div class="card">
+      <div class="daybar">
+        <div class="d" id="d-date">—</div>
+        <button class="btn ghost sm" id="btn-reroll">换一批</button>
+      </div>
+      <div class="ttl"><h2>今天谁教</h2><span class="hint">点一下就能改</span></div>
+      <div class="teacher" id="teachers"></div>
+      <div class="ttl" style="margin:18px 0 12px"><h2>今天的五个字</h2><span class="hint" id="d-prog"></span></div>
+      <div class="tiles" id="tiles"></div>
+      <div class="empty" id="t-empty" style="display:none">字库已经全部学完了，了不起。</div>
+    </div>
+  </section>
+
+  <!-- 抽查 -->
+  <section id="p-quiz" hidden>
+    <div class="card">
+      <div class="ttl"><h2>随机抽查</h2><span class="hint" id="q-scope-txt"></span></div>
+      <div class="filters" id="q-scope"></div>
+      <div class="quiz" id="q-body"></div>
+      <div class="qstat">
+        <div><b id="q-cur">0</b>本轮</div>
+        <div><b id="q-right">0</b>答对</div>
+        <div><b id="q-rate">—</b>历史正确率</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 字库 -->
+  <section id="p-lib" hidden>
+    <div class="card">
+      <div class="ttl"><h2>字库</h2><span class="hint" id="lib-sum"></span></div>
+      <div class="filters" id="lib-status"></div>
+      <div class="filters" id="lib-grade"></div>
+      <div class="grid" id="lib-grid"></div>
+      <div class="legend">
+        <span><i style="background:var(--green)"></i>已掌握</span>
+        <span><i style="background:var(--amber)"></i>需巩固</span>
+        <span><i style="background:var(--line)"></i>还没学</span>
+        <span style="margin-left:auto">点一个字看详情</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- 记录 -->
+  <section id="p-log" hidden>
+    <div class="card">
+      <div class="ttl"><h2>学习记录</h2><span class="hint">按日期倒序</span></div>
+      <div class="log" id="log-list"></div>
+      <div class="empty" id="l-empty" style="display:none">还没有记录，今天先学五个字吧。</div>
+    </div>
+  </section>
+
+  <!-- 统计 -->
+  <section id="p-stat" hidden>
+    <div class="card">
+      <div class="ttl"><h2>总览</h2><span class="hint" id="st-child"></span></div>
+      <div class="kpis">
+        <div class="kpi"><b id="k-learn">0</b><span>学过</span></div>
+        <div class="kpi"><b id="k-known">0</b><span>已掌握</span></div>
+        <div class="kpi"><b id="k-fuzzy">0</b><span>需巩固</span></div>
+        <div class="kpi"><b id="k-left">0</b><span>剩余</span></div>
+        <div class="kpi"><b id="k-day">0</b><span>连续天数</span></div>
+        <div class="kpi"><b id="k-tot">0</b><span>累计天数</span></div>
+      </div>
+      <div style="margin-top:18px" id="bars"></div>
+    </div>
+    <div class="card">
+      <div class="ttl"><h2>设置</h2></div>
+      <div class="setrow"><label for="s-name">孩子的名字</label><input id="s-name" maxlength="8"></div>
+      <div class="setrow"><label for="s-per">每天学几个字</label><input id="s-per" type="number" min="1" max="20"></div>
+      <div class="setrow"><label for="s-new">添加大人</label><span class="row"><input id="s-new" maxlength="6" placeholder="如：外婆"><button class="btn sm" id="s-add">添加</button></span></div>
+      <div class="setrow"><label>大人名单</label><span class="row" id="s-teachers"></span></div>
+      <div class="setrow"><label>云端数据</label><span class="row"><code id="s-bin" style="font-size:12px;color:var(--muted)"></code><button class="btn ghost sm" id="s-copy">复制链接</button></span></div>
+      <div class="setrow"><label>数据备份</label><span class="row"><button class="btn ghost sm" id="s-export">导出</button><button class="btn ghost sm" id="s-import">导入</button></span></div>
+    </div>
+  </section>
+
+  <p class="foot">
+    字表来源：统编版语文一年级上／下、二年级上／下识字表（会认字）<br>
+    数据存在云端，换手机、换平板打开同一个链接就能接着学
+  </p>
+</div>
+
+<div class="mask" id="mask"><div class="sheet" id="sheet"></div></div>
+<div class="toast" id="toast"></div>
+
+<script>
+/* ============ 常量 ============ */
+const API_BASE = 'https://time.taizhendong.com';
+const DEFAULT_BIN = 'yining-renzibu-v1';
+const LS_BIN = 'yining_renzibu_bin';
+const LS_DATA = 'yining_renzibu_data_';
+const DEF_TEACHERS = ['妈妈','爸爸','奶奶','爷爷','老师'];
+
+/* ============ 状态 ============ */
+let POOL = [];          // [{c,p,w,g,gi}]
+let MAP = {};           // char -> item
+let GRADES = [];
+let DB = null;          // 云端/本地数据
+let binId = null;
+let syncing = false, pending = false, timer = null;
+let hwReady = false;
+let libFilter = { status:'all', grade:'all' };
+let qScope = 'learned';
+let quiz = { list:[], i:0, right:0, total:0, revealed:false, cur:null };
+
+const $ = s => document.querySelector(s);
+const todayKey = () => fmtDate(new Date());
+function fmtDate(d){
+  return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+}
+function weekday(d){ return '日一二三四五六'[d.getDay()]; }
+
+/* ============ 数据骨架 ============ */
+function blankDB(){
+  return { version:1, child:'以宁', perDay:5, teachers:DEF_TEACHERS.slice(),
+           days:{}, learned:{}, quiz:{ right:0, total:0 }, createdAt:new Date().toISOString() };
+}
+function normalize(d){
+  const b = blankDB();
+  if(!d || typeof d!=='object') return b;
+  const o = Object.assign(b, d);
+  o.days = (d.days && typeof d.days==='object') ? d.days : {};
+  o.learned = (d.learned && typeof d.learned==='object') ? d.learned : {};
+  o.quiz = Object.assign({right:0,total:0}, d.quiz||{});
+  if(!Array.isArray(o.teachers) || !o.teachers.length) o.teachers = DEF_TEACHERS.slice();
+  o.perDay = Math.min(20, Math.max(1, parseInt(o.perDay,10)||5));
+  // 清理字库里已不存在的字
+  for(const k of Object.keys(o.learned)) if(!MAP[k]) delete o.learned[k];
+  return o;
+}
+
+/* ============ 云同步 ============ */
+function setSync(kind, txt){
+  const dot = $('#dot');
+  dot.className = 'dot' + (kind==='on'?' on':kind==='busy'?' busy':' off');
+  $('#synctxt').textContent = txt;
+}
+function lsKey(){ return binId ? LS_DATA + binId : null; }
+function persistLocal(){
+  const k = lsKey(); if(!k || !DB) return;
+  try{ localStorage.setItem(k, JSON.stringify(DB)); }catch(e){}
+}
+async function loadCloud(){
+  const r = await fetch(API_BASE + '/data/' + encodeURIComponent(binId));
+  if(r.status === 404) return null;
+  if(!r.ok) throw new Error('读取失败 ' + r.status);
+  return r.json();
+}
+async function saveCloud(){
+  if(!binId || !DB) return;
+  DB.updatedAt = new Date().toISOString();
+  if(syncing){ pending = true; return; }
+  syncing = true; setSync('busy','同步中…');
+  try{
+    const r = await fetch(API_BASE + '/data/' + encodeURIComponent(binId), {
+      method:'PUT', headers:{'Content-Type':'application/json'}, body: JSON.stringify(DB)
+    });
+    if(!r.ok) throw new Error('保存失败');
+    persistLocal(); setSync('on','已同步 · ' + new Date().toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'}));
+  }catch(e){
+    persistLocal(); setSync('off','离线 · 已存本地');
+  }finally{
+    syncing = false;
+    if(pending){ pending = false; saveCloud(); }
+  }
+}
+function scheduleSave(){
+  persistLocal();
+  clearTimeout(timer);
+  timer = setTimeout(saveCloud, 700);
+}
+
+/* ============ 字库 ============ */
+async function loadChars(){
+  const r = await fetch('./data/chars.json?v=1');
+  const j = await r.json();
+  GRADES = j.grades;
+  const seen = new Set();
+  GRADES.forEach((g, gi) => {
+    g.chars.forEach(arr => {
+      const c = arr[0];
+      if(seen.has(c)) return;
+      seen.add(c);
+      const it = { c, p:arr[1]||'', w:arr[2]||[], g:g.name, gi };
+      POOL.push(it); MAP[c] = it;
+    });
+  });
+}
+
+/* ============ 今日 ============ */
+function learnedCount(){ return Object.keys(DB.learned).length; }
+function isKnown(c){ const e = DB.learned[c]; return !!e && e.status === 'known'; }
+function pickNew(n){
+  const out = [];
+  for(const it of POOL){
+    if(out.length >= n) break;
+    if(DB.learned[it.c]) continue;
+    if(DB.days[todayKey()] && DB.days[todayKey()].chars.includes(it.c)) continue;
+    out.push(it.c);
+  }
+  return out;
+}
+function ensureToday(){
+  const k = todayKey();
+  let d = DB.days[k];
+  if(!d){
+    const chars = pickNew(DB.perDay);
+    d = { teacher: DB.teachers[0] || '', chars, at:new Date().toISOString() };
+    DB.days[k] = d;
+    scheduleSave();
+  }
+  return d;
+}
+function mark(c, status){
+  const k = todayKey();
+  DB.learned[c] = { status, date:k, teacher:(DB.days[k]||{}).teacher||'' };
+  scheduleSave();
+}
+function replace(c){
+  // 已经认识 → 归入已掌握，再从剩余字库补一个新字
+  DB.learned[c] = { status:'known', date:todayKey(), teacher:(DB.days[todayKey()]||{}).teacher||'', via:'replace' };
+  const k = todayKey();
+  const d = DB.days[k];
+  const i = d.chars.indexOf(c);
+  const fresh = pickNew(1)[0];
+  if(fresh && i >= 0) d.chars[i] = fresh;
+  else if(i >= 0) d.chars.splice(i,1);
+  scheduleSave();
+  renderAll();
+  toast(fresh ? '换成「' + fresh + '」' : '已标记为认识');
+}
+function reroll(){
+  const k = todayKey();
+  const d = DB.days[k];
+  if(!d) return;
+  // 未标记的字退回字库，重新抽
+  d.chars = d.chars.filter(c => DB.learned[c]);
+  d.chars = d.chars.concat(pickNew(DB.perDay - d.chars.length));
+  scheduleSave(); renderAll();
+  toast('换了五个新字');
+}
+
+/* ============ 渲染 ============ */
+function renderAll(){
+  renderToday(); renderQuizPane(); renderLib(); renderLog(); renderStats(); renderTabs();
+  try{ document.title = DB.child + '的认字簿 · ' + learnedCount() + ' 字'; }catch(e){}
+}
+function renderTabs(){
+  const k = todayKey(); const d = DB.days[k];
+  const done = d ? d.chars.filter(isKnown).length : 0;
+  $('#n-today').textContent = done + '/' + (d ? d.chars.length : DB.perDay);
+  $('#n-quiz').textContent = DB.quiz.total;
+  $('#n-lib').textContent = learnedCount();
+  $('#n-log').textContent = Object.keys(DB.days).length;
+  $('#n-stat').textContent = Math.round(learnedCount() / POOL.length * 100) + '%';
+}
+function renderToday(){
+  const now = new Date();
+  $('#d-date').innerHTML = (now.getMonth()+1) + '月' + now.getDate() + '日'
+    + ' <small>星期' + weekday(now) + '</small>';
+  const d = ensureToday();
+
+  // 大人
+  $('#teachers').innerHTML = DB.teachers.map(t =>
+    '<button class="chip" data-t="' + esc(t) + '" aria-pressed="' + (d.teacher===t) + '">' + esc(t) + '</button>'
+  ).join('') + '<button class="chip ghost" id="t-add">+</button>';
+
+  // 五个字
+  const tiles = d.chars.map(c => {
+    const it = MAP[c] || {c, p:'', w:[]};
+    const ok = isKnown(c);
+    return '<div class="tile' + (ok?' done':'') + '">'
+      + '<div class="py">' + esc(it.p) + '</div>'
+      + '<div class="tzwrap"><div class="tz lg" data-c="' + c + '"><span class="hz">' + c + '</span>'
+      + (ok ? '<span class="stamp">认</span>' : '') + '</div></div>'
+      + '<div class="w">' + (it.w.length ? it.w.map(w=>'<span>'+esc(w)+'</span>').join('') : '<span style="opacity:.45">—</span>') + '</div>'
+      + '<div class="acts">'
+      + '<button class="ok" data-act="ok" data-c="' + c + '">' + (ok?'已认识':'认识了') + '</button>'
+      + '<button class="sw" data-act="sw" data-c="' + c + '">换一个</button>'
+      + '</div></div>';
+  }).join('');
+  $('#tiles').innerHTML = tiles;
+  $('#t-empty').style.display = d.chars.length ? 'none' : 'block';
+  $('#d-prog').textContent = d.chars.filter(isKnown).length + ' / ' + d.chars.length + ' 已认识';
+}
+function renderQuizPane(){
+  const scopes = [['learned','学过的'],['fuzzy','需巩固'],['known','已掌握'],['all','全部字库']];
+  $('#q-scope').innerHTML = scopes.map(s =>
+    '<button class="chip" data-q="' + s[0] + '" aria-pressed="' + (qScope===s[0]) + '">' + s[1] + '</button>').join('');
+  $('#q-right').textContent = DB.quiz.right;
+  $('#q-rate').textContent = DB.quiz.total ? Math.round(DB.quiz.right / DB.quiz.total * 100) + '%' : '—';
+  $('#q-cur').textContent = quiz.total;
+  if(!quiz.cur){ nextQuiz(); return; }
+  renderQuizCard();
+}
+function quizPool(){
+  let list;
+  if(qScope === 'all') list = POOL.map(i => i.c);
+  else if(qScope === 'fuzzy') list = Object.keys(DB.learned).filter(c => DB.learned[c].status === 'fuzzy');
+  else if(qScope === 'known') list = Object.keys(DB.learned).filter(c => DB.learned[c].status === 'known');
+  else list = Object.keys(DB.learned);
+  // 需巩固的加权出现
+  const w = [];
+  list.forEach(c => { const n = (DB.learned[c] && DB.learned[c].status === 'fuzzy') ? 3 : 1; for(let i=0;i<n;i++) w.push(c); });
+  return w.length ? w : list;
+}
+function nextQuiz(){
+  const pool = quizPool();
+  if(!pool.length){
+    quiz.cur = null;
+    $('#q-body').innerHTML = '<div class="empty">这个范围里还没有字。先去「今日」学几个吧。</div>';
+    $('#q-scope-txt').textContent = '';
+    return;
+  }
+  let c = pool[Math.floor(Math.random()*pool.length)];
+  if(pool.length > 1){ let guard = 0; while(c === quiz.cur && guard++ < 12) c = pool[Math.floor(Math.random()*pool.length)]; }
+  quiz.cur = c; quiz.revealed = false;
+  renderQuizCard();
+}
+function renderQuizCard(){
+  const c = quiz.cur; if(!c) return;
+  const it = MAP[c] || {c, p:'', w:[]};
+  const shown = quiz.revealed;
+  $('#q-body').innerHTML =
+    '<div class="qwrap"><div class="tz lg" style="cursor:pointer" id="q-tz"><span class="hz">' + c + '</span></div></div>'
+    + '<div class="meta">'
+    + (shown ? '<div class="py">' + esc(it.p) + '</div><div class="ws">' + (it.w.length?it.w.map(w=>'<span>'+esc(w)+'</span>').join(''):'') + '</div>'
+             : '<div class="ws" style="color:var(--muted);font-size:13px">这个字读什么？</div>')
+    + '</div>'
+    + '<div class="qbtns">'
+    + (shown
+        ? '<button class="yes" data-qa="next">下一个 →</button>'
+        : '<button class="yes" data-qa="right">会读</button><button class="no" data-qa="wrong">不会</button>')
+    + '</div>'
+    + '<div class="row" style="justify-content:center;margin-top:14px">'
+    + '<button class="btn ghost sm" data-qa="say">听发音</button>'
+    + '<button class="btn ghost sm" data-qa="detail">看详情</button>'
+    + '</div>';
+  $('#q-scope-txt').textContent = (it.g || '') + ' · 共 ' + quizPool().length + ' 字';
+}
+function answer(ok){
+  if(quiz.revealed) return;
+  quiz.revealed = true; quiz.total++;
+  DB.quiz.total++;
+  if(ok){
+    quiz.right++; DB.quiz.right++;
+    const e = DB.learned[quiz.cur];
+    if(e && e.status === 'fuzzy'){ e.hit = (e.hit||0)+1; if(e.hit >= 2) e.status = 'known'; }
+  }else{
+    const e = DB.learned[quiz.cur];
+    if(e){ e.status = 'fuzzy'; e.hit = 0; }
+    else DB.learned[quiz.cur] = { status:'fuzzy', date:todayKey(), teacher:'', hit:0 };
+  }
+  scheduleSave();
+  renderQuizCard(); renderQuizPane(); renderTabs(); renderLib(); renderStats();
+}
+function renderLib(){
+  const st = libFilter.status, gd = libFilter.grade;
+  const stats = { k:0, f:0, n:0 };
+  const rows = POOL.filter(it => {
+    if(gd !== 'all' && it.gi !== +gd) return false;
+    const e = DB.learned[it.c];
+    const s = !e ? 'n' : (e.status === 'known' ? 'k' : 'f');
+    stats[s]++;
+    if(st === 'all') return true;
+    return st === s;
+  });
+  $('#lib-sum').textContent = '已掌握 ' + Object.values(DB.learned).filter(e=>e.status==='known').length
+    + ' · 需巩固 ' + Object.values(DB.learned).filter(e=>e.status==='fuzzy').length
+    + ' · 剩余 ' + (POOL.length - learnedCount());
+  $('#lib-status').innerHTML = [['all','全部'],['k','已掌握'],['f','需巩固'],['n','还没学']].map(s =>
+    '<button class="chip" data-ls="' + s[0] + '" aria-pressed="' + (st===s[0]) + '">' + s[1] + '</button>').join('');
+  $('#lib-grade').innerHTML = [['all','全部']].concat(GRADES.map((g,i)=>[String(i), g.name])).map(g =>
+    '<button class="chip" data-lg="' + g[0] + '" aria-pressed="' + (gd===String(g[0])) + '">' + g[1] + '</button>').join('');
+  $('#lib-grid').innerHTML = rows.length
+    ? rows.slice(0, 400).map(it => {
+        const e = DB.learned[it.c];
+        const s = !e ? 'n' : (e.status === 'known' ? 'k' : 'f');
+        return '<button class="cell ' + s + '" data-c="' + it.c + '">' + it.c + '</button>';
+      }).join('')
+    : '<div class="empty" style="grid-column:1/-1">这个筛选下还没有字</div>';
+  if(rows.length > 400){
+    $('#lib-grid').insertAdjacentHTML('beforeend',
+      '<div class="empty" style="grid-column:1/-1">… 还有 ' + (rows.length-400) + ' 个字，用上面的筛选缩小范围</div>');
+  }
+}
+function renderLog(){
+  const keys = Object.keys(DB.days).sort().reverse();
+  $('#l-empty').style.display = keys.length ? 'none' : 'block';
+  $('#log-list').innerHTML = keys.map(k => {
+    const d = DB.days[k];
+    const dd = new Date(k + 'T00:00:00');
+    const chars = d.chars.map(c => {
+      const e = DB.learned[c];
+      return '<b class="' + (e && e.status==='known' ? 'k' : '') + '" data-c="' + c + '">' + c + '</b>';
+    }).join('');
+    return '<div class="e">'
+      + '<div class="row" style="justify-content:space-between">'
+      + '<div><div class="ed">' + (k===todayKey()?'今天 · ':'') + (dd.getMonth()+1) + '月' + dd.getDate() + '日 星期' + weekday(dd) + '</div>'
+      + '<div class="et">' + (d.teacher ? esc(d.teacher) + '教 · ' : '') + d.chars.length + ' 个字</div></div>'
+      + '<button class="btn ghost sm" data-del="' + k + '">删除</button></div>'
+      + '<div class="ec">' + chars + '</div></div>';
+  }).join('');
+}
+function renderStats(){
+  const ks = Object.keys(DB.learned);
+  const known = ks.filter(c => DB.learned[c].status === 'known').length;
+  const fuzzy = ks.length - known;
+  $('#k-learn').textContent = ks.length;
+  $('#k-known').textContent = known;
+  $('#k-fuzzy').textContent = fuzzy;
+  $('#k-left').textContent = POOL.length - ks.length;
+  $('#st-child').textContent = DB.child + ' · 字库共 ' + POOL.length + ' 字';
+
+  // 连续天数
+  let streak = 0;
+  const d = new Date();
+  for(let i=0;i<400;i++){
+    const k = fmtDate(d);
+    if(DB.days[k]) streak++;
+    else if(i > 0) break;
+    d.setDate(d.getDate()-1);
+  }
+  $('#k-day').textContent = streak;
+  $('#k-tot').textContent = Object.keys(DB.days).length;
+
+  $('#bars').innerHTML =
+    '<div class="bar"><div class="l"><span>总进度</span><span>' + ks.length + ' / ' + POOL.length + '</span></div>'
+    + '<div class="t"><i style="width:' + (ks.length/POOL.length*100).toFixed(1) + '%"></i></div></div>'
+    + GRADES.map((g,i) => {
+        const tot = POOL.filter(x => x.gi === i).length;
+        const got = POOL.filter(x => x.gi === i && DB.learned[x.c]).length;
+        const kn = POOL.filter(x => x.gi === i && DB.learned[x.c] && DB.learned[x.c].status==='known').length;
+        return '<div class="bar"><div class="l"><span>' + g.name + '</span><span>' + got + ' / ' + tot + '</span></div>'
+          + '<div class="t"><i class="' + (i%2?'g2':'') + '" style="width:' + (tot?got/tot*100:0).toFixed(1) + '%"></i></div></div>';
+      }).join('');
+
+  $('#s-name').value = DB.child;
+  $('#s-per').value = DB.perDay;
+  $('#s-bin').textContent = binId;
+  $('#s-teachers').innerHTML = DB.teachers.map((t,i) =>
+    '<span class="chip" data-rt="' + i + '">' + esc(t) + ' ×</span>').join('');
+}
+
+/* ============ 详情 ============ */
+function openDetail(c){
+  const it = MAP[c] || {c, p:'', w:[]};
+  const e = DB.learned[c];
+  $('#sheet').innerHTML =
+    '<button class="cls" id="d-close">×</button>'
+    + '<div class="dtl">'
+    + '<div class="dpy">' + esc(it.p) + '</div>'
+    + '<div class="tz big"><span class="hz">' + c + '</span></div>'
+    + '<div class="dws">' + (it.w.length ? it.w.map(w=>'<span>'+esc(w)+'</span>').join('') : '<span style="opacity:.5">暂无组词</span>') + '</div>'
+    + '<div class="dmeta">' + esc(it.g || '') + ' · ' + (e ? ('学于 ' + e.date + (e.teacher?' · '+esc(e.teacher)+'教':'')) : '还没学过') + '</div>'
+    + '<div class="dact">'
+    + '<button class="btn sm" data-dsay="c">读一遍</button>'
+    + (it.w.length ? '<button class="btn ghost sm" data-dsay="w">读词语</button>' : '')
+    + (hwReady ? '<button class="btn ghost sm" id="d-hw">看笔顺</button>' : '')
+    + '<button class="btn ghost sm" data-dmark="known">标已掌握</button>'
+    + (e ? '<button class="btn ghost sm" data-dmark="fuzzy">标需巩固</button>' : '')
+    + '</div>'
+    + '<div id="hw" style="display:none"></div>'
+    + '</div>';
+  $('#mask').classList.add('on');
+  $('#d-close').onclick = closeDetail;
+
+  const say = t => speak(t);
+  const bs = $('#sheet').querySelector('[data-dsay="c"]'); if(bs) bs.onclick = () => say(c);
+  const bw = $('#sheet').querySelector('[data-dsay="w"]'); if(bw) bw.onclick = () => say((it.w[0]||c));
+  $('#sheet').querySelectorAll('[data-dmark]').forEach(b => b.onclick = () => {
+    const st = b.dataset.dmark;
+    DB.learned[c] = Object.assign({ date: todayKey(), teacher:'' }, DB.learned[c], { status: st });
+    scheduleSave(); renderAll(); closeDetail(); toast(st === 'known' ? '已标记为掌握' : '已标记为需巩固');
+  });
+  const hb = $('#d-hw');
+  if(hb) hb.onclick = () => {
+    const box = $('#hw');
+    if(box.style.display === 'none'){
+      box.style.display = 'block';
+      try{
+        HanziWriter.create(c, { width:180, height:180, padding:6, showOutline:true,
+          strokeAnimationSpeed:1, delayBetweenStrokes:280, strokeColor:'#241F1A', outlineColor:'#E3C9BE' })
+          .animateCharacter();
+      }catch(err){ box.innerHTML = '<div class="empty">笔顺数据加载失败</div>'; }
+    }else{ box.style.display = 'none'; box.innerHTML = ''; }
+  };
+}
+function closeDetail(){ $('#mask').classList.remove('on'); $('#sheet').innerHTML = ''; }
+
+/* ============ 发音 ============ */
+function speak(text){
+  if(!('speechSynthesis' in window)){ toast('这个浏览器不支持朗读'); return; }
+  try{
+    speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = 'zh-CN'; u.rate = .8; u.pitch = 1.05;
+    speechSynthesis.speak(u);
+  }catch(e){}
+}
+
+/* ============ 工具 ============ */
+function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
+let tToast = null;
+function toast(msg){
+  const t = $('#toast'); t.textContent = msg; t.classList.add('on');
+  clearTimeout(tToast); tToast = setTimeout(() => t.classList.remove('on'), 2200);
+}
+
+/* ============ 事件 ============ */
+function bind(){
+  document.querySelectorAll('.tab').forEach(b => b.onclick = () => {
+    document.querySelectorAll('.tab').forEach(x => x.setAttribute('aria-selected', String(x === b)));
+    ['today','quiz','lib','log','stat'].forEach(p => { $('#p-'+p).hidden = (p !== b.dataset.tab); });
+    window.scrollTo({ top:0, behavior:'smooth' });
+  });
+
+  $('#tiles').onclick = e => {
+    const tz = e.target.closest('.tz'); if(tz){ openDetail(tz.dataset.c); return; }
+    const b = e.target.closest('button[data-act]'); if(!b) return;
+    if(b.dataset.act === 'ok'){
+      const c = b.dataset.c;
+      if(isKnown(c)){ delete DB.learned[c]; } else { mark(c,'known'); speak(c); }
+      scheduleSave(); renderAll();
+    }else if(b.dataset.act === 'sw'){ replace(b.dataset.c); }
+  };
+
+  $('#teachers').onclick = e => {
+    const b = e.target.closest('button'); if(!b) return;
+    if(b.id === 't-add'){
+      const n = prompt('添加一位大人','');
+      if(n && n.trim()){
+        const v = n.trim();
+        if(!DB.teachers.includes(v)) DB.teachers.push(v);
+        DB.days[todayKey()].teacher = v;
+        scheduleSave(); renderAll();
+      }
+      return;
+    }
+    DB.days[todayKey()].teacher = b.dataset.t;
+    // 同步更新已学字的教师
+    DB.days[todayKey()].chars.forEach(c => { if(DB.learned[c]) DB.learned[c].teacher = b.dataset.t; });
+    scheduleSave(); renderAll();
+  };
+  $('#btn-reroll').onclick = () => { if(confirm('把今天还没标记的字退回字库，重新抽五个？')) reroll(); };
+
+  $('#q-scope').onclick = e => {
+    const b = e.target.closest('button'); if(!b) return;
+    qScope = b.dataset.q; quiz = { list:[], i:0, right:0, total:0, revealed:false, cur:null };
+    renderQuizPane();
+  };
+  $('#q-body').onclick = e => {
+    const tz = e.target.closest('#q-tz');
+    if(tz && quiz.cur){ speak(quiz.cur); return; }
+    const b = e.target.closest('button'); if(!b) return;
+    const a = b.dataset.qa;
+    if(a === 'right') answer(true);
+    else if(a === 'wrong') answer(false);
+    else if(a === 'next'){ quiz.total > 0 ? nextQuiz() : null; renderQuizPane(); }
+    else if(a === 'say') speak(quiz.cur);
+    else if(a === 'detail') openDetail(quiz.cur);
+  };
+
+  $('#lib-status').onclick = e => { const b = e.target.closest('button'); if(b){ libFilter.status = b.dataset.ls; renderLib(); } };
+  $('#lib-grade').onclick = e => { const b = e.target.closest('button'); if(b){ libFilter.grade = b.dataset.lg; renderLib(); } };
+  $('#lib-grid').onclick = e => { const b = e.target.closest('.cell'); if(b) openDetail(b.dataset.c); };
+
+  $('#log-list').onclick = e => {
+    const ch = e.target.closest('b[data-c]');
+    if(ch){ openDetail(ch.dataset.c); return; }
+    const del = e.target.closest('[data-del]');
+    if(del){
+      const k = del.dataset.del;
+      if(!confirm('删除 ' + k + ' 的记录？当天学的字会退回字库。')) return;
+      (DB.days[k].chars||[]).forEach(c => { if(DB.learned[c] && DB.learned[c].date === k) delete DB.learned[c]; });
+      delete DB.days[k];
+      scheduleSave(); renderAll(); toast('已删除');
+    }
+  };
+
+  $('#s-name').onchange = e => { DB.child = e.target.value.trim() || '以宁'; scheduleSave(); renderStats(); toast('已保存'); };
+  $('#s-per').onchange = e => { DB.perDay = Math.min(20, Math.max(1, parseInt(e.target.value,10)||5)); scheduleSave(); toast('明天起每天 ' + DB.perDay + ' 个字'); };
+  $('#s-add').onclick = () => {
+    const v = $('#s-new').value.trim(); if(!v) return;
+    if(!DB.teachers.includes(v)) DB.teachers.push(v);
+    $('#s-new').value = ''; scheduleSave(); renderStats(); renderToday(); toast('已添加');
+  };
+  $('#s-teachers').onclick = e => {
+    const b = e.target.closest('[data-rt]'); if(!b) return;
+    DB.teachers.splice(+b.dataset.rt, 1); scheduleSave(); renderStats(); renderToday();
+  };
+  $('#s-copy').onclick = () => {
+    const url = location.origin + location.pathname + '?id=' + binId;
+    const done = () => toast('链接已复制');
+    if(navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(url).then(done, () => prompt('复制这个链接', url));
+    else prompt('复制这个链接', url);
+  };
+  $('#s-export').onclick = () => {
+    const blob = new Blob([JSON.stringify(DB, null, 1)], {type:'application/json'});
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'yining-literacy-' + todayKey() + '.json';
+    a.click();
+  };
+  $('#s-import').onclick = () => {
+    const i = document.createElement('input'); i.type = 'file'; i.accept = '.json';
+    i.onchange = () => {
+      const f = i.files[0]; if(!f) return;
+      const r = new FileReader();
+      r.onload = () => {
+        try{
+          DB = normalize(JSON.parse(r.result));
+          scheduleSave(); renderAll(); toast('导入成功');
+        }catch(err){ toast('文件格式不对'); }
+      };
+      r.readAsText(f);
+    };
+    i.click();
+  };
+
+  $('#mask').onclick = e => { if(e.target.id === 'mask') closeDetail(); };
+  document.addEventListener('keydown', e => { if(e.key === 'Escape') closeDetail(); });
+}
+
+/* ============ 启动 ============ */
+async function boot(){
+  const params = new URLSearchParams(location.search);
+  binId = params.get('id') || localStorage.getItem(LS_BIN) || DEFAULT_BIN;
+  localStorage.setItem(LS_BIN, binId);
+
+  try{ await loadChars(); }
+  catch(e){ document.querySelector('.wrap').innerHTML = '<div class="card"><div class="empty">字库加载失败，请刷新重试。</div></div>'; return; }
+
+  // 先本地，后云端
+  const cached = localStorage.getItem(LS_DATA + binId);
+  DB = normalize(cached ? JSON.parse(cached) : null);
+
+  bind();
+  renderAll();
+  setSync('busy','读取云端…');
+  try{
+    const cloud = await loadCloud();
+    if(cloud){
+      DB = normalize(cloud);
+      persistLocal();
+      setSync('on','已同步');
+    }else{
+      await saveCloud();   // 首次：用固定 id 建一份
+    }
+  }catch(e){
+    setSync('off','离线 · 用本地数据');
+  }
+  renderAll();
+
+  // 笔顺动画（CDN 可用时才出现按钮）
+  const s = document.createElement('script');
+  s.src = 'https://cdn.jsdelivr.net/npm/hanzi-writer@3.7.0/dist/hanzi-writer.min.js';
+  s.onload = () => { hwReady = true; };
+  s.onerror = () => { hwReady = false; };
+  document.head.appendChild(s);
+}
+boot();
+</script>
+</body>
+</html>
