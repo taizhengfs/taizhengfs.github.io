@@ -130,15 +130,53 @@ button{font-family:inherit;font-size:inherit;color:inherit;cursor:pointer;border
 }
 .tile .acts button:active{transform:scale(.96)}
 .tile .acts .ok:hover{border-color:var(--green);color:var(--green);background:var(--green-soft)}
-.tile .acts .sw:hover{border-color:var(--amber);color:var(--amber);background:var(--amber-soft)}
 .tile.done .tz{border-color:var(--green);background:var(--green-soft)}
-.tile.done .acts .ok{background:var(--green);border-color:var(--green);color:#fff}
+.tzwrap{position:relative}
+/* 阶段提示条 */
+.phase{
+  border-radius:12px;padding:11px 14px;margin-bottom:14px;line-height:1.5;
+  border:1px solid var(--line-2);background:var(--paper-2);
+}
+.phase b{display:block;font-size:14.5px;letter-spacing:.02em}
+.phase span{display:block;font-size:12px;color:var(--muted);margin-top:2px}
+.phase.sift{border-color:#D9C9A8;background:#FBF4E4}
+.phase.sift b{color:#8A6A22}
+.phase.learn{border-left:3px solid var(--red);background:#FBF1F0}
+.phase.learn b{color:var(--red)}
+/* 印章：认（本来就认识）/ 学（今天要学）/ 会（学会了） */
 .tile .stamp{
   position:absolute;right:-4px;bottom:-4px;z-index:2;width:26px;height:26px;border-radius:50%;
   background:var(--red);color:#fff;font-family:var(--kai);font-size:13px;
   display:flex;align-items:center;justify-content:center;box-shadow:0 2px 6px rgba(193,68,59,.3);
 }
-.tzwrap{position:relative}
+.tile .stamp.s2{background:var(--amber);box-shadow:0 2px 6px rgba(176,125,31,.3)}
+.tile .stamp.s3{background:var(--green);box-shadow:0 2px 6px rgba(79,122,84,.3)}
+.tile.picked .tz{border-color:var(--amber);background:var(--amber-soft)}
+.tile.picked .acts .undo{flex:1}
+.tile .acts .undo{
+  border-color:var(--line-2);color:var(--muted);flex:1;
+}
+.tile .acts .undo:hover{border-color:var(--ink-2);color:var(--ink-2)}
+.tile .acts .no{
+  flex:1;padding:6px 4px;border-radius:9px;font-size:12px;border:1px solid var(--line-2);
+  background:#fff;color:var(--ink-2);transition:all .16s;
+}
+.tile .acts .no:hover{border-color:var(--amber);color:var(--amber);background:var(--amber-soft)}
+.tile .acts .no:active{transform:scale(.96)}
+/* 集齐 5 个字时的庆祝：卡片依次跳一下 */
+.tiles.cheer .tile{animation:cheer .5s cubic-bezier(.25,1.4,.4,1) both}
+.tiles.cheer .tile:nth-child(2){animation-delay:.06s}
+.tiles.cheer .tile:nth-child(3){animation-delay:.12s}
+.tiles.cheer .tile:nth-child(4){animation-delay:.18s}
+.tiles.cheer .tile:nth-child(5){animation-delay:.24s}
+@keyframes cheer{
+  0%{transform:translateY(0)}
+  35%{transform:translateY(-9px) scale(1.04)}
+  100%{transform:translateY(0)}
+}
+@media(prefers-reduced-motion:reduce){
+  .tiles.cheer .tile{animation-duration:.01s}
+}
 /* 换卡：旧字盖上印章后翻走，新字浮现 */
 .tile{will-change:transform,opacity}
 .tile.swap-out{animation:swapOut .24s cubic-bezier(.36,0,.66,-.2) forwards;pointer-events:none}
@@ -221,6 +259,11 @@ button{font-family:inherit;font-size:inherit;color:inherit;cursor:pointer;border
   border:1px solid var(--grid);background:#fff;display:flex;align-items:center;justify-content:center;
 }
 .log .ec b.k{border-color:var(--green);background:var(--green-soft);color:var(--green)}
+.log .ec b.f{border-color:var(--amber);background:var(--amber-soft);color:var(--amber)}
+.log .ec .sep{
+  align-self:center;font-size:11px;color:var(--muted);margin-left:6px;
+  padding-right:8px;border-right:1px dashed var(--line-2);
+}
 
 /* ---------- 统计 ---------- */
 .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(88px,1fr));gap:10px}
@@ -300,11 +343,12 @@ button{font-family:inherit;font-size:inherit;color:inherit;cursor:pointer;border
     <div class="card">
       <div class="daybar">
         <div class="d" id="d-date">—</div>
-        <button class="btn ghost sm" id="btn-reroll">换一批</button>
+        <button class="btn ghost sm" id="t-reopen" hidden>重新挑一遍</button>
       </div>
+      <div class="phase" id="t-phase" hidden></div>
       <div class="ttl"><h2>今天谁教</h2><span class="hint">点一下就能改</span></div>
       <div class="teacher" id="teachers"></div>
-      <div class="ttl" style="margin:18px 0 12px"><h2>今天的五个字</h2><span class="hint" id="d-prog"></span></div>
+      <div class="ttl" style="margin:18px 0 12px"><h2>今天的字</h2><span class="hint" id="d-prog"></span></div>
       <div class="tiles" id="tiles"></div>
       <div class="empty" id="t-empty" style="display:none">字库已经全部学完了，了不起。</div>
     </div>
@@ -432,8 +476,15 @@ function fmtDate(d){
 function weekday(d){ return '日一二三四五六'[d.getDay()]; }
 
 /* ============ 数据骨架 ============ */
+/* 每天分两阶段：
+   sift  筛选：给以宁看一批字，认识的换掉、不认识的留下，直到凑够 5 个
+   learn 学习：这 5 个字锁定为「今天要学的字」，不再更换 */
+function blankDay(){
+  return { teacher:'', phase:'sift', pool:[], sifted:[], picked:[], history:[],
+           at:new Date().toISOString() };
+}
 function blankDB(){
-  return { version:2, child:'以宁', perDay:5, teachers:DEF_TEACHERS.slice(),
+  return { version:3, child:'以宁', perDay:5, teachers:DEF_TEACHERS.slice(),
            days:{}, learned:{}, quiz:{}, createdAt:new Date().toISOString(), rev:0 };
 }
 /* quiz 由裸计数 {right,total} 改为 「日期 → 设备 → [对,总]」。
@@ -475,9 +526,28 @@ function normalize(d){
   const b = blankDB();
   if(!d || typeof d!=='object') return b;
   const o = Object.assign(b, d);
-  o.version = 2;
+  o.version = 3;
   // 深拷贝：normalize 的结果会被 mergeDB 就地改写，共享引用会污染入参
   o.days = (d.days && typeof d.days==='object') ? cloneJSON(d.days) : {};
+  // v3 起每天分「筛选 / 学习」两阶段，与 v2 的单卡片模型不兼容，
+  // 且旧数据口径（本来就认识 vs 当天学会）无法还原。
+  // 旧记录整体作废，翻开干净的一页 —— 这样连旧缓存也会自动丢弃。
+  if((parseInt(d.version, 10) || 0) < 3){ o.days = {}; o.learned = {}; }
+  for(const dk of Object.keys(o.days)){
+    const dd = o.days[dk];
+    if(!dd || typeof dd !== 'object'){ delete o.days[dk]; continue; }
+    const base = blankDay();
+    if(Array.isArray(dd.pool) || Array.isArray(dd.picked)){ Object.assign(base, dd); o.days[dk] = base; continue; }
+    const chars = Array.isArray(dd.chars) ? dd.chars : [];
+    base.teacher = dd.teacher || '';
+    base.picked  = chars.slice();
+    base.sifted  = chars.slice();
+    base.pool    = [];
+    base.history = Array.isArray(dd.history) ? dd.history.slice() : chars.slice();
+    base.phase   = 'learn';
+    base.at      = dd.at || base.at;
+    o.days[dk]   = base;
+  }
   o.learned = (d.learned && typeof d.learned==='object') ? cloneJSON(d.learned) : {};
   // 旧结构迁移：裸计数 / 扁平按天数组 都归到 legacy 名下，总量不丢
   o.quiz = migrateQuiz(d && d.quiz);
@@ -491,10 +561,13 @@ function normalize(d){
   if(!o.createdAt) o.createdAt = new Date().toISOString();
   // 清理字库里已不存在的字（字库加载完成后才做，缺字库时不误删）
   if(MAP && Object.keys(MAP).length){
+    const inPool = c => MAP[c];
     for(const k of Object.keys(o.learned)) if(!MAP[k]) delete o.learned[k];
     for(const dk of Object.keys(o.days)){
       const dd = o.days[dk];
-      if(dd && Array.isArray(dd.chars)) dd.chars = dd.chars.filter(c => !c || MAP[c]);
+      ['pool','sifted','picked','history'].forEach(f => {
+        if(Array.isArray(dd[f])) dd[f] = dd[f].filter(inPool);
+      });
     }
   }
   return o;
@@ -513,19 +586,23 @@ function mergeLearn(a, b){
 function mergeDay(a, b){
   if(!a) return b; if(!b) return a;
   const uniq = arr => (arr || []).filter((x, i, s) => x && s.indexOf(x) === i);
-  const charsA = a.chars || [], charsB = b.chars || [];
   // history 取并集：当天露过面的字一个都不能少，用于记录和防止重复抽到
-  const history = uniq((a.history || charsA).concat(b.history || charsB));
+  const history = uniq((a.history || []).concat(b.history || []));
   // chars 是当前待学的卡片，**取更晚操作过的那一方**，不能取并集——
   // 否则两台设备各 5 张卡一合并就变成 10 张，永远学不完
   const atA = String(a.at || ''), atB = String(b.at || '');
   let win = a;
   if(atB > atA) win = b;
-  else if(atA === atB && charsB.length > charsA.length) win = b;
+  // 有一方已经进入学习阶段就跟着它：锁定比筛选更「新」
+  else if(a.phase === 'sift' && b.phase === 'learn') win = b;
+  const at = (atB > atA ? atB : atA) || a.at || b.at;
   return { teacher: win.teacher || a.teacher || b.teacher || '',
-           chars: (win.chars || []).slice(),
+           phase: win.phase === 'learn' ? 'learn' : 'sift',
+           pool: uniq((win.pool || []).concat([])),
+           sifted: uniq((a.sifted || []).concat(b.sifted || [])),   // 各选各的，取并集
+           picked: (win.picked || []).slice(),
            history,
-           at: (atB > atA ? atB : atA) || a.at || b.at };
+           at };
 }
 /* 把 incoming 并进 base，返回 {db, changed} */
 function mergeDB(base, incoming){
@@ -694,12 +771,19 @@ async function loadChars(){
 /* ============ 今日 ============ */
 function learnedCount(){ return Object.keys(DB.learned).length; }
 function isKnown(c){ const e = DB.learned[c]; return !!e && e.status === 'known'; }
-/* 今天实际搞定几个：卡片被换走后仍算数，所以按 history 统计 */
+/* 今天学会几个 = 今天定下的字里已经掌握的。
+   筛选时「本来就认识」的字不算今天学的，所以不计入这里。 */
 function todayDone(){
   const d = DB.days[todayKey()];
   if(!d) return 0;
-  const seen = (d.history && d.history.length) ? d.history : d.chars;
-  return seen.filter(isKnown).length;
+  if(d.phase === 'learn') return d.picked.filter(isKnown).length;
+  return d.sifted.length;      // 筛选阶段显示已挑出几个
+}
+/* 当天筛掉的字：本来就认识、没算进今天要学的 */
+function todaySiftedOut(){
+  const d = DB.days[todayKey()];
+  if(!d) return [];
+  return d.history.filter(c => !d.picked.includes(c) && !d.sifted.includes(c));
 }
 function pickNew(n){
   const out = [];
@@ -707,8 +791,10 @@ function pickNew(n){
     if(out.length >= n) break;
     if(DB.learned[it.c]) continue;
     const t = DB.days[todayKey()];
-    const seen = t && (t.history && t.history.length ? t.history : t.chars);
-    if(seen && seen.includes(it.c)) continue;   // 今天露过面的字不再重复抽
+    if(t){
+      const seen = (t.history || []).concat(t.pool || [], t.sifted || [], t.picked || []);
+      if(seen.includes(it.c)) continue;   // 今天露过面的字不再重复抽
+    }
     out.push(it.c);
   }
   return out;
@@ -717,75 +803,148 @@ function ensureToday(){
   const k = todayKey();
   let d = DB.days[k];
   if(!d){
-    const chars = pickNew(DB.perDay);
-    d = { teacher: DB.teachers[0] || '', chars, history:chars.slice(), at:new Date().toISOString() };
+    const pool = pickNew(DB.perDay);
+    d = blankDay();
+    d.teacher = DB.teachers[0] || '';
+    d.pool = pool.slice();
+    d.history = pool.slice();
     DB.days[k] = d;
     scheduleSave();
     return d;
   }
-  /* 不变量自愈：今日卡片上只能是「还没认识的字」。
-     旧版本换字被合并还原 / 异常数据会把认识的字留在卡片上，
-     导致打开满屏「已认识」没法学。这里直接把认识的换出、补入新字。 */
-  const stale = d.chars.filter(c => isKnown(c));
-  if(stale.length || d.chars.length < DB.perDay){
-    if(!d.history || !d.history.length) d.history = d.chars.slice();
-    d.chars = d.chars.filter(c => !isKnown(c));
-    const fresh = pickNew(DB.perDay - d.chars.length);
-    fresh.forEach(c => {
-      d.chars.push(c);
-      if(!d.history.includes(c)) d.history.push(c);
-    });
-    d.at = new Date().toISOString();   // 标记本方更新，合并时以自愈后为准
-    scheduleSave();
+
+  /* 自愈：
+     筛选阶段 —— 卡片上只能是「还没认识的字」，认识的自动换出补新；
+     学习阶段 —— picked 是今天定好的字，即使后来学会了也绝不更换。 */
+  if(d.phase !== 'learn'){
+    let touched = false;
+    // 尚未进入学习阶段，但已经攒够不认识的字 → 锁定
+    if(d.sifted.length >= DB.perDay){
+      d.picked = d.sifted.slice(0, DB.perDay);
+      d.pool = [];
+      d.phase = 'learn';
+      touched = true;
+    }else{
+      const stale = d.pool.filter(c => isKnown(c));
+      if(stale.length){
+        d.pool = d.pool.filter(c => !isKnown(c));
+        touched = true;
+      }
+      if(d.pool.length < DB.perDay){
+        const fresh = pickNew(DB.perDay - d.pool.length);
+        fresh.forEach(c => {
+          d.pool.push(c);
+          if(!d.history.includes(c)) d.history.push(c);
+        });
+        touched = true;
+      }
+      // 保险：sifted 里混入已认识的（异常数据）直接剔除
+      const badSift = d.sifted.filter(c => isKnown(c));
+      if(badSift.length){
+        d.sifted = d.sifted.filter(c => !isKnown(c));
+        touched = true;
+      }
+    }
+    if(touched){ d.at = new Date().toISOString(); scheduleSave(); }
   }
   return d;
 }
-function mark(c, status){
-  const k = todayKey();
-  DB.learned[c] = { status, date:k, teacher:(DB.days[k]||{}).teacher||'' };
-  scheduleSave();
-}
-/* 把当日卡片上的 c 换成新字，返回新字（null = 字库已空）。
-   history 记录当天出现过的每一个字，换掉的字不会从记录里消失 */
-function pull(c){
+/* ============ 阶段一：筛选 ============ */
+/* 本来就认识 → 盖「认」章翻走，补一个新字上来。
+   这个字不算「今天学的」，但计入已掌握。 */
+function siftKnown(c){
   const d = DB.days[todayKey()];
-  if(!d) return null;
-  const i = d.chars.indexOf(c);
-  if(i < 0) return null;
-  if(!d.history) d.history = d.chars.slice();
-  const fresh = pickNew(1)[0];
-  if(fresh){ d.chars[i] = fresh; d.history.push(fresh); }
-  else d.chars.splice(i, 1);
-  d.at = new Date().toISOString();   // 换过卡片 → 这一方更新，合并时优先采用
-  return fresh || null;
-}
-/* 认识了 → 归入已掌握，卡片盖上「认」章后翻走，换上新字 */
-function replace(c){
-  DB.learned[c] = { status:'known', date:todayKey(), teacher:(DB.days[todayKey()]||{}).teacher||'', via:'ok' };
-  speak(c);
-  swapTile(todayIndexOf(c), pull(c), '认',
-    c => '认识了！换上「' + c + '」', '认识了！');
-}
-/* 换一个 → 只是跳过这个字，不计入已掌握 */
-function swapOnly(c){
-  swapTile(todayIndexOf(c), pull(c), null,
-    c => '换成「' + c + '」', '字库里没有新字了');
-}
-function todayIndexOf(c){
-  const d = DB.days[todayKey()];
-  return d ? d.chars.indexOf(c) : -1;
-}
-function reroll(){
-  const k = todayKey();
-  const d = DB.days[k];
   if(!d) return;
-  // 未标记的字退回字库，重新抽
-  d.chars = d.chars.filter(c => DB.learned[c]);
-  d.chars = d.chars.concat(pickNew(DB.perDay - d.chars.length));
-  if(!d.history) d.history = [];
-  d.chars.forEach(c => { if(!d.history.includes(c)) d.history.push(c); });
+  const i = d.pool.indexOf(c);
+  DB.learned[c] = { status:'known', date:todayKey(), teacher:d.teacher||'', via:'sift' };
+  speak(c);
+  if(i < 0){ scheduleSave(); renderAll(); return; }
+  const fresh = pickNew(1)[0];
+  if(fresh){ d.pool[i] = fresh; if(!d.history.includes(fresh)) d.history.push(fresh); }
+  else d.pool.splice(i, 1);
+  d.at = new Date().toISOString();
+  swapTile(i, fresh, '认', x => '本来就认识，换「' + x + '」问问', '本来就认识');
+}
+/* 不认识 → 留下来，作为今天要学的字 */
+function siftPick(c){
+  const d = DB.days[todayKey()];
+  if(!d) return;
+  if(d.sifted.includes(c)) return;
+  d.sifted.push(c);
+  d.at = new Date().toISOString();
+  speak(c);
+  const i = d.pool.indexOf(c);
+  const done = d.sifted.length >= DB.perDay;
+  if(done){
+    // 集齐了 → 锁定今天要学的字
+    d.picked = d.sifted.slice(0, DB.perDay);
+    d.pool = [];
+    d.phase = 'learn';
+    scheduleSave();
+    stampThen(i, c, '学', () => {
+      renderAll();
+      toast('集齐 ' + d.picked.length + ' 个字，今天就学它们！');
+      celebrate();
+    });
+  }else{
+    scheduleSave();
+    stampThen(i, c, '学', () => {
+      refreshCard(i);
+      $('#d-prog').textContent = '已选 ' + d.sifted.length + ' / ' + DB.perDay + ' 个不认识的字';
+      renderTabs();
+      toast('记住了，还差 ' + (DB.perDay - d.sifted.length) + ' 个');
+    });
+  }
+}
+/* 取消选择 */
+function siftUndo(c){
+  const d = DB.days[todayKey()];
+  if(!d) return;
+  d.sifted = d.sifted.filter(x => x !== c);
+  d.at = new Date().toISOString();
+  scheduleSave(); refreshCard(d.pool.indexOf(c)); renderTabs();
+  $('#d-prog').textContent = '已选 ' + d.sifted.length + ' / ' + DB.perDay + ' 个字';
+}
+/* ============ 阶段二：学习 ============ */
+function learnDone(c, ok){
+  const d = DB.days[todayKey()];
+  if(!d) return;
+  const prev = DB.learned[c];
+  DB.learned[c] = { status: ok ? 'known' : 'fuzzy', date: todayKey(),
+                    teacher: d.teacher || '', via: 'learn' };
+  if(!ok && prev && prev.via === 'learn') DB.learned[c].try = (prev.try||0) + 1;
+  speak(c);
+  scheduleSave();
+  const i = d.picked.indexOf(c);
+  stampThen(i, c, ok ? '会' : '练', () => {
+    renderToday(); renderTabs(); renderLib(); renderLog(); renderStats();
+    const left = d.picked.filter(x => !(DB.learned[x] && DB.learned[x].status === 'known')).length;
+    if(!left) toast('今天 5 个字都学会了！');
+  });
+}
+/* 学习阶段反悔：重新筛选 */
+function reopenSift(){
+  const d = DB.days[todayKey()];
+  if(!d) return;
+  d.phase = 'sift';
+  d.pool = d.picked.slice();
+  d.sifted = [];
+  d.picked = [];
+  d.at = new Date().toISOString();
   scheduleSave(); renderAll();
-  toast('换了五个新字');
+  toast('重新挑一遍今天要学的字');
+}
+/* 筛选阶段：全部换一批新字问 */
+function rerollSift(){
+  const d = DB.days[todayKey()];
+  if(!d || d.phase === 'learn') return;
+  // 已选中的保留，其余换新
+  const keep = d.sifted.slice();
+  d.pool = keep.concat(pickNew(DB.perDay - keep.length));
+  d.pool.forEach(c => { if(!d.history.includes(c)) d.history.push(c); });
+  d.at = new Date().toISOString();
+  scheduleSave(); renderAll();
+  toast('换了一批新字');
 }
 
 /* ============ 渲染 ============ */
@@ -794,7 +953,8 @@ function renderAll(){
   try{ document.title = DB.child + '的认字簿 · ' + learnedCount() + ' 字'; }catch(e){}
 }
 function renderTabs(){
-  $('#n-today').textContent = todayDone() + '/' + DB.perDay;
+  const d = DB.days[todayKey()];
+  $('#n-today').textContent = (d && d.phase === 'learn' ? todayDone() : todayDone()) + '/' + DB.perDay;
   $('#n-quiz').textContent = quizTotals(DB.quiz).total;
   $('#n-lib').textContent = learnedCount();
   $('#n-log').textContent = Object.keys(DB.days).length;
@@ -805,62 +965,121 @@ function renderToday(){
   $('#d-date').innerHTML = (now.getMonth()+1) + '月' + now.getDate() + '日'
     + ' <small>星期' + weekday(now) + '</small>';
   const d = ensureToday();
+  const sift = d.phase !== 'learn';
 
   // 大人
   $('#teachers').innerHTML = DB.teachers.map(t =>
     '<button class="chip" data-t="' + esc(t) + '" aria-pressed="' + (d.teacher===t) + '">' + esc(t) + '</button>'
   ).join('') + '<button class="chip ghost" id="t-add">+</button>';
 
-  // 五个字
-  $('#tiles').innerHTML = d.chars.map(c => tileNode(c)).join('');
-  $('#t-empty').style.display = d.chars.length ? 'none' : 'block';
-  $('#d-prog').textContent = todayDone() + ' / ' + DB.perDay + ' 已认识';
+  // 阶段提示
+  const list = sift ? d.pool : d.picked;
+  const got = d.picked.filter(c => isKnown(c)).length;
+  $('#t-phase').className = 'phase ' + (sift ? 'sift' : 'learn');
+  $('#t-phase').innerHTML = sift
+    ? '<b>第一步 · 挑出不认识的</b><span>问以宁认不认识，认识的换一个，凑够 '
+      + DB.perDay + ' 个不认识的就开始学</span>'
+    : '<b>今天学这 ' + d.picked.length + ' 个字</b><span>已经定好了，今天就教它们 · 学会 '
+      + got + '/' + d.picked.length + '</span>';
+  $('#t-phase').hidden = false;
+
+  // 卡片
+  $('#tiles').innerHTML = list.map(c => tileNode(c, sift)).join('');
+  $('#t-empty').style.display = list.length ? 'none' : 'block';
+  $('#d-prog').textContent = sift
+    ? '已选 ' + d.sifted.length + ' / ' + DB.perDay + ' 个不认识的字'
+    : '学会 ' + got + ' / ' + d.picked.length;
+  // 阶段按钮：筛选阶段是「换一批」，学习阶段是「重新挑」
+  const rb = $('#t-reopen');
+  rb.hidden = false;
+  rb.textContent = sift ? '换一批' : '重新挑';
+  rb.dataset.phase = sift ? 'sift' : 'learn';
 }
-function tileClass(c){ return 'tile' + (isKnown(c) ? ' done' : ''); }
-function tileNode(c){ return '<div class="' + tileClass(c) + '">' + tileInner(c) + '</div>'; }
-function tileInner(c){
+/* tileClass / tileInner 需要知道当前阶段，才能渲染正确的按钮 */
+function tileClass(c, sift){
+  const d = DB.days[todayKey()] || {};
+  let cls = 'tile';
+  if(sift && d.sifted && d.sifted.includes(c)) cls += ' picked';
+  if(!sift && isKnown(c)) cls += ' done';
+  return cls;
+}
+function tileNode(c, sift){ return '<div class="' + tileClass(c, sift) + '">' + tileInner(c, sift) + '</div>'; }
+function tileInner(c, sift){
   const it = MAP[c] || {c, p:'', w:[]};
-  const ok = isKnown(c);
+  const d = DB.days[todayKey()] || {};
+  const picked = !!(d.sifted && d.sifted.includes(c));
+  const known  = isKnown(c);
+  let stamp = '';
+  if(sift && picked) stamp = '<span class="stamp s2">学</span>';
+  if(!sift && known) stamp = '<span class="stamp">会</span>';
+
+  let acts;
+  if(sift){
+    acts = picked
+      ? '<button class="undo" data-act="undo" data-c="' + c + '">取消</button>'
+      : '<button class="ok" data-act="know" data-c="' + c + '">认识</button>'
+        + '<button class="no" data-act="pick" data-c="' + c + '">不认识</button>';
+  }else{
+    acts = known
+      ? '<button class="undo" data-act="redo" data-c="' + c + '">还没会</button>'
+      : '<button class="ok" data-act="got" data-c="' + c + '">学会了</button>'
+        + '<button class="no" data-act="miss" data-c="' + c + '">没记住</button>';
+  }
   return '<div class="py">' + esc(it.p) + '</div>'
     + '<div class="tzwrap"><div class="tz lg" data-c="' + c + '"><span class="hz">' + c + '</span>'
-    + (ok ? '<span class="stamp">认</span>' : '') + '</div></div>'
+    + stamp + '</div></div>'
     + '<div class="w">' + (it.w.length ? it.w.map(w=>'<span>'+esc(w)+'</span>').join('') : '<span style="opacity:.45">—</span>') + '</div>'
-    + '<div class="acts">'
-    + '<button class="ok" data-act="ok" data-c="' + c + '">' + (ok?'已认识':'认识了') + '</button>'
-    + '<button class="sw" data-act="sw" data-c="' + c + '">换一个</button>'
-    + '</div>';
+    + '<div class="acts">' + acts + '</div>';
 }
-/* 只刷新一张卡：旧卡盖印章后翻走 → 原地浮现新卡，其余四张纹丝不动 */
-function swapTile(i, newC, stampText, msgWith, msgEmpty){
+/* 只刷新一张卡：旧卡盖印章后翻走 → 原地浮现新卡，其余卡片纹丝不动 */
+function swapTile(i, newC, stampText, msgFn){
   const el = (i >= 0 && $('#tiles').children[i]) ? $('#tiles').children[i] : null;
   scheduleSave();
-  if(!el || !newC){ renderAll(); toast(newC ? msgWith(newC) : msgEmpty); return; }
-
-  // 印章先落到旧字上，再让它翻走
-  if(stampText){
-    const wrap = el.querySelector('.tzwrap');
-    if(wrap && !wrap.querySelector('.stamp')){
-      const s = document.createElement('span');
-      s.className = 'stamp'; s.textContent = stampText;
-      wrap.appendChild(s);
-    }
-  }
+  if(!el || !newC){ renderAll(); if(msgFn && !newC) toast('字库里没有新字了'); return; }
+  addStamp(el, stampText);
   el.classList.add('swap-out');
   const finish = () => {
-    el.className = tileClass(newC);
-    el.innerHTML  = tileInner(newC);
+    el.className = tileClass(newC, true);
+    el.innerHTML  = tileInner(newC, true);
     el.classList.add('swap-in');
     setTimeout(() => el.classList.remove('swap-in'), 380);
-    refreshOthers();
+    renderToday();   // 只更新今日页的进度条与提示，卡片本身上面已换好
+    renderTabs(); renderLib(); renderLog(); renderStats();
   };
-  const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion:reduce)').matches;
-  reduce ? finish() : setTimeout(finish, 240);
-  toast(msgWith(newC));
+  reduceMotion() ? finish() : setTimeout(finish, 240);
+  if(msgFn) toast(msgFn(newC));
 }
-/* 更新「今日」以外、不引起当前视图跳动的部分 */
-function refreshOthers(){
-  $('#d-prog').textContent = todayDone() + ' / ' + DB.perDay + ' 已认识';
-  renderTabs(); renderLib(); renderLog(); renderStats();
+/* 盖章 → 卡片原地保留（不翻走） */
+function stampThen(i, c, text, cb){
+  const el = (i >= 0 && $('#tiles').children[i]) ? $('#tiles').children[i] : null;
+  reduceMotion() ? cb() : setTimeout(cb, 260);
+  if(el) addStamp(el, text);
+}
+function refreshCard(i){
+  const sift = (DB.days[todayKey()] || {}).phase !== 'learn';
+  const el = (i >= 0 && $('#tiles').children[i]) ? $('#tiles').children[i] : null;
+  if(!el) return;
+  const c = el.querySelector('.hz').textContent;
+  el.className = tileClass(c, sift);
+  el.innerHTML  = tileInner(c, sift);
+}
+function addStamp(el, text){
+  if(!text) return;
+  const wrap = el && el.querySelector('.tzwrap');
+  if(wrap && !wrap.querySelector('.stamp')){
+    const s = document.createElement('span');
+    s.className = 'stamp'; s.textContent = text;
+    wrap.appendChild(s);
+  }
+}
+function reduceMotion(){
+  return !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion:reduce)').matches);
+}
+function celebrate(){
+  const box = $('#tiles');
+  if(!box) return;
+  box.classList.remove('cheer'); void box.offsetWidth; box.classList.add('cheer');
+  setTimeout(() => box.classList.remove('cheer'), 900);
 }
 function renderQuizPane(){
   const scopes = [['learned','学过的'],['fuzzy','需巩固'],['known','已掌握'],['all','全部字库']];
@@ -970,19 +1189,22 @@ function renderLog(){
   $('#log-list').innerHTML = keys.map(k => {
     const d = DB.days[k];
     const dd = new Date(k + 'T00:00:00');
-    // 用 history：当天出现过的字全在，被换掉的也留痕
-    const seen = (d.history && d.history.length ? d.history : d.chars)
-      .filter((c, i, a) => a.indexOf(c) === i);
-    const chars = seen.map(c => {
+    const learned = (d.picked && d.picked.length) ? d.picked : (d.sifted || []);
+    // 筛掉的字：本来就会、没算进今天学的
+    const out = (d.history || []).filter(c => !learned.includes(c));
+    const mark = arr => arr.map(c => {
       const e = DB.learned[c];
-      return '<b class="' + (e && e.status==='known' ? 'k' : '') + '" data-c="' + c + '">' + c + '</b>';
+      return '<b class="' + (e && e.status==='known' ? 'k' : 'f') + '" data-c="' + c + '">' + c + '</b>';
     }).join('');
+    const got = learned.filter(c => isKnown(c)).length;
     return '<div class="e">'
       + '<div class="row" style="justify-content:space-between">'
       + '<div><div class="ed">' + (k===todayKey()?'今天 · ':'') + (dd.getMonth()+1) + '月' + dd.getDate() + '日 星期' + weekday(dd) + '</div>'
-      + '<div class="et">' + (d.teacher ? esc(d.teacher) + '教 · ' : '') + seen.length + ' 个字</div></div>'
+      + '<div class="et">' + (d.teacher ? esc(d.teacher) + '教 · ' : '')
+      + '学了 ' + learned.length + ' 个字，会 ' + got + (out.length ? ' · 本来就会 ' + out.length + ' 个' : '') + '</div></div>'
       + '<button class="btn ghost sm" data-del="' + k + '">删除</button></div>'
-      + '<div class="ec">' + chars + '</div></div>';
+      + '<div class="ec">' + (learned.length ? mark(learned) : '<span class="muted">还没定字</span>')
+      + (out.length ? '<span class="sep">本来就会</span>' + mark(out) : '') + '</div></div>';
   }).join('');
 }
 function renderStats(){
@@ -1126,12 +1348,17 @@ function bind(){
   $('#tiles').onclick = e => {
     const tz = e.target.closest('.tz'); if(tz){ openDetail(tz.dataset.c); return; }
     const b = e.target.closest('button[data-act]'); if(!b) return;
-    const c = b.dataset.c;
-    if(b.dataset.act === 'ok'){
-      // 已认识再点一次 = 撤销（退回字库，卡片保留）
-      if(isKnown(c)){ delete DB.learned[c]; scheduleSave(); renderAll(); return; }
-      replace(c);
-    }else if(b.dataset.act === 'sw'){ swapOnly(c); }
+    const c = b.dataset.c, a = b.dataset.act;
+    if(a === 'know') siftKnown(c);          // 阶段一：本来就认识 → 换一个
+    else if(a === 'pick') siftPick(c);      // 阶段一：不认识 → 留下来
+    else if(a === 'undo') siftUndo(c);      // 阶段一：取消选择
+    else if(a === 'got') learnDone(c, true);   // 阶段二：学会了
+    else if(a === 'miss') learnDone(c, false); // 阶段二：没记住
+    else if(a === 'redo'){                 // 阶段二：反悔，退回没学会
+      delete DB.learned[c]; scheduleSave();
+      refreshCard(DB.days[todayKey()].picked.indexOf(c));
+      renderTabs(); renderLib(); renderStats();
+    }
   };
 
   $('#teachers').onclick = e => {
@@ -1146,12 +1373,22 @@ function bind(){
       }
       return;
     }
-    DB.days[todayKey()].teacher = b.dataset.t;
-    // 同步更新已学字的教师
-    DB.days[todayKey()].chars.forEach(c => { if(DB.learned[c]) DB.learned[c].teacher = b.dataset.t; });
+    const d = DB.days[todayKey()];
+    d.teacher = b.dataset.t;
+    // 同步更新今天相关字的教师记录
+    (d.picked.length ? d.picked : d.sifted.concat(d.pool)).forEach(c => {
+      if(DB.learned[c]) DB.learned[c].teacher = b.dataset.t;
+    });
+    d.at = new Date().toISOString();
     scheduleSave(); renderAll();
   };
-  $('#btn-reroll').onclick = () => { if(confirm('把今天还没标记的字退回字库，重新抽五个？')) reroll(); };
+  $('#t-reopen').onclick = () => {
+    if($('#t-reopen').dataset.phase === 'sift'){
+      if(confirm('换一批新字问问？已经选中的会保留。')) rerollSift();
+    }else{
+      if(confirm('重新挑今天要学的字？已经学会的会保留。')) reopenSift();
+    }
+  };
 
   $('#q-scope').onclick = e => {
     const b = e.target.closest('button'); if(!b) return;
@@ -1181,7 +1418,11 @@ function bind(){
     if(del){
       const k = del.dataset.del;
       if(!confirm('删除 ' + k + ' 的记录？当天学的字会退回字库。')) return;
-      (DB.days[k].chars||[]).forEach(c => { if(DB.learned[c] && DB.learned[c].date === k) delete DB.learned[c]; });
+      // 只退掉「当天学会」的字；本来就认识的字不属于那天，保留
+      const dk = DB.days[k];
+      ((dk.picked && dk.picked.length) ? dk.picked : (dk.sifted || [])).forEach(c => {
+        if(DB.learned[c] && DB.learned[c].date === k && DB.learned[c].via !== 'sift') delete DB.learned[c];
+      });
       delete DB.days[k];
       scheduleSave(); renderAll(); toast('已删除');
     }
@@ -1293,15 +1534,22 @@ function reportData(){
     cur.setDate(cur.getDate()-1);
   }
 
-  // 按日期升序：累计掌握曲线 + 明细
+  // 按日期升序：累计「今天学会的字」曲线 + 明细
   const dayKeys = Object.keys(DB.days).sort();
   const cum = [];
   const acc = new Set();
   dayKeys.forEach(k => {
     const d = DB.days[k];
-    const seen = ((d.history && d.history.length) ? d.history : d.chars) || [];
-    seen.forEach(c => { if(DB.learned[c]) acc.add(c); });
+    const picked = (d.picked && d.picked.length) ? d.picked : (d.sifted || []);
+    picked.forEach(c => { if(DB.learned[c]) acc.add(c); });
     cum.push({ k, n: acc.size });
+  });
+  // 累计被筛掉的字：本来就认识、没有算进当天学的
+  let siftedOut = 0;
+  Object.keys(DB.days).forEach(k => {
+    const d = DB.days[k];
+    const picked = (d.picked && d.picked.length) ? d.picked : (d.sifted || []);
+    siftedOut += (d.history || []).filter(c => !picked.includes(c)).length;
   });
 
   const grades = GRADES.map((g, i) => {
@@ -1319,7 +1567,7 @@ function reportData(){
   });
   return {
     child:DB.child, known:known.slice().sort(), fuzzy:fuzzy.slice().sort(), left,
-    learned:ks.length, streak, days:dayKeys.length, cum, grades,
+    learned:ks.length, streak, days:dayKeys.length, cum, grades, siftedOut,
     qt, byTeacher, perDay:DB.perDay, pool:POOL.length
   };
 }
@@ -1375,7 +1623,8 @@ function buildReport(){
     const dt = new Date(end); dt.setDate(dt.getDate()-i);
     const k = fmtDate(dt);
     const d = DB.days[k];
-    const cnt = d ? (((d.history&&d.history.length)?d.history:d.chars)||[]).filter(c=>DB.learned[c]).length : 0;
+    const picked = d ? ((d.picked && d.picked.length) ? d.picked : (d.sifted || [])) : [];
+    const cnt = picked.filter(c => DB.learned[c]).length;
     cells.push({ k, cnt, future: k > todayK, day:dt.getDay() });
   }
   const maxCnt = Math.max(1, ...cells.map(c => c.cnt));
@@ -1398,14 +1647,17 @@ function buildReport(){
   const rows = Object.keys(DB.days).sort().reverse().map(k => {
     const d = DB.days[k];
     const dd = new Date(k + 'T00:00:00');
-    const seen = ((d.history&&d.history.length) ? d.history : d.chars) || [];
-    const got = seen.filter(c => DB.learned[c] && DB.learned[c].status === 'known');
+    const picked = (d.picked && d.picked.length) ? d.picked : (d.sifted || []);
+    const got = picked.filter(c => DB.learned[c] && DB.learned[c].status === 'known');
+    const out = (d.history || []).filter(c => !picked.includes(c));
+    const cell = arr => arr.map(c => '<span class="' + (DB.learned[c] && DB.learned[c].status==='known' ? 'k' : 'f') + '">' + c + '</span>').join('');
     return '<tr><td class="nowrap">' + k + '</td>'
       + '<td class="nowrap">' + (dd.getMonth()+1) + '/' + dd.getDate() + ' 周' + weekday(dd) + '</td>'
       + '<td class="nowrap">' + esc(d.teacher || '—') + '</td>'
-      + '<td class="nowrap">' + seen.length + '</td>'
+      + '<td class="nowrap">' + picked.length + '</td>'
       + '<td class="nowrap"><b>' + got.length + '</b></td>'
-      + '<td class="hzline">' + seen.map(c => '<span class="' + (DB.learned[c] && DB.learned[c].status==='known' ? 'k' : 'f') + '">' + c + '</span>').join('') + '</td></tr>';
+      + '<td class="hzline">' + (picked.length ? cell(picked) : '<span class="muted">—</span>') + '</td>'
+      + '<td class="hzline dim">' + (out.length ? cell(out) : '<span class="muted">—</span>') + '</td></tr>';
   }).join('');
 
   const chip = arr => arr.length
@@ -1428,6 +1680,8 @@ function buildReport(){
         R.qt.total ? '答 ' + R.qt.total + ' 题' : '还没抽查')
   + '</section>'
 
+  + (R.siftedOut ? '<p class="tip">筛选环节还认出了 <b>' + R.siftedOut
+      + '</b> 个本来就认识的字，这些不计入「今天学的」。</p>' : '')
   + '<section class="card"><h2>学习曲线</h2>'
   + '<p class="muted">纵轴是累计学会的字数，横轴是日期。</p>' + curve + '</section>'
 
@@ -1453,7 +1707,8 @@ function buildReport(){
       + '</div></section>' : '')
 
   + '<section class="card"><h2>每日明细</h2>'
-  + (rows ? '<table><thead><tr><th>日期</th><th>星期</th><th>教的人</th><th>学</th><th>会</th><th>当天学的字</th></tr></thead><tbody>' + rows + '</tbody></table>'
+  + (rows ? '<table><thead><tr><th>日期</th><th>星期</th><th>教的人</th><th>学</th><th>会</th>'
+      + '<th>当天学的字</th><th>本来就认识</th></tr></thead><tbody>' + rows + '</tbody></table>'
          : '<p class="muted">还没有记录。</p>')
   + '</section>'
 
@@ -1490,6 +1745,9 @@ const REPORT_CSS = [
 'break-inside:avoid}',
 '.card h2{margin:0 0 12px;font-size:16px;letter-spacing:.03em}',
 '.muted{color:var(--muted);font-size:13px;margin:0 0 10px}',
+'.tip{background:#FBF4E4;border:1px solid #E7D9B4;border-radius:10px;padding:9px 13px;',
+'font-size:12.5px;color:#8A6A22;margin:0 0 16px}',
+'.hzline.dim{opacity:.55}',
 '.heat{display:flex;gap:4px;overflow-x:auto;padding-bottom:4px}',
 '.hcol{display:flex;flex-direction:column;gap:4px}',
 '.heat i{width:13px;height:13px;border-radius:3px;display:block;background:#EFEAE0}',
@@ -1522,14 +1780,25 @@ const REPORT_CSS = [
 ].join('');
 
 function buildCSV(){
-  const head = ['字','拼音','册次','状态','学会日期','教的人','来源'];
-  const lines = [head.join(',')];
+  // 逐字明细
   const q = s => '"' + String(s==null?'':s).replace(/"/g,'""') + '"';
+  const viaOf = v => v === 'sift' ? '本来就认识' : (v === 'learn' ? '当天学会' : (v === 'quiz' ? '抽查' : ''));
+  const lines = [['字','拼音','册次','状态','日期','教的人','来源'].join(',')];
   Object.keys(DB.learned).sort().forEach(c => {
     const e = DB.learned[c], it = MAP[c] || {};
     lines.push([q(c), q(it.p||''), q(it.g||''),
       q(e.status === 'known' ? '已掌握' : '需巩固'),
-      q(e.date||''), q(e.teacher||''), q(e.via === 'ok' ? '今日卡片' : (e.via || '抽查'))].join(','));
+      q(e.date||''), q(e.teacher||''), q(viaOf(e.via))].join(','));
+  });
+  // 每日记录
+  lines.push('');
+  lines.push(['日期','教的人','当天学的字','学会几个','本来就认识的字'].join(','));
+  Object.keys(DB.days).sort().reverse().forEach(k => {
+    const d = DB.days[k];
+    const picked = (d.picked && d.picked.length) ? d.picked : (d.sifted || []);
+    const out = (d.history || []).filter(c => !picked.includes(c));
+    lines.push([q(k), q(d.teacher||''), q(picked.join('')),
+      q(picked.filter(c => isKnown(c)).length), q(out.join(''))].join(','));
   });
   return lines.join('\n');
 }
@@ -1583,7 +1852,7 @@ window.__lit = {
   get db(){ return DB; },
   quizTotal(){ return quizTotals(DB.quiz).total; },
   syncPull, saveCloud, mergeDB, buildReport, buildCSV, snapshotRestore, snapList,
-  renderAll, ensureToday
+  renderAll, ensureToday, siftKnown, siftPick, siftUndo, learnDone, reopenSift, rerollSift
 };
 boot();
 </script>

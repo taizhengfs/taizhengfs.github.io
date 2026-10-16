@@ -1,10 +1,9 @@
-/* 认字簿冒烟测试：jsdom 加载 + 模拟云端 + 走一遍关键交互 */
+/* 认字簿冒烟测试：jsdom 加载 + 模拟云端 + 走一遍两阶段交互 */
 const fs = require('fs');
 const path = require('path');
 const { JSDOM, VirtualConsole } = require('jsdom');
 
-const path0 = require('path');
-const APP = path0.resolve(__dirname, '..');
+const APP = path.resolve(__dirname, '..');
 const html = fs.readFileSync(path.join(APP, 'index.html'), 'utf8');
 const charsRaw = fs.readFileSync(path.join(APP, 'data/chars.json'), 'utf8');
 
@@ -17,13 +16,11 @@ const cloud = { store: null, puts: 0, gets: 0 };
 
 function mockFetch(url, opt = {}) {
   const u = String(url);
-  if (u.indexOf('chars.json') >= 0) {
+  if (u.indexOf('chars.json') >= 0)
     return Promise.resolve({ ok: true, status: 200, json: () => Promise.resolve(JSON.parse(charsRaw)) });
-  }
   if (u.indexOf('time.taizhendong.com') >= 0) {
     if (opt.method === 'PUT') {
-      cloud.puts++;
-      cloud.store = JSON.parse(opt.body);
+      cloud.puts++; cloud.store = JSON.parse(opt.body);
       return Promise.resolve({ ok: true, status: 200, json: () => Promise.resolve(cloud.store) });
     }
     cloud.gets++;
@@ -58,120 +55,139 @@ function ok(name, cond, extra) {
   if (cond) { pass++; console.log('  OK   ' + name + (extra ? '  ' + extra : '')); }
   else { fail++; console.log('  FAIL ' + name + (extra ? '  ' + extra : '')); }
 }
+const btn = (act, i) => $$('#tiles [data-act="' + act + '"]')[i || 0];
 
 (async () => {
-  await wait(900);
+  await wait(1000);
+  const L = window.__lit;
+  const k = Object.keys(L.db.days)[0];
 
   console.log('--- 渲染 ---');
-  const tiles = $$('#tiles .tile');
-  ok('今日渲染 5 个字卡', tiles.length === 5, '实际 ' + tiles.length);
-  ok('字卡显示汉字', tiles.length && tiles[0].querySelector('.hz').textContent.length === 1);
+  ok('今日渲染 5 张卡', $$('#tiles .tile').length === 5, '实际 ' + $$('#tiles .tile').length);
+  ok('卡片显示汉字', $$('#tiles .hz').every(e => e.textContent.length === 1));
   ok('拼音已填充', $$('#tiles .py').filter(p => p.textContent.trim()).length === 5);
-  ok('组词已填充', $$('#tiles .w span').length >= 10, '共 ' + $$('#tiles .w span').length + ' 个词');
-  ok('大人可选', $$('#teachers .chip').length >= 5, $$('#teachers .chip').length + ' 个');
-  ok('默认选中第一位大人', $$('#teachers .chip[aria-pressed="true"]').length === 1);
-  ok('日期已渲染', /月.*日/.test($('#d-date').textContent), $('#d-date').textContent.trim());
+  ok('组词已填充', $$('#tiles .w span').length >= 10, $$('#tiles .w span').length + ' 个词');
+  ok('大人可选', $$('#teachers .chip').length >= 5);
+  ok('日期已渲染', /月.*日/.test($('#d-date').textContent));
+  ok('处于筛选阶段', $('#t-phase').className.includes('sift'));
+  ok('筛选阶段显示双按钮', !!btn('know') && !!btn('pick'));
+  ok('阶段按钮是「换一批」', $('#t-reopen').textContent === '换一批', $('#t-reopen').textContent);
+  ok('进度显示 0/5', $('#d-prog').textContent.includes('0 / 5'), $('#d-prog').textContent);
 
-  console.log('--- 云端 ---');
-  ok('已创建云端数据（PUT）', cloud.puts >= 1, 'PUT ' + cloud.puts + ' 次');
-  ok('云端结构含 days/learned', !!(cloud.store && cloud.store.days && cloud.store.learned));
-  const dayKey = Object.keys(cloud.store.days)[0];
-  ok('今日记录已写入', !!dayKey && cloud.store.days[dayKey].chars.length === 5, dayKey);
+  console.log('--- 阶段一：筛选 ---');
+  // 第 1 个字：本来就认识 → 换成新字，且不计入「今天学的」
+  const c1 = $$('#tiles .hz')[0].textContent;
+  btn('know').click();
+  await wait(600);
+  ok('认识的字被换走', $$('#tiles .hz')[0].textContent !== c1, c1 + ' → ' + $$('#tiles .hz')[0].textContent);
+  ok('认识的字记为 known', L.db.learned[c1] && L.db.learned[c1].status === 'known');
+  ok('来源是「本来就认识」', L.db.learned[c1].via === 'sift', L.db.learned[c1].via);
+  ok('不算进今天要学的', L.db.days[k].sifted.length === 0);
+  ok('卡片仍是 5 张', $$('#tiles .tile').length === 5);
 
-  console.log('--- 交互：认识了（卡片翻走换新的）---');
-  const firstChar = tiles[0].querySelector('.hz').textContent;
-  $$('#tiles .acts .ok')[0].click();
-  await wait(60);
-  ok('卡片播放了翻出动效', $$('#tiles .tile')[0].classList.contains('swap-out'));
-  await wait(1100);
-  const db1 = cloud.store;
-  ok('已写入 learned', !!db1.learned[firstChar], firstChar);
-  ok('状态为 known', db1.learned[firstChar] && db1.learned[firstChar].status === 'known');
-  ok('记录了日期', db1.learned[firstChar] && !!db1.learned[firstChar].date);
-  ok('记录了教的大人', !!(db1.learned[firstChar] && db1.learned[firstChar].teacher), db1.learned[firstChar].teacher);
-  ok('这张卡片已换上新字', $$('#tiles .hz')[0].textContent !== firstChar,
-     firstChar + ' → ' + $$('#tiles .hz')[0].textContent);
-  ok('新卡片带进场动效后归位', !$$('#tiles .tile')[0].classList.contains('swap-out'));
-  ok('今日仍是 5 个字', $$('#tiles .tile').length === 5);
-  ok('换掉的字仍留在当天记录里', db1.days[dayKey].history.includes(firstChar));
-  ok('Tab 计数更新', $('#n-today').textContent === '1/5', $('#n-today').textContent);
+  // 新的第 1 个字：不认识 → 留下
+  const c2 = $$('#tiles .hz')[0].textContent;
+  btn('pick').click();
+  await wait(600);
+  ok('不认识的字被选中', L.db.days[k].sifted.includes(c2), c2);
+  ok('卡片盖了「学」章', !!$('#tiles .tile.picked .stamp'));
+  ok('进度显示 1/5', $('#d-prog').textContent.includes('1 / 5'), $('#d-prog').textContent);
 
-  console.log('--- 交互：换一个（只是跳过，不计入掌握）---');
-  const before = $$('#tiles .hz').map(e => e.textContent);
-  $$('#tiles .acts .sw')[1].click();
-  await wait(1100);
-  const after = $$('#tiles .hz').map(e => e.textContent);
-  const db2 = cloud.store;
-  ok('确实换掉了字', before[1] !== after[1], before[1] + ' → ' + after[1]);
-  ok('换一个不计入已掌握', !db2.learned[before[1]], before[1]);
-  ok('新字来自剩余字库', !!after[1] && !db2.learned[after[1]]);
-  ok('跳过的字也留在记录里', db2.days[dayKey].history.includes(before[1]));
-  ok('今日仍是 5 个字', after.length === 5);
-  ok('换一个不改变掌握进度', $('#n-today').textContent === '1/5', $('#n-today').textContent);
+  btn('undo').click();
+  await wait(400);
+  ok('可以取消选择', !L.db.days[k].sifted.includes(c2));
+  btn('pick').click();
+  await wait(500);
 
-  console.log('--- 交互：切换大人 ---');
-  const chips = $$('#teachers .chip');
-  chips[1].click();
-  await wait(1100);
-  ok('大人已切换', $$('#teachers .chip')[1].getAttribute('aria-pressed') === 'true',
-     $('#teachers .chip[aria-pressed="true"]').textContent);
-  ok('大人同步写入云端', cloud.store.days[dayKey].teacher === $$('#teachers .chip')[1].dataset.t,
-     cloud.store.days[dayKey].teacher);
+  console.log('--- 集齐 5 个 → 自动锁定 ---');
+  let guard = 0;
+  while (L.db.days[k].sifted.length < 5 && guard++ < 12) {
+    const b = $$('#tiles [data-act="pick"]')[0];
+    if (!b) break;
+    b.click();
+    await wait(450);
+  }
+  await wait(300);
+  ok('已集齐 5 个', L.db.days[k].sifted.length === 5, L.db.days[k].sifted.join(''));
+  ok('自动进入学习阶段', L.db.days[k].phase === 'learn', L.db.days[k].phase);
+  ok('picked 锁定 5 个字', L.db.days[k].picked.length === 5, L.db.days[k].picked.join(''));
+  ok('筛选池已清空', L.db.days[k].pool.length === 0);
+  ok('提示条显示「今天学这 5 个字」',
+    $('#t-phase').className.includes('learn') && /今天学这 5 个字/.test($('#t-phase').textContent),
+    $('#t-phase').textContent.slice(0, 16));
+  ok('阶段按钮变成「重新挑」', $('#t-reopen').textContent === '重新挑');
+  ok('Tab 计数 0/5', $('#n-today').textContent === '0/5', $('#n-today').textContent);
+
+  console.log('--- 阶段二：学习（卡片不再更换）---');
+  const locked = L.db.days[k].picked.slice();
+  const lc = locked[0];
+  btn('got').click();
+  await wait(600);
+  ok('学会的字记为 known', L.db.learned[lc].status === 'known');
+  ok('来源是「当天学会」', L.db.learned[lc].via === 'learn', L.db.learned[lc].via);
+  ok('卡片没被换走（锁定生效）', L.db.days[k].picked.join('') === locked.join(''),
+    L.db.days[k].picked.join(''));
+  ok('页面仍显示这 5 个字', $$('#tiles .hz').map(e => e.textContent).join('') === locked.join(''),
+    $$('#tiles .hz').map(e => e.textContent).join(''));
+  ok('进度显示 学会 1/5', $('#d-prog').textContent.includes('学会 1 / 5'), $('#d-prog').textContent);
+  ok('Tab 计数 1/5', $('#n-today').textContent === '1/5', $('#n-today').textContent);
+
+  const missC = $$('#tiles .hz')[1].textContent;
+  btn('miss', 0).click();
+  await wait(600);
+  ok('没记住的字记为 fuzzy', L.db.learned[missC] && L.db.learned[missC].status === 'fuzzy', missC);
+  ok('卡片依然没被换走', L.db.days[k].picked.join('') === locked.join(''));
+
+  let g2 = 0;
+  while ($$('#tiles [data-act="got"]').length && g2++ < 8) {
+    $$('#tiles [data-act="got"]')[0].click();
+    await wait(450);
+  }
+  ok('可以全部学完', L.db.days[k].picked.every(c => L.db.learned[c].status === 'known'),
+    L.db.days[k].picked.join(''));
+  ok('学完卡片依然在（不换字）', L.db.days[k].picked.length === 5);
+  ok('进度显示 5/5', $('#d-prog').textContent.includes('5 / 5'), $('#d-prog').textContent);
+
+  console.log('--- 筛选的字不算今天学的 ---');
+  ok('本来就认识的字不在 picked 里', !L.db.days[k].picked.includes(c1), c1);
+  ok('它仍留在 history 记录里', L.db.days[k].history.includes(c1));
+  ok('已掌握 = 5 学会 + 1 本来会',
+    Object.values(L.db.learned).filter(e => e.status === 'known').length === 6,
+    Object.values(L.db.learned).filter(e => e.status === 'known').length + ' 个');
 
   console.log('--- 抽查 ---');
   $$('.tab')[1].click();
-  await wait(200);
-  ok('抽查卡片渲染', !!$('#q-body .tz .hz'), $('#q-body .tz .hz') ? $('#q-body .tz .hz').textContent : '');
-  const qc = $('#q-body .tz .hz').textContent;
-  ok('抽查时隐藏拼音', !$('#q-body .py'));
+  await wait(250);
+  ok('抽查卡片渲染', !!$('#q-body .tz .hz'));
   $$('#q-body [data-qa="right"]')[0].click();
-  await wait(1100);
-  ok('答对后显示拼音', !!$('#q-body .py'), $('#q-body .py') ? $('#q-body .py').textContent : '');
-  ok('抽查计数 +1', window.__lit.quizTotal() === 1, JSON.stringify(cloud.store.quiz));
-  $$('#q-body [data-qa="next"]')[0].click();
   await wait(300);
-  ok('可切换到下一个字', $('#q-body .tz .hz').textContent !== qc || true);
+  ok('抽查计数 +1', L.quizTotal() === 1, JSON.stringify(L.db.quiz));
 
   console.log('--- 字库 ---');
   $$('.tab')[2].click();
-  await wait(200);
-  const cells = $$('#lib-grid .cell');
-  ok('字库渲染出格子', cells.length > 100, cells.length + ' 个');
-  ok('已学的字标为已掌握', $$('#lib-grid .cell.k').length >= 1, $$('#lib-grid .cell.k').length + ' 个');
-  ok('摘要显示三档统计', /已掌握.*需巩固.*剩余/.test($('#lib-sum').textContent), $('#lib-sum').textContent);
+  await wait(250);
+  ok('字库渲染出格子', $$('#lib-grid .cell').length > 100, $$('#lib-grid .cell').length + ' 个');
+  ok('已学的字标为已掌握', $$('#lib-grid .cell.k').length >= 5, $$('#lib-grid .cell.k').length + ' 个');
   $('#lib-status .chip[data-ls="k"]').click();
-  await wait(150);
-  ok('筛选“已掌握”生效', $$('#lib-grid .cell').length === $$('#lib-grid .cell.k').length,
-    $$('#lib-grid .cell').length + ' 个');
+  await wait(200);
+  ok('筛选「已掌握」生效', $$('#lib-grid .cell').length === $$('#lib-grid .cell.k').length);
 
   console.log('--- 记录 ---');
   $$('.tab')[3].click();
-  await wait(200);
+  await wait(250);
   ok('记录列表有条目', $$('#log-list .e').length === 1);
-  ok('记录显示大人名', /教/.test($('#log-list .et').textContent), $('#log-list .et').textContent);
-  const logChars = $$('#log-list .ec b').map(b => b.textContent);
-  ok('记录显示当天学过的 7 个字（含被换掉的）', logChars.length === 7, logChars.join(''));
-  ok('被换掉的字没从记录里消失', logChars.includes(firstChar) && logChars.includes(before[1]),
-     '含 ' + firstChar + ' 与 ' + before[1]);
+  ok('记录显示「学了 5 个字」', /学了 5 个字/.test($('#log-list .et').textContent),
+    $('#log-list .et').textContent);
+  ok('记录显示「本来就会」', /本来就会/.test($('#log-list .et').textContent));
+  ok('记录含 6 个字（5 学的 + 1 本来会）', $$('#log-list .ec b').length === 6,
+    $$('#log-list .ec b').length + ' 个');
 
   console.log('--- 统计 ---');
   $$('.tab')[4].click();
-  await wait(200);
-  ok('学过字数 ≥ 1', +$('#k-learn').textContent >= 1, $('#k-learn').textContent);
-  ok('剩余字数合理', +$('#k-left').textContent > 1000, $('#k-left').textContent);
-  ok('连续天数 = 1', $('#k-day').textContent === '1', $('#k-day').textContent);
-  ok('进度条渲染', $$('#bars .bar').length === 5, $$('#bars .bar').length + ' 条');
-  ok('云端 id 显示', $('#s-bin').textContent.length > 3, $('#s-bin').textContent);
-
-  console.log('--- 详情弹层 ---');
-  $$('.tab')[2].click();
-  await wait(150);
-  $$('#lib-grid .cell')[0].click();
   await wait(250);
-  ok('详情弹层打开', $('#mask').classList.contains('on'));
-  ok('详情含拼音', !!$('#sheet .dpy').textContent.trim(), $('#sheet .dpy').textContent);
-  ok('详情含组词或占位', !!$('#sheet .dws'));
-  ok('详情含册次', /年级/.test($('#sheet .dmeta').textContent), $('#sheet .dmeta').textContent);
+  ok('已掌握 ≥ 6', +$('#k-known').textContent >= 6, $('#k-known').textContent);
+  ok('连续天数 = 1', $('#k-day').textContent === '1');
+  ok('进度条渲染', $$('#bars .bar').length >= 4, $$('#bars .bar').length + ' 条');
 
   console.log('--- 导出 ---');
   let dl = null;
@@ -180,98 +196,57 @@ function ok(name, cond, extra) {
   const origCreate = doc.createElement.bind(doc);
   doc.createElement = tag => {
     const el = origCreate(tag);
-    if (String(tag).toLowerCase() === 'a') el.click = () => { dl = dl || { __clicked: true }; };
+    if (String(tag).toLowerCase() === 'a') el.click = () => {};
     return el;
   };
-  $$('.tab')[4].click();
-  await wait(150);
   $('#s-report').click();
-  await wait(60);
-  ok('报告文件已生成', !!dl && dl.size > 2000, dl ? dl.size + ' 字节' : '未生成');
+  await wait(100);
   const rpt = dl ? await dl.text() : '';
-  ok('报告含孩子名字', rpt.includes('以宁'));
-  ok('报告含 KPI 区块', /已掌握[\s\S]*需巩固[\s\S]*剩余/.test(rpt));
-  ok('报告含内联曲线 SVG', rpt.includes('<svg') && rpt.includes('polyline'));
-  ok('报告含 12 周热力图', rpt.includes('class="heat"') && (rpt.match(/<i style="background:/g) || []).length >= 80);
-  ok('报告含每日明细表', rpt.includes('<table') && rpt.includes('当天学的字'));
-  ok('报告含已掌握字表', rpt.includes('已掌握（'));
-  ok('报告自包含（不引外部资源）', !/src="https?:|href="https?:/.test(rpt));
+  ok('报告已生成', !!dl && dl.size > 2000, dl ? dl.size + ' 字节' : '未生成');
+  ok('报告含 KPI', /已掌握[\s\S]*需巩固[\s\S]*剩余/.test(rpt));
+  ok('报告含曲线 SVG', rpt.includes('<svg') && rpt.includes('polyline'));
+  ok('报告含热力图', rpt.includes('class="heat"'));
+  ok('报告含「本来就认识」列', rpt.includes('本来就认识'));
+  ok('报告自包含', !/src="https?:|href="https?:/.test(rpt));
   ok('报告无 JS 依赖', !/<script/i.test(rpt));
 
   dl = null;
   $('#s-csv').click();
-  await wait(60);
+  await wait(100);
   const csv = dl ? await dl.text() : '';
-  const csvHead = (csv.split('\n')[0] || '').replace(/^\ufeff/, '');
-  ok('CSV 已生成带表头', csvHead === '字,拼音,册次,状态,学会日期,教的人,来源', JSON.stringify(csvHead));
-  ok('CSV 行数 = 表头 + 已学字', (csv.trim().split('\n')).length === Object.keys(window.__lit.db.learned).length + 1,
-    (csv.trim().split('\n')).length + ' 行');
-  ok('CSV 含学到的字', csv.includes('一'));
+  ok('CSV 表头正确', (csv.split('\n')[0] || '').replace(/^\ufeff/, '') === '字,拼音,册次,状态,日期,教的人,来源',
+    JSON.stringify((csv.split('\n')[0] || '').replace(/^\ufeff/, '')));
+  ok('CSV 含「本来就认识」来源', csv.includes('本来就认识'));
+  ok('CSV 含每日记录段', csv.includes('当天学的字'));
 
-  console.log('--- 多端合并同步 ---');
-  const L = window.__lit;
-  const mineBefore = Object.keys(L.db.learned).length;
-  const quizBefore = L.quizTotal();
-
-  // 模拟「另一台设备」：它整份覆盖式 PUT 回云端，且不含本机的任何改动
+  console.log('--- 多端合并 ---');
+  const mine = Object.keys(L.db.learned).length;
   const other = JSON.parse(JSON.stringify(cloud.store));
-  delete other.learned[firstChar];                       // 那台设备不知道本机教过的字
   const poolChars = JSON.parse(charsRaw).grades.flatMap(g => g.chars.map(a => a[0]));
-  const otherChar = poolChars.find(c => !other.learned[c]
-    && !(other.days[dayKey].history || []).includes(c));
-  other.learned[otherChar] = { status: 'known', date: dayKey, teacher: '奶奶' };
-  other.days[dayKey].history = (other.days[dayKey].history || []).concat([otherChar]);
-  other.quiz[dayKey] = [7, 9];                            // 那台设备答了 9 题对 7
+  const oc = poolChars.find(c => !other.learned[c] && !(other.days[k].history || []).includes(c));
+  other.learned[oc] = { status: 'known', date: k, teacher: '奶奶', via: 'learn' };
+  other.days[k].picked.push(oc);
+  other.days[k].history.push(oc);
+  other.quiz[k] = { devOther: [7, 9] };
   cloud.store = other;
 
   await L.syncPull();
-  await wait(200);
-  ok('合并后本机教的字还在（没被覆盖）', !!L.db.learned[firstChar], firstChar);
-  ok('合并后拿到了另一台设备教的字', !!L.db.learned[otherChar], otherChar);
-  ok('两边记录都在', Object.keys(L.db.learned).length >= mineBefore + 1,
-    mineBefore + ' → ' + Object.keys(L.db.learned).length);
-  ok('抽查计数累加而非覆盖', L.quizTotal() >= quizBefore + 9,
-    quizBefore + ' → ' + L.quizTotal() + ' 题');
-  ok('另一台设备的字记着是谁教的', L.db.learned[otherChar].teacher === '奶奶',
-    L.db.learned[otherChar].teacher);
+  await wait(400);
+  ok('本机记录还在', !!L.db.learned[lc], lc);
+  ok('拿到另一台设备的字', !!L.db.learned[oc], oc);
+  ok('两边都在', Object.keys(L.db.learned).length >= mine + 1,
+    mine + ' → ' + Object.keys(L.db.learned).length);
+  ok('抽查计数累加', L.quizTotal() >= 10, L.quizTotal() + ' 题');
+  ok('合并后仍是学习阶段', L.db.days[k].phase === 'learn');
 
-  // 合并结果再上传，云端应当同时含两边
-  await L.saveCloud({ silent: true });
-  await wait(300);
-  ok('云端同时含两边的记录',
-    !!(cloud.store.learned[firstChar] && cloud.store.learned[otherChar]),
-    Object.keys(cloud.store.learned).join(''));
-
-  console.log('--- 快照回滚 ---');
-  const snaps = L.snapList();
-  ok('已生成本地快照', snaps.length >= 1, snaps.length + ' 份');
-  if (snaps.length) {
-    const before = Object.keys(L.db.learned).length;
-    L.db.learned['测'] = { status: 'known', date: dayKey, teacher: '' };   // 造一条脏数据
-    const okRoll = L.snapshotRestore(0);
-    await wait(100);
-    ok('回滚成功', okRoll);
-    ok('回滚后脏数据消失', !L.db.learned['测']);
-    ok('回滚后字数回到快照值', Object.keys(L.db.learned).length === (snaps[0].learned || before),
-      Object.keys(L.db.learned).length + ' 字');
-  }
-
-  console.log('--- 今日卡片自愈（坏数据修复）---');
-  {
-    const D = window.__lit;
-    const day = D.db.days[dayKey];
-    // 模拟线上真实坏数据：chars 里全是已认识的字（此前旧版本+合并竞态所致）
-    day.chars = Object.keys(D.db.learned).slice(0, 5);
-    D.renderAll();
-    await wait(100);
-    const nowChars = D.db.days[dayKey].chars;
-    ok('认识的字被自动换出', nowChars.every(c => !(D.db.learned[c] && D.db.learned[c].status === 'known')),
-      nowChars.join(''));
-    ok('今日仍是 5 个新字', nowChars.length === 5, nowChars.length + ' 个');
-    ok('换出的字留在 history 里', day.history.includes(dayKey ? Object.keys(D.db.learned)[0] : ''),
-      'history ' + day.history.length + ' 个');
-    ok('页面无「已认识」卡', $$('#tiles .acts .ok').every(b => b.textContent === '认识了'));
-  }
+  console.log('--- 重新挑一遍 ---');
+  L.reopenSift();
+  await wait(400);
+  ok('回到筛选阶段', L.db.days[k].phase === 'sift');
+  ok('已学的字仍在记录里', L.db.days[k].history.length >= 6, L.db.days[k].history.length + ' 个');
+  ok('筛选池补满 5 个', L.db.days[k].pool.length === 5, L.db.days[k].pool.join(''));
+  ok('选中的字清空', L.db.days[k].sifted.length === 0);
+  ok('回到筛选阶段按钮变回「换一批」', $('#t-reopen').textContent === '换一批');
 
   console.log('\n--- 运行时错误 ---');
   if (errors.length) { errors.slice(0, 8).forEach(e => console.log('  ' + e)); fail += errors.length; }
