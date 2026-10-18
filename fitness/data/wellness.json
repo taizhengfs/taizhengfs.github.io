@@ -1,9 +1,9 @@
 {
- "generatedAt": "2026-10-17T07:00:43",
+ "generatedAt": "2026-10-18T14:30:39",
  "range": {
   "start": "2026-06-16",
-  "end": "2026-10-17",
-  "days": 124
+  "end": "2026-10-18",
+  "days": 125
  },
  "daily": [
   {
@@ -3322,20 +3322,84 @@
    "respSleep": 15.0
   },
   {
-   "date": "2026-10-17"
+   "acuteLoad": 2,
+   "bbCharged": 70,
+   "bbDrained": 64,
+   "bbMax": 85,
+   "bbMin": 19,
+   "date": "2026-10-17",
+   "hrvHigh": 76,
+   "hrvLow": 59,
+   "hrvNight": 59,
+   "hrvStatus": "BALANCED",
+   "hrvUpper": 72,
+   "hrvWeekly": 60,
+   "rAcwrFactor": 100,
+   "rHrvFactor": 79,
+   "rSleepFactor": 61,
+   "rSleepHistFactor": 77,
+   "rStressFactor": 46,
+   "readinessFeedback": "GOOD_SLEEP_HISTORY",
+   "readinessLevel": "MODERATE",
+   "readinessScore": 69,
+   "recoveryH": 1,
+   "respAwake": 15.0,
+   "respHigh": 23.0,
+   "respLow": 7.0,
+   "respSleep": 16.0
+  },
+  {
+   "acuteLoad": 98,
+   "bbCharged": 63,
+   "bbDrained": 46,
+   "bbMax": 87,
+   "bbMin": 24,
+   "date": "2026-10-18",
+   "hrvHigh": 82,
+   "hrvLow": 59,
+   "hrvNight": 58,
+   "hrvStatus": "BALANCED",
+   "hrvUpper": 72,
+   "hrvWeekly": 60,
+   "rAcwrFactor": 100,
+   "rHrvFactor": 78,
+   "rSleepFactor": 52,
+   "rSleepHistFactor": 68,
+   "rStressFactor": 46,
+   "readinessFeedback": "LISTEN_TO_YOUR_BODY",
+   "readinessLevel": "MODERATE",
+   "readinessScore": 50,
+   "recoveryH": 1647,
+   "respAwake": 14.0,
+   "respHigh": 22.0,
+   "respLow": 5.0,
+   "respSleep": 16.0
   }
  ],
  "latest": {
+  "vo2max": 54.0,
+  "vo2maxDate": "2026-10-18",
+  "loadAerobicLow": 219.5,
+  "loadAnaerobic": 0.0,
+  "loadTargetLow": 211,
+  "loadTargetHigh": 474,
+  "loadFeedback": "AEROBIC_HIGH_SHORTAGE",
+  "deviceName": "Warden's 7X",
   "fitnessAge": 27.0,
   "realAge": 33,
   "fitnessAgeAchievable": 27.0,
   "bmiValue": 19.5,
+  "enduranceScore": 5858,
+  "enduranceClass": 3,
+  "enduranceNext": 5800,
+  "hillScore": 28,
+  "hillClass": 2,
   "race": {
-   "date": "2026-10-17",
-   "5k": 1374,
+   "date": "2026-10-18",
+   "5k": 1373,
    "10k": 2945,
-   "half": 6636,
-   "full": 15300
+   "half": 6640,
+   "full": 15305
   }
  }
 }
