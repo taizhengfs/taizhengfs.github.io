@@ -1,25 +1,25 @@
 {
- "generatedAt": "2026-10-19T07:00:43",
+ "generatedAt": "2026-10-19T09:00:40",
  "asOf": "2026-10-19",
  "today": {
   "date": "2026-10-19",
-  "rhr": 51,
-  "rhr7": 49.9,
+  "rhr": 52,
+  "rhr7": 50.0,
   "rhr30": 50.1,
-  "steps": null,
-  "steps7": 6621.0,
-  "steps30": 6534.0,
-  "sleepH": null,
-  "sleepScore": null,
-  "deepH": null,
-  "lightH": null,
-  "remH": null,
-  "awakeH": null,
-  "sleep7": 6.4,
+  "steps": 1051,
+  "steps7": 6092.0,
+  "steps30": 6121.0,
+  "sleepH": 7.68,
+  "sleepScore": 81,
+  "deepH": 0.85,
+  "lightH": 5.8,
+  "remH": 1.03,
+  "awakeH": 0.32,
+  "sleep7": 6.5,
   "sleep30": 7.0,
-  "score7": 73.4,
+  "score7": 73.6,
   "weight": null,
-  "deepPct": null
+  "deepPct": 11.1
  },
  "yesterday": {
   "date": "2026-10-18",
@@ -47,10 +47,10 @@
    "2026-10-19"
   ],
   "cur": {
-   "sleepAvg": 6.35,
-   "scoreAvg": 72.3,
-   "rhrAvg": 49.9,
-   "stepsAvg": 6932.0,
+   "sleepAvg": 6.54,
+   "scoreAvg": 73.6,
+   "rhrAvg": 50.0,
+   "stepsAvg": 6092.0,
    "activeDays": 6
   },
   "prev": {
@@ -61,10 +61,10 @@
    "activeDays": 7
   },
   "delta": {
-   "sleepAvg": -1.01,
-   "rhrAvg": 0.5,
-   "stepsAvg": 753.0,
-   "scoreAvg": -6.1
+   "sleepAvg": -0.82,
+   "rhrAvg": 0.6,
+   "stepsAvg": -87.0,
+   "scoreAvg": -4.8
   },
   "workouts": [
    {
@@ -178,10 +178,10 @@
   },
   {
    "date": "2026-10-19",
-   "sleepH": null,
-   "sleepScore": null,
-   "rhr": 51,
-   "steps": null
+   "sleepH": 7.68,
+   "sleepScore": 81,
+   "rhr": 52,
+   "steps": 1051
   }
  ],
  "restDays": 1,
@@ -189,7 +189,27 @@
   {
    "level": "good",
    "title": "静息心率平稳",
-   "text": "今日 51 bpm，与月均 50.1 bpm 基本持平。"
+   "text": "今日 52 bpm，与月均 50.1 bpm 基本持平。"
+  },
+  {
+   "level": "good",
+   "title": "睡眠充足",
+   "text": "昨晚睡了 7.68 小时，高于月均 7.0 小时。"
+  },
+  {
+   "level": "good",
+   "title": "睡眠质量优秀",
+   "text": "睡眠评分 81 分，属于高质量睡眠。"
+  },
+  {
+   "level": "warn",
+   "title": "深睡比例偏低",
+   "text": "深睡占比 11.1%（0.85 小时），低于 13%~23% 的健康区间。深睡是身体修复的关键阶段，偏低常与晚睡、饮酒、睡前看屏幕有关。"
+  },
+  {
+   "level": "warn",
+   "title": "活动量偏低",
+   "text": "今日 1,051 步，仅为月均 6,121 步的 17%。"
   },
   {
    "level": "info",
@@ -199,7 +219,7 @@
   {
    "level": "warn",
    "title": "本周睡眠下滑",
-   "text": "近 7 天平均睡眠 6.35 小时，比上周少了 1.0 小时。"
+   "text": "近 7 天平均睡眠 6.54 小时，比上周少了 0.8 小时。"
   },
   {
    "level": "good",
@@ -207,8 +227,13 @@
    "text": "负荷比 1.23，落在 0.8–1.3 之间，是既能进步又不易受伤的节奏。"
   },
   {
-   "level": "bad",
-   "title": "训练准备度 46 分 · 状态偏低",
+   "level": "good",
+   "title": "HRV 处于基线内",
+   "text": "昨夜 HRV 62 ms，在本人的平衡区间内，周均 60 ms，恢复状态稳定。"
+  },
+  {
+   "level": "warn",
+   "title": "训练准备度 65 分 · 状态一般",
    "text": "腕表综合睡眠、HRV、压力与近期负荷给出的判断，可直接决定今天该练还是该歇。"
   }
  ],
@@ -1007,27 +1032,54 @@
   ]
  },
  "readiness": {
-  "score": 92,
+  "score": 87,
   "level": "excellent",
   "label": "状态极佳",
   "comps": [
    {
+    "key": "sleep",
+    "label": "睡眠",
+    "score": 81.0,
+    "weight": 0.3,
+    "value": "81 分",
+    "hint": "睡了 7.68 小时",
+    "effective": 29.0
+   },
+   {
+    "key": "duration",
+    "label": "睡眠时长",
+    "score": 100.0,
+    "weight": 0.1,
+    "value": "7.68 h",
+    "hint": "目标 7.5 小时",
+    "effective": 10.0
+   },
+   {
     "key": "rhr",
     "label": "静息心率",
-    "score": 95.0,
+    "score": 89.0,
     "weight": 0.2,
-    "value": "51 bpm",
-    "hint": "月均 50.1，偏离 +1",
-    "effective": 50.0
+    "value": "52 bpm",
+    "hint": "月均 50.1，偏离 +2",
+    "effective": 19.0
+   },
+   {
+    "key": "hrv",
+    "label": "HRV 心率变异",
+    "score": 81.0,
+    "weight": 0.25,
+    "value": "62 ms",
+    "hint": "基线区间 59–72 ms",
+    "effective": 24.0
    },
    {
     "key": "battery",
     "label": "身体电量",
-    "score": 52.0,
+    "score": 86.0,
     "weight": 0.05,
-    "value": "44",
-    "hint": "昨夜回充 44，白天消耗 —",
-    "effective": 12.0
+    "value": "73",
+    "hint": "昨夜回充 73，白天消耗 15",
+    "effective": 5.0
    },
    {
     "key": "load",
@@ -1036,12 +1088,10 @@
     "weight": 0.15,
     "value": "ACWR 1.23",
     "hint": "最佳区间",
-    "effective": 37.0
+    "effective": 14.0
    }
   ],
-  "missing": [
-   "hrv"
-  ]
+  "missing": []
  },
  "wellness": {
   "available": true,
@@ -1691,32 +1741,45 @@
    },
    {
     "date": "2026-10-19",
-    "hrvNight": null,
-    "hrvWeekly": null,
-    "hrvStatus": null,
-    "hrvLow": null,
-    "hrvUpper": null,
-    "readinessScore": 46,
-    "readinessLevel": "LOW",
-    "readinessFeedback": "UNKNOWN",
-    "acuteLoad": 98,
-    "bbCharged": 44,
-    "bbDrained": 0,
+    "hrvNight": 62,
+    "hrvWeekly": 60,
+    "hrvStatus": "BALANCED",
+    "hrvLow": 59,
+    "hrvUpper": 72,
+    "readinessScore": 65,
+    "readinessLevel": "MODERATE",
+    "readinessFeedback": "RECOVERED_AND_READY",
+    "acuteLoad": 88,
+    "bbCharged": 73,
+    "bbDrained": 15,
     "bbMin": 14,
-    "bbMax": 57,
-    "respSleep": null,
+    "bbMax": 87,
+    "respSleep": 16.0,
     "spo2SleepAvg": null,
-    "respAwake": null,
-    "respLow": null,
-    "respHigh": null,
+    "respAwake": 15.0,
+    "respLow": 9.0,
+    "respHigh": 20.0,
     "spo2Lowest": null
    }
   ],
   "latest": {
+   "vo2max": 54.0,
+   "vo2maxDate": "2026-10-18",
+   "loadAerobicLow": 219.5,
+   "loadAnaerobic": 0.0,
+   "loadTargetLow": 211,
+   "loadTargetHigh": 474,
+   "loadFeedback": "AEROBIC_HIGH_SHORTAGE",
+   "deviceName": "Warden's 7X",
    "fitnessAge": 27.0,
    "realAge": 33,
    "fitnessAgeAchievable": 27.0,
    "bmiValue": 19.5,
+   "enduranceScore": 5856,
+   "enduranceClass": 3,
+   "enduranceNext": 5800,
+   "hillScore": 28,
+   "hillClass": 2,
    "race": {
     "date": "2026-10-19",
     "5k": 1373,
@@ -1726,6 +1789,6 @@
    }
   }
  },
- "narrative": "静息心率 51 bpm。近 7 天共 1 次训练，累计 7.51 公里 / 102 分钟，最近一次是 2026-10-18 的越野跑（7.51 公里）。需要留意的是：训练准备度 46 分 · 状态偏低——腕表综合睡眠、HRV、压力与近期负荷给出的判断，可直接决定今天该练还是该歇；本周睡眠下滑——近 7 天平均睡眠 6.35 小时，比上周少了 1.0 小时。做得好的地方：静息心率平稳、负荷处最佳区间。",
+ "narrative": "昨晚睡了 7.68 小时、睡眠评分 81 分、其中深睡 0.85 小时、静息心率 52 bpm、走了 1,051 步。近 7 天共 1 次训练，累计 7.51 公里 / 102 分钟，最近一次是 2026-10-18 的越野跑（7.51 公里）。需要留意的是：深睡比例偏低——深睡占比 11.1%（0.85 小时），低于 13%~23% 的健康区间。深睡是身体修复的关键阶段，偏低常与晚睡、饮酒、睡前看屏幕有关；活动量偏低——今日 1,051 步，仅为月均 6,121 步的 17%。做得好的地方：静息心率平稳、睡眠充足、睡眠质量优秀。",
  "narrativeSource": "rule"
 }

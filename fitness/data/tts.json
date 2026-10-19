@@ -1,13 +1,13 @@
 {
-  "asOf": "2026-10-16",
-  "today": "2026-10-18",
-  "stale": true,
+  "asOf": "2026-10-19",
+  "today": "2026-10-19",
+  "stale": false,
   "mode": "full",
-  "text": "早上好。昨晚的睡眠数据还没同步到手机，稍后可以在健康日记里查看。",
-  "chars": 32,
-  "estSeconds": 7,
-  "sqi": null,
-  "level": null,
-  "levelLabel": null,
+  "text": "早上好。昨晚睡了七小时四十一分钟，睡眠指数八十二分，不错。心率变异性六十二，已经贴着下限五十九了。快速眼动只有一小时二分钟。其中深睡五十一分钟、快速眼动一小时二分钟。静息心率五十二。身体电量回充了七十三。今天准备度六十五分，做中低强度就行。",
+  "chars": 120,
+  "estSeconds": 27,
+  "sqi": 81.6,
+  "level": 8,
+  "levelLabel": "良好",
   "estimatedSleep": false
 }
