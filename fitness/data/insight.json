@@ -1,14 +1,14 @@
 {
- "generatedAt": "2026-10-20T09:00:16",
+ "generatedAt": "2026-10-20T17:00:39",
  "asOf": "2026-10-20",
  "today": {
   "date": "2026-10-20",
   "rhr": 51,
   "rhr7": 50.3,
   "rhr30": 50.2,
-  "steps": 60,
-  "steps7": 5713.0,
-  "steps30": 6064.0,
+  "steps": 3000,
+  "steps7": 6133.0,
+  "steps30": 6162.0,
   "sleepH": 4.23,
   "sleepScore": 55,
   "deepH": 1.03,
@@ -50,8 +50,8 @@
    "sleepAvg": 6.46,
    "scoreAvg": 73.4,
    "rhrAvg": 50.3,
-   "stepsAvg": 5713.0,
-   "activeDays": 6
+   "stepsAvg": 6133.0,
+   "activeDays": 7
   },
   "prev": {
    "sleepAvg": 7.12,
@@ -63,7 +63,7 @@
   "delta": {
    "sleepAvg": -0.66,
    "rhrAvg": 1.9,
-   "stepsAvg": -253.0,
+   "stepsAvg": 167.0,
    "scoreAvg": -5.3
   },
   "workouts": [
@@ -181,7 +181,7 @@
    "sleepH": 4.23,
    "sleepScore": 55,
    "rhr": 51,
-   "steps": 60
+   "steps": 3000
   }
  ],
  "restDays": 2,
@@ -209,7 +209,7 @@
   {
    "level": "warn",
    "title": "活动量偏低",
-   "text": "今日 60 步，仅为月均 6,064 步的 1%。"
+   "text": "今日 3,000 步，仅为月均 6,162 步的 49%。"
   },
   {
    "level": "info",
@@ -1078,7 +1078,7 @@
     "score": 62.0,
     "weight": 0.05,
     "value": "53",
-    "hint": "昨夜回充 53，白天消耗 —",
+    "hint": "昨夜回充 53，白天消耗 45",
     "effective": 5.0
    },
    {
@@ -1751,14 +1751,14 @@
     "readinessFeedback": "FIND_TIME_TO_RELAX",
     "acuteLoad": 78,
     "bbCharged": 53,
-    "bbDrained": 0,
+    "bbDrained": 45,
     "bbMin": 5,
     "bbMax": 58,
     "respSleep": 16.0,
     "spo2SleepAvg": null,
-    "respAwake": 14.0,
-    "respLow": 9.0,
-    "respHigh": 22.0,
+    "respAwake": 15.0,
+    "respLow": 8.0,
+    "respHigh": 23.0,
     "spo2Lowest": null
    }
   ],
@@ -1789,6 +1789,6 @@
    }
   }
  },
- "narrative": "昨晚睡了 4.23 小时、睡眠评分 55 分、其中深睡 1.03 小时、静息心率 51 bpm、走了 60 步。近 7 天共 1 次训练，累计 7.51 公里 / 102 分钟，最近一次是 2026-10-18 的越野跑（7.51 公里）。需要留意的是：睡眠质量偏差——睡眠评分仅 55 分，低于 60 分说明睡眠结构或连续性有明显问题；训练准备度 44 分 · 状态偏低——腕表综合睡眠、HRV、压力与近期负荷给出的判断，可直接决定今天该练还是该歇。做得好的地方：静息心率平稳、深睡充足、负荷处最佳区间。",
+ "narrative": "昨晚睡了 4.23 小时、睡眠评分 55 分、其中深睡 1.03 小时、静息心率 51 bpm、走了 3,000 步。近 7 天共 1 次训练，累计 7.51 公里 / 102 分钟，最近一次是 2026-10-18 的越野跑（7.51 公里）。需要留意的是：睡眠质量偏差——睡眠评分仅 55 分，低于 60 分说明睡眠结构或连续性有明显问题；训练准备度 44 分 · 状态偏低——腕表综合睡眠、HRV、压力与近期负荷给出的判断，可直接决定今天该练还是该歇。做得好的地方：静息心率平稳、深睡充足、负荷处最佳区间。",
  "narrativeSource": "rule"
 }
