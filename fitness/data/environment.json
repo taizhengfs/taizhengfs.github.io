@@ -6634,7 +6634,28 @@
         "on": true,
         "power": 0
       }
+    },
+    {
+      "ts": "2026-10-20T07:13:04",
+      "minute": "2026-10-20 07:13",
+      "date": "2026-10-20",
+      "bedroom": {
+        "temp": 26.5,
+        "humidity": 80.5
+      },
+      "living": {
+        "temp": 24.8,
+        "humidity": 84
+      },
+      "fan": {
+        "on": true,
+        "speed": 2
+      },
+      "humidifier": {
+        "on": true,
+        "power": 0
+      }
     }
   ],
-  "updatedAt": "2026-10-20T06:58:03"
+  "updatedAt": "2026-10-20T07:13:04"
 }

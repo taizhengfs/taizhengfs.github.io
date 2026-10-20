@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-20T07:00:04",
+  "generatedAt": "2026-10-20T09:00:04",
   "source": "米家 miaomiaoce.sensor_ht.t2（卧室「温度计」）",
   "window": "睡眠日 D 的夜窗 = 前日 21:00 → 当日 09:00",
   "bands": {
@@ -17,39 +17,39 @@
     "minNightsForCorr": 10
   },
   "coverage": {
-    "rawSamples": 316,
+    "rawSamples": 317,
     "rawSpan": [
       "2026-10-13",
       "2026-10-20"
     ],
-    "nightsMatched": 5,
+    "nightsMatched": 6,
     "nightsSpan": [
       "2026-10-14",
-      "2026-10-19"
+      "2026-10-20"
     ]
   },
   "latest": {
-    "ts": "2026-10-20T06:58:03",
+    "ts": "2026-10-20T07:13:04",
     "temp": 26.5,
     "humidity": 80.5
   },
   "today": {
-    "date": "2026-10-19",
-    "tempAvg": 26.9,
-    "tempMin": 26.0,
-    "tempMax": 27.3,
-    "humAvg": 73.5,
-    "humMin": 72.0,
-    "humMax": 75.7,
-    "samples": 48,
+    "date": "2026-10-20",
+    "tempAvg": 26.4,
+    "tempMin": 25.9,
+    "tempMax": 26.5,
+    "humAvg": 80.4,
+    "humMin": 80.0,
+    "humMax": 81.7,
+    "samples": 41,
     "timeInTempBand": 0.0,
     "timeInHumBand": 0.0,
     "tempOk": false,
     "humOk": false,
-    "sleepScore": 81,
-    "sleepH": 7.68,
-    "deepPct": 11.1,
-    "awakeH": 0.32
+    "sleepScore": 55,
+    "sleepH": 4.23,
+    "deepPct": 24.3,
+    "awakeH": 0.02
   },
   "nights": [
     {
@@ -141,54 +141,72 @@
       "sleepH": 7.68,
       "deepPct": 11.1,
       "awakeH": 0.32
+    },
+    {
+      "date": "2026-10-20",
+      "tempAvg": 26.4,
+      "tempMin": 25.9,
+      "tempMax": 26.5,
+      "humAvg": 80.4,
+      "humMin": 80.0,
+      "humMax": 81.7,
+      "samples": 41,
+      "timeInTempBand": 0.0,
+      "timeInHumBand": 0.0,
+      "tempOk": false,
+      "humOk": false,
+      "sleepScore": 55,
+      "sleepH": 4.23,
+      "deepPct": 24.3,
+      "awakeH": 0.02
     }
   ],
   "corr": {
     "temp_score": {
       "key": "temp_score",
       "name": "夜间温度 vs 睡眠评分",
-      "n": 5,
+      "n": 6,
       "r": null,
       "p": null,
       "label": "样本不足",
-      "need": 5
+      "need": 4
     },
     "temp_awake": {
       "key": "temp_awake",
       "name": "夜间温度 vs 夜醒时长",
-      "n": 5,
+      "n": 6,
       "r": null,
       "p": null,
       "label": "样本不足",
-      "need": 5
+      "need": 4
     },
     "temp_deep": {
       "key": "temp_deep",
       "name": "夜间温度 vs 深睡占比",
-      "n": 5,
+      "n": 6,
       "r": null,
       "p": null,
       "label": "样本不足",
-      "need": 5
+      "need": 4
     },
     "hum_score": {
       "key": "hum_score",
       "name": "夜间湿度 vs 睡眠评分",
-      "n": 5,
+      "n": 6,
       "r": null,
       "p": null,
       "label": "样本不足",
-      "need": 5
+      "need": 4
     },
     "hum_awake": {
       "key": "hum_awake",
       "name": "夜间湿度 vs 夜醒时长",
-      "n": 5,
+      "n": 6,
       "r": null,
       "p": null,
       "label": "样本不足",
-      "need": 5
+      "need": 4
     }
   },
-  "signature": "2f19ab29ce2cb8973719d719cb3d506d"
+  "signature": "e15bb15bae5619e1d609187035df7bbb"
 }
