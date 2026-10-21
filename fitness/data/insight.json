@@ -1,14 +1,14 @@
 {
- "generatedAt": "2026-10-21T09:00:43",
+ "generatedAt": "2026-10-21T22:00:33",
  "asOf": "2026-10-21",
  "today": {
   "date": "2026-10-21",
   "rhr": 50,
   "rhr7": 50.4,
   "rhr30": 50.1,
-  "steps": 133,
-  "steps7": 5872.0,
-  "steps30": 6093.0,
+  "steps": 3977,
+  "steps7": 6421.0,
+  "steps30": 6221.0,
   "sleepH": 7.32,
   "sleepScore": 69,
   "deepH": 1.62,
@@ -50,8 +50,8 @@
    "sleepAvg": 6.62,
    "scoreAvg": 72.7,
    "rhrAvg": 50.4,
-   "stepsAvg": 5872.0,
-   "activeDays": 6
+   "stepsAvg": 6421.0,
+   "activeDays": 7
   },
   "prev": {
    "sleepAvg": 6.75,
@@ -63,7 +63,7 @@
   "delta": {
    "sleepAvg": -0.13,
    "rhrAvg": 2.0,
-   "stepsAvg": 442.0,
+   "stepsAvg": 991.0,
    "scoreAvg": -5.6
   },
   "workouts": [
@@ -181,7 +181,7 @@
    "sleepH": 7.32,
    "sleepScore": 69,
    "rhr": 50,
-   "steps": 133
+   "steps": 3977
   }
  ],
  "restDays": 3,
@@ -209,7 +209,7 @@
   {
    "level": "warn",
    "title": "活动量偏低",
-   "text": "今日 133 步，仅为月均 6,093 步的 2%。"
+   "text": "今日 3,977 步，仅为月均 6,221 步的 64%。"
   },
   {
    "level": "warn",
@@ -1078,7 +1078,7 @@
     "score": 82.0,
     "weight": 0.05,
     "value": "70",
-    "hint": "昨夜回充 70，白天消耗 1",
+    "hint": "昨夜回充 70，白天消耗 65",
     "effective": 5.0
    },
    {
@@ -1751,14 +1751,14 @@
     "readinessFeedback": "GOOD_SLEEP_HISTORY",
     "acuteLoad": 68,
     "bbCharged": 70,
-    "bbDrained": 1,
+    "bbDrained": 65,
     "bbMin": 5,
     "bbMax": 75,
     "respSleep": 16.0,
     "spo2SleepAvg": null,
-    "respAwake": 17.0,
+    "respAwake": 15.0,
     "respLow": 7.0,
-    "respHigh": 22.0,
+    "respHigh": 23.0,
     "spo2Lowest": null
    }
   ],
@@ -1789,6 +1789,6 @@
    }
   }
  },
- "narrative": "昨晚睡了 7.32 小时、睡眠评分 69 分、其中深睡 1.62 小时、静息心率 50 bpm、走了 133 步。近 7 天共 1 次训练，累计 7.51 公里 / 102 分钟，最近一次是 2026-10-18 的越野跑（7.51 公里）。需要留意的是：夜间易醒——夜间清醒 1.15 小时，睡眠连续性受影响，会降低睡眠评分的实际恢复价值；活动量偏低——今日 133 步，仅为月均 6,093 步的 2%。做得好的地方：静息心率平稳、深睡充足、负荷处最佳区间。",
+ "narrative": "昨晚睡了 7.32 小时、睡眠评分 69 分、其中深睡 1.62 小时、静息心率 50 bpm、走了 3,977 步。近 7 天共 1 次训练，累计 7.51 公里 / 102 分钟，最近一次是 2026-10-18 的越野跑（7.51 公里）。需要留意的是：夜间易醒——夜间清醒 1.15 小时，睡眠连续性受影响，会降低睡眠评分的实际恢复价值；活动量偏低——今日 3,977 步，仅为月均 6,221 步的 64%。做得好的地方：静息心率平稳、深睡充足、负荷处最佳区间。",
  "narrativeSource": "rule"
 }
