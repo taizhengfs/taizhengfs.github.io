@@ -1,13 +1,13 @@
 {
   "asOf": "2026-10-25",
-  "today": "2026-10-25",
-  "stale": false,
+  "today": "2026-10-26",
+  "stale": true,
   "mode": "full",
-  "text": "早上好。昨晚没有睡眠数据。今天准备度六十四分，做中低强度就行。",
-  "chars": 31,
+  "text": "早上好。昨晚的睡眠数据还没同步到手机，稍后可以在健康日记里查看。",
+  "chars": 32,
   "estSeconds": 7,
-  "sqi": 0,
-  "level": 1,
-  "levelLabel": "极差",
+  "sqi": null,
+  "level": null,
+  "levelLabel": null,
   "estimatedSleep": false
 }
