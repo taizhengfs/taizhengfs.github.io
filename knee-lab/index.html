@@ -1,0 +1,1570 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#f97316">
+<meta name="description" content="越野跑者的工位静默训练舱：六段式膝踝强化时序表，练完即打卡，自动统计今日完成率、连续天数与下坡抗冲击战力指数。">
+<link rel="icon" href="/img/favicon-3.ico">
+<title>越野跑·工位膝盖动力舱 - Warden's Life</title>
+<style>
+  :root{
+    --font-stack:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue","PingFang SC","Hiragino Sans GB","Microsoft YaHei",Arial,sans-serif;
+    --font-mono:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;
+
+    --bg-base:#0b0f19; --bg-surface:#111827; --bg-card:#1f2937; --bg-card-hover:#283548;
+    --border-color:#374151; --border-focus:#f97316;
+    --text-main:#f3f4f6; --text-muted:#9ca3af; --text-dim:#6b7280;
+
+    --accent-trail:#f97316; --accent-trail-glow:rgba(249,115,22,.18);
+    --accent-spring:#10b981; --accent-power:#3b82f6; --accent-warning:#eab308;
+
+    --radius-sm:6px; --radius-md:10px; --radius-lg:16px; --radius-full:9999px;
+    --shadow-sm:0 1px 3px rgba(0,0,0,.3); --shadow-md:0 4px 14px rgba(0,0,0,.4); --shadow-lg:0 10px 25px -5px rgba(0,0,0,.5);
+  }
+  [data-theme="light"]{
+    --bg-base:#f8fafc; --bg-surface:#fff; --bg-card:#f1f5f9; --bg-card-hover:#e2e8f0;
+    --border-color:#cbd5e1; --border-focus:#ea580c;
+    --text-main:#0f172a; --text-muted:#475569; --text-dim:#94a3b8;
+    --accent-trail:#ea580c; --accent-trail-glow:rgba(234,88,12,.14);
+    --accent-spring:#059669; --accent-power:#2563eb; --accent-warning:#d97706;
+    --shadow-sm:0 1px 3px rgba(0,0,0,.06); --shadow-md:0 4px 12px rgba(0,0,0,.08); --shadow-lg:0 10px 25px -5px rgba(0,0,0,.1);
+  }
+  body.stealth-mode{
+    --bg-base:#f4f4f5!important; --bg-surface:#fff!important; --bg-card:#fafafa!important; --bg-card-hover:#f4f4f5!important;
+    --border-color:#e4e4e7!important; --border-focus:#71717a!important;
+    --text-main:#27272a!important; --text-muted:#71717a!important; --text-dim:#a1a1aa!important;
+    --accent-trail:#52525b!important; --accent-trail-glow:rgba(82,82,91,.08)!important;
+    --accent-spring:#52525b!important; --accent-power:#52525b!important; --accent-warning:#71717a!important;
+    --shadow-sm:none!important; --shadow-md:none!important; --shadow-lg:0 2px 8px rgba(0,0,0,.05)!important;
+  }
+
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+  body{font-family:var(--font-stack);background:var(--bg-base);color:var(--text-main);min-height:100vh;line-height:1.5;
+       transition:background-color .25s ease,color .25s ease;display:flex;flex-direction:column}
+  .container{max-width:1280px;margin:0 auto;padding:1.25rem 1rem 3rem;width:100%}
+
+  /* ---------- Header ---------- */
+  .app-header{background:var(--bg-surface);border-bottom:1px solid var(--border-color);position:sticky;top:0;z-index:40;backdrop-filter:blur(8px)}
+  .header-inner{max-width:1280px;margin:0 auto;padding:.7rem 1rem;display:flex;align-items:center;justify-content:space-between;gap:.75rem;flex-wrap:wrap}
+  .brand-group{display:flex;align-items:center;gap:.7rem;min-width:0}
+  .brand-icon{width:36px;height:36px;flex:0 0 36px;background:linear-gradient(135deg,var(--accent-trail),#d97706);border-radius:var(--radius-md);
+              display:flex;align-items:center;justify-content:center;color:#fff;box-shadow:0 2px 8px var(--accent-trail-glow)}
+  body.stealth-mode .brand-icon{background:#71717a!important;box-shadow:none!important}
+  .brand-title{font-size:1.05rem;font-weight:700;letter-spacing:-.02em;display:flex;align-items:baseline;gap:.5rem;flex-wrap:wrap}
+  .brand-sub{font-size:.72rem;color:var(--text-muted);font-weight:500}
+  .back-link{font-size:.72rem;color:var(--text-muted);text-decoration:none;border:1px solid var(--border-color);
+             padding:.15rem .45rem;border-radius:var(--radius-sm)}
+  .back-link:hover{color:var(--accent-trail);border-color:var(--border-focus)}
+  .header-actions{display:flex;align-items:center;gap:.5rem;flex-wrap:wrap}
+
+  .date-nav{display:flex;align-items:center;background:var(--bg-card);border:1px solid var(--border-color);border-radius:var(--radius-full);padding:.15rem .4rem;font-size:.82rem}
+  .date-nav button{background:transparent;border:none;color:var(--text-main);cursor:pointer;padding:.2rem .45rem;border-radius:var(--radius-full);display:flex;align-items:center}
+  .date-nav button:hover{background:var(--bg-card-hover)}
+  .current-date-badge{font-weight:600;font-family:var(--font-mono);padding:0 .4rem;user-select:none;white-space:nowrap}
+
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:.4rem;padding:.42rem .8rem;font-size:.8rem;font-weight:600;
+       border-radius:var(--radius-md);border:1px solid var(--border-color);background:var(--bg-card);color:var(--text-main);
+       cursor:pointer;transition:all .15s ease;white-space:nowrap}
+  .btn:hover{background:var(--bg-card-hover);border-color:var(--border-focus)}
+  .btn:active{transform:scale(.98)}
+  .btn-trail{background:var(--accent-trail);border-color:var(--accent-trail);color:#fff}
+  .btn-trail:hover{background:#ea580c;border-color:#ea580c}
+  body.stealth-mode .btn-trail{background:#52525b!important;border-color:#52525b!important}
+  .btn-stealth-active{background:#3f3f46!important;color:#fafafa!important;border-color:#71717a!important}
+
+  .sync-dot{width:8px;height:8px;flex:0 0 8px;border-radius:50%;background:var(--text-dim);display:inline-block}
+  .sync-dot.pending{background:var(--accent-warning);animation:syncPulse 1s infinite}
+  .sync-dot.success{background:var(--accent-spring)}
+  .sync-dot.error{background:#ef4444}
+  @keyframes syncPulse{0%,100%{opacity:.35}50%{opacity:1}}
+  .share-field{display:flex;gap:.45rem;margin:.7rem 0}
+  .share-field input{flex:1;min-width:0;font-family:var(--font-mono);font-size:.75rem;padding:.45rem .6rem;border-radius:var(--radius-md);
+                     border:1px solid var(--border-color);background:var(--bg-card);color:var(--text-main)}
+
+  /* ---------- Stat cards ---------- */
+  .dashboard-overview{display:grid;grid-template-columns:repeat(auto-fit,minmax(235px,1fr));gap:1rem;margin-bottom:1.25rem}
+  .stat-card{background:var(--bg-surface);border:1px solid var(--border-color);border-radius:var(--radius-lg);padding:.95rem 1.15rem;
+             box-shadow:var(--shadow-sm);display:flex;flex-direction:column;justify-content:space-between;overflow:hidden}
+  .stat-header{display:flex;align-items:center;justify-content:space-between;gap:.5rem;color:var(--text-muted);font-size:.75rem;
+               font-weight:600;text-transform:uppercase;letter-spacing:.05em}
+  .stat-body{margin:.45rem 0;display:flex;align-items:baseline;gap:.45rem;flex-wrap:wrap}
+  .stat-value{font-size:1.85rem;font-weight:800;font-family:var(--font-mono);letter-spacing:-.03em}
+  .stat-label-tag{font-size:.72rem;padding:.18rem .5rem;border-radius:var(--radius-full);font-weight:600}
+  .progress-track{width:100%;height:7px;background:var(--bg-card);border-radius:var(--radius-full);overflow:hidden;margin-top:.4rem}
+  .progress-fill{height:100%;background:var(--accent-trail);border-radius:var(--radius-full);transition:width .3s ease}
+  .armor-badge{display:inline-flex;align-items:center;gap:.35rem;font-size:.72rem;font-weight:700;padding:.18rem .5rem;border-radius:var(--radius-full)}
+  .armor-lv1{background:rgba(239,68,68,.15);color:#ef4444;border:1px solid rgba(239,68,68,.3)}
+  .armor-lv2{background:rgba(234,179,8,.15);color:#eab308;border:1px solid rgba(234,179,8,.3)}
+  .armor-lv3{background:rgba(16,185,129,.15);color:#10b981;border:1px solid rgba(16,185,129,.3)}
+  .armor-lv4{background:rgba(59,130,246,.15);color:#3b82f6;border:1px solid rgba(59,130,246,.3)}
+
+  /* ---------- Workspace ---------- */
+  .workspace-grid{display:grid;grid-template-columns:1fr 340px;gap:1.4rem;align-items:start}
+  @media (max-width:960px){.workspace-grid{grid-template-columns:1fr}}
+
+  /* Next-up bar */
+  .nextup-bar{display:flex;align-items:center;gap:.75rem;flex-wrap:wrap;background:var(--bg-surface);border:1px solid var(--border-color);
+              border-left:4px solid var(--accent-trail);border-radius:var(--radius-lg);padding:.8rem 1rem;margin-bottom:1rem;box-shadow:var(--shadow-sm)}
+  .nextup-label{font-size:.72rem;font-weight:700;letter-spacing:.06em;color:var(--accent-trail);text-transform:uppercase}
+  .nextup-name{font-weight:700;font-size:.92rem}
+  .nextup-sub{font-size:.75rem;color:var(--text-muted)}
+  .nextup-actions{margin-left:auto;display:flex;gap:.45rem;flex-wrap:wrap}
+
+  .schedule-header{display:flex;justify-content:space-between;align-items:center;gap:.5rem;margin-bottom:.85rem;flex-wrap:wrap}
+  .schedule-header h2{font-size:1.1rem;font-weight:700;display:flex;align-items:center;gap:.5rem}
+  .timeline-stream{display:flex;flex-direction:column;gap:1rem}
+  #cardsList{display:flex;flex-direction:column;gap:1rem}
+
+  .routine-card{background:var(--bg-surface);border:1px solid var(--border-color);border-radius:var(--radius-lg);padding:1.05rem;
+                box-shadow:var(--shadow-sm);transition:border-color .2s,transform .1s}
+  .routine-card:hover{border-color:var(--border-focus)}
+  .routine-card.completed{border-color:rgba(16,185,129,.4);background:linear-gradient(to right,rgba(16,185,129,.04),transparent)}
+  .routine-card.core-spotlight{border-left:4px solid var(--accent-trail)}
+  .routine-card.is-now{border-color:var(--accent-trail);box-shadow:0 0 0 2px var(--accent-trail-glow)}
+  .card-top{display:flex;justify-content:space-between;align-items:flex-start;gap:.5rem;flex-wrap:wrap;margin-bottom:.6rem}
+  .slot-left{display:flex;flex-direction:column;gap:.3rem}
+  .time-slot-tag{font-family:var(--font-mono);font-size:.73rem;font-weight:700;color:var(--accent-trail);background:var(--accent-trail-glow);
+                 padding:.18rem .5rem;border-radius:var(--radius-sm);display:inline-flex;align-items:center;gap:.3rem}
+  body.stealth-mode .time-slot-tag{color:var(--text-muted)!important;background:var(--bg-card)!important}
+  .now-tag{font-size:.68rem;font-weight:700;color:#fff;background:var(--accent-trail);padding:.12rem .45rem;border-radius:var(--radius-full)}
+  body.stealth-mode .now-tag{background:#52525b!important}
+  .routine-title{font-size:1rem;font-weight:700;display:flex;align-items:center;gap:.4rem;flex-wrap:wrap}
+  .routine-target-pill{font-size:.7rem;color:var(--text-muted);background:var(--bg-card);border:1px solid var(--border-color);
+                       padding:.12rem .42rem;border-radius:var(--radius-sm)}
+  .routine-progress{font-family:var(--font-mono);font-size:.75rem;color:var(--text-muted)}
+  .routine-desc{font-size:.8rem;color:var(--text-muted);margin:.2rem 0 .7rem;line-height:1.45}
+  .sets-grid{display:flex;flex-wrap:wrap;gap:.45rem;margin-top:.4rem}
+  .set-check-btn{display:inline-flex;align-items:center;gap:.4rem;background:var(--bg-card);border:1px solid var(--border-color);
+                 padding:.35rem .7rem;border-radius:var(--radius-md);font-size:.78rem;font-weight:600;cursor:pointer;user-select:none;
+                 transition:all .15s ease;color:var(--text-main)}
+  .set-check-btn:hover{background:var(--bg-card-hover);border-color:var(--text-muted)}
+  .set-check-btn.checked{background:rgba(16,185,129,.18);border-color:var(--accent-spring);color:var(--accent-spring)}
+  body.stealth-mode .set-check-btn.checked{background:#e4e4e7!important;border-color:#71717a!important;color:#27272a!important}
+  .set-check-box{width:16px;height:16px;flex:0 0 16px;border-radius:4px;border:1.5px solid currentColor;display:flex;align-items:center;justify-content:center;font-size:10px}
+  .set-check-btn.checked .set-check-box{background:currentColor;color:var(--bg-surface)}
+  .set-time{font-size:.66rem;opacity:.75;font-family:var(--font-mono)}
+  .action-row{display:flex;align-items:center;gap:.5rem;margin-top:.8rem;padding-top:.7rem;border-top:1px dashed var(--border-color);flex-wrap:wrap}
+  .quick-timer-btn{padding:.28rem .6rem;font-size:.73rem;border-radius:var(--radius-sm);background:var(--bg-card);
+                   border:1px solid var(--border-color);color:var(--text-main);cursor:pointer;display:inline-flex;align-items:center;gap:.3rem}
+  .quick-timer-btn:hover{border-color:var(--accent-trail);color:var(--accent-trail)}
+  .bulk-btn{margin-left:auto}
+
+  /* ---------- Sidebar ---------- */
+  .sidebar-stack{display:flex;flex-direction:column;gap:1.1rem}
+  .timer-widget,.panel-card{background:var(--bg-surface);border:1px solid var(--border-color);border-radius:var(--radius-lg);
+                            padding:1.15rem;box-shadow:var(--shadow-sm)}
+  .timer-widget{text-align:center;box-shadow:var(--shadow-md)}
+  .timer-header,.panel-head{display:flex;align-items:center;justify-content:space-between;gap:.5rem;margin-bottom:.9rem}
+  .timer-header h3,.panel-head h3{font-size:.92rem;font-weight:700;display:flex;align-items:center;gap:.4rem}
+  .timer-display-wrap{position:relative;width:168px;height:168px;margin:.4rem auto .9rem;display:flex;align-items:center;justify-content:center}
+  .timer-svg{transform:rotate(-90deg);width:100%;height:100%}
+  .timer-circle-bg{fill:none;stroke:var(--bg-card);stroke-width:8}
+  .timer-circle-progress{fill:none;stroke:var(--accent-trail);stroke-width:8;stroke-linecap:round;
+                         transition:stroke-dashoffset .1s linear,stroke .3s}
+  .timer-number{position:absolute;display:flex;flex-direction:column;align-items:center;justify-content:center}
+  .timer-seconds{font-size:2.6rem;font-weight:800;font-family:var(--font-mono);line-height:1}
+  .timer-state-label{font-size:.7rem;color:var(--text-muted);margin-top:.25rem;letter-spacing:.05em;text-transform:uppercase}
+  .timer-target{font-size:.72rem;color:var(--text-dim);margin-bottom:.6rem;min-height:1.1em}
+  .timer-presets{display:flex;justify-content:center;gap:.35rem;margin-bottom:.9rem;flex-wrap:wrap}
+  .preset-pill{background:var(--bg-card);border:1px solid var(--border-color);padding:.22rem .5rem;border-radius:var(--radius-sm);
+               font-size:.72rem;font-family:var(--font-mono);font-weight:600;cursor:pointer;color:var(--text-main)}
+  .preset-pill.active{background:var(--accent-trail);border-color:var(--accent-trail);color:#fff}
+  body.stealth-mode .preset-pill.active{background:#52525b!important;border-color:#52525b!important}
+  .timer-controls{display:flex;gap:.45rem;justify-content:center;flex-wrap:wrap}
+
+  .timeline-log{list-style:none;display:flex;flex-direction:column;gap:.35rem;max-height:190px;overflow:auto}
+  .log-item{display:flex;align-items:center;gap:.5rem;font-size:.76rem;color:var(--text-muted)}
+  .log-time{font-family:var(--font-mono);color:var(--accent-spring);font-weight:600}
+  .empty-hint{font-size:.76rem;color:var(--text-dim)}
+
+  .chart-container{display:flex;align-items:flex-end;justify-content:space-between;height:88px;padding-top:8px;gap:5px}
+  .chart-col{flex:1;display:flex;flex-direction:column;align-items:center;height:100%;justify-content:flex-end;cursor:pointer}
+  .chart-bar-bg{width:100%;max-width:26px;height:62px;background:var(--bg-card);border-radius:var(--radius-sm);overflow:hidden;
+                display:flex;align-items:flex-end}
+  .chart-bar-fill{width:100%;background:var(--accent-trail);border-radius:var(--radius-sm);transition:height .3s ease;min-height:0}
+  .chart-col.is-active .chart-bar-bg{outline:2px solid var(--text-main)}
+  .chart-day-label{font-size:.66rem;color:var(--text-dim);font-family:var(--font-mono);margin-top:.3rem}
+
+  .guide-banner-card{background:linear-gradient(135deg,rgba(249,115,22,.12),rgba(59,130,246,.08));border:1px solid var(--border-color);
+                     border-radius:var(--radius-lg);padding:.95rem 1.05rem}
+  body.stealth-mode .guide-banner-card{background:var(--bg-card)!important}
+  .guide-banner-title{font-size:.9rem;font-weight:700;margin-bottom:.25rem;display:flex;align-items:center;gap:.4rem}
+  .guide-banner-text{font-size:.76rem;color:var(--text-muted);line-height:1.45;margin-bottom:.7rem}
+
+  .data-row{display:flex;justify-content:space-between;align-items:center;font-size:.72rem;color:var(--text-dim);padding:0 .2rem;flex-wrap:wrap;gap:.5rem}
+  .link-btn{background:none;border:none;color:inherit;cursor:pointer;text-decoration:underline;font-size:.72rem;padding:0}
+
+  /* ---------- Modal ---------- */
+  .modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(4px);z-index:100;display:none;
+                  align-items:center;justify-content:center;padding:1rem}
+  .modal-backdrop.open{display:flex}
+  .modal-box{background:var(--bg-surface);border:1px solid var(--border-color);border-radius:var(--radius-lg);width:100%;max-width:650px;
+             max-height:90vh;display:flex;flex-direction:column;box-shadow:var(--shadow-lg);overflow:hidden;animation:modalFadeIn .18s ease-out}
+  @keyframes modalFadeIn{from{opacity:0;transform:translateY(12px) scale(.98)}to{opacity:1;transform:none}}
+  .modal-header{padding:1rem 1.3rem;border-bottom:1px solid var(--border-color);display:flex;justify-content:space-between;align-items:center;gap:1rem}
+  .modal-header h3{font-size:1.05rem;font-weight:700}
+  .modal-body{padding:1.1rem 1.3rem;overflow-y:auto;font-size:.85rem;line-height:1.6}
+  .modal-footer{padding:.85rem 1.3rem;border-top:1px solid var(--border-color);display:flex;justify-content:flex-end;gap:.55rem;background:var(--bg-card);flex-wrap:wrap}
+  .diagram-panel{background:var(--bg-card);border:1px solid var(--border-color);border-radius:var(--radius-md);padding:1rem;margin:1rem 0;
+                 font-family:var(--font-mono);font-size:.74rem;color:var(--text-main);overflow-x:auto;white-space:pre;line-height:1.35}
+  .key-points-list{list-style:none;display:flex;flex-direction:column;gap:.55rem;margin:1rem 0}
+  .key-point-item{display:flex;gap:.65rem;align-items:flex-start;background:var(--bg-card);padding:.6rem .8rem;
+                  border-radius:var(--radius-md);border-left:3px solid var(--accent-trail)}
+  .key-point-item strong{display:block;margin-bottom:.12rem}
+  .key-point-item span{color:var(--text-muted);font-size:.78rem}
+  .warning-box{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.3);border-radius:var(--radius-md);
+               padding:.7rem .9rem;color:#fca5a5;font-size:.78rem;margin-top:1rem}
+
+  .toast-container{position:fixed;bottom:1.4rem;right:1.4rem;display:flex;flex-direction:column;gap:.5rem;z-index:120;pointer-events:none}
+  .toast-pill{background:var(--bg-surface);border:1px solid var(--border-color);color:var(--text-main);padding:.55rem .9rem;
+              border-radius:var(--radius-md);font-size:.8rem;box-shadow:var(--shadow-lg);display:flex;align-items:center;gap:.5rem;
+              animation:toastIn .2s cubic-bezier(.16,1,.3,1);pointer-events:auto;max-width:80vw}
+  @keyframes toastIn{from{transform:translateY(100%);opacity:0}to{transform:none;opacity:1}}
+
+  .icon{width:1em;height:1em;display:inline-block;vertical-align:-.15em;fill:currentColor}
+  .keyboard-hint-row{display:flex;align-items:center;justify-content:center;gap:1.1rem;font-size:.7rem;color:var(--text-dim);margin-top:1.8rem;flex-wrap:wrap}
+  .kbd{background:var(--bg-card);border:1px solid var(--border-color);padding:.12rem .32rem;border-radius:4px;font-family:var(--font-mono);font-size:.68rem;color:var(--text-main)}
+
+  @media (max-width:640px){
+    .header-inner{padding:.6rem .75rem}
+    .brand-title{font-size:.95rem}
+    .container{padding:1rem .75rem 2.5rem}
+    .stat-value{font-size:1.6rem}
+    .set-check-btn{flex:1 1 auto;justify-content:center}
+    .nextup-actions{margin-left:0;width:100%}
+    .toast-container{left:1rem;right:1rem;bottom:1rem;align-items:center}
+  }
+</style>
+</head>
+<body>
+
+<header class="app-header">
+  <div class="header-inner">
+    <div class="brand-group">
+      <div class="brand-icon">
+        <svg class="icon" viewBox="0 0 24 24"><path d="M14 6l-3.75 5 2.85 3.8L11.5 16l4.5 6H20l-6-8 3-4h-3zM8 10L3.5 16H8l2.5-3.33L8 10zm-3 8l3-4 1.5 2L8 18H5z"/></svg>
+      </div>
+      <div>
+        <div class="brand-title">
+          <span id="brandName">越野跑·膝盖动力舱</span>
+          <span class="brand-sub" id="brandSub">Trail Desk Knee Lab</span>
+          <a class="back-link" href="/tools/">← 返回工具箱</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="header-actions">
+      <div class="date-nav">
+        <button id="prevDayBtn" title="上一天 (←)"><svg class="icon" viewBox="0 0 24 24"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg></button>
+        <span class="current-date-badge" id="displayDate">TODAY</span>
+        <button id="nextDayBtn" title="下一天 (→)"><svg class="icon" viewBox="0 0 24 24"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg></button>
+        <button id="todayJumpBtn" style="font-size:.72rem;padding:.2rem .4rem;font-weight:700;">今日</button>
+      </div>
+
+      <button class="btn" id="syncLinkBtn" title="云端同步 · 多设备共享">
+        <span class="sync-dot" id="syncDot"></span><span id="syncText">同步准备中</span>
+      </button>
+
+      <button class="btn" id="stealthToggleBtn" title="工位伪装防窥 (快捷键 C)">
+        <svg class="icon" viewBox="0 0 24 24"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
+        <span id="stealthBtnText">工位伪装</span>
+      </button>
+
+      <button class="btn" id="themeToggleBtn" title="切换深浅主题">
+        <svg class="icon" viewBox="0 0 24 24"><path d="M12 3a9 9 0 1 0 9 9 7 7 0 0 1-9-9z"/></svg>
+      </button>
+
+      <button class="btn btn-trail" id="openGuideBtn">
+        <svg class="icon" viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm1 15h-2v-2h2zm1.07-7.75l-.9.92C12.45 11.9 12 12.5 12 14h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41a2 2 0 0 0-4 0H7a5 5 0 0 1 10 0c0 1.04-.42 1.99-1.07 2.75z"/></svg>
+        姿态指南
+      </button>
+    </div>
+  </div>
+</header>
+
+<main class="container">
+
+  <section class="dashboard-overview">
+    <div class="stat-card">
+      <div class="stat-header"><span>今日达成率</span><span id="completedFraction">0 / 0 组</span></div>
+      <div class="stat-body">
+        <span class="stat-value" id="progressPercentage">0%</span>
+        <span class="stat-label-tag" id="progressPill">未启动</span>
+      </div>
+      <div class="progress-track"><div class="progress-fill" id="progressBar" style="width:0%"></div></div>
+      <div style="font-size:.72rem;color:var(--text-dim);margin-top:.45rem" id="todayVolume">今日累计等长时长 0 秒</div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-header"><span>下坡抗冲击战力</span><span>近 7 天</span></div>
+      <div class="stat-body">
+        <span class="stat-value" id="armorScore">0</span>
+        <span style="font-size:.9rem;color:var(--text-muted)">/ 100</span>
+        <span class="armor-badge armor-lv1" id="armorBadge">软骨裸奔级</span>
+      </div>
+      <div style="font-size:.72rem;color:var(--text-dim)" id="armorDesc">股四头肌离心与跟腱减震尚未激活</div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-header"><span>连续打卡</span><span>STREAK</span></div>
+      <div class="stat-body">
+        <span class="stat-value" id="streakDays">0</span>
+        <span style="font-size:.95rem;font-weight:600">天</span>
+      </div>
+      <div style="font-size:.72rem;color:var(--text-dim)">每日完成 ≥4 组即计入，第 3 周重塑肌腱刚度</div>
+    </div>
+  </section>
+
+  <div class="workspace-grid">
+
+    <section class="timeline-stream">
+      <div class="nextup-bar" id="nextUpBar">
+        <div>
+          <div class="nextup-label">NEXT UP · 下一个该练</div>
+          <div class="nextup-name" id="nextUpName">今日全部完成 🎉</div>
+          <div class="nextup-sub" id="nextUpSub">保持住，明天见</div>
+        </div>
+        <div class="nextup-actions">
+          <button class="btn" id="nextUpTimerBtn">载入倒计时</button>
+          <button class="btn btn-trail" id="nextUpDoneBtn">练完打卡 ✓</button>
+        </div>
+      </div>
+
+      <div class="schedule-header">
+        <h2>
+          <svg class="icon" viewBox="0 0 24 24"><path d="M19 3h-1V1h-2v2H8V1H6v2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2zm0 16H5V8h14zM7 10h5v5H7z"/></svg>
+          工位静默训练时序表
+        </h2>
+        <span style="font-size:.73rem;color:var(--text-muted)">微幅 · 等长 · 无晃动</span>
+      </div>
+
+      <div id="cardsList"></div>
+    </section>
+
+    <aside class="sidebar-stack">
+      <div class="timer-widget">
+        <div class="timer-header">
+          <h3>
+            <svg class="icon" viewBox="0 0 24 24"><path d="M15 1H9v2h6V1zm-4 13h2V8h-2zm8.03-6.61l1.42-1.42A9 9 0 0 0 12 4a9 9 0 1 0 9 9c0-2.12-.74-4.07-1.97-5.61z"/></svg>
+            等长收缩倒计时
+          </h3>
+          <button class="btn" id="soundToggleBtn" style="padding:.18rem .45rem;font-size:.72rem"><span id="soundStatusText">声音: 开</span></button>
+        </div>
+        <div class="timer-target" id="timerTargetText">自由练习模式</div>
+        <div class="timer-display-wrap">
+          <svg class="timer-svg" viewBox="0 0 160 160">
+            <circle class="timer-circle-bg" cx="80" cy="80" r="70"></circle>
+            <circle class="timer-circle-progress" id="timerCircle" cx="80" cy="80" r="70"></circle>
+          </svg>
+          <div class="timer-number">
+            <span class="timer-seconds" id="timerSecsDisplay">40</span>
+            <span class="timer-state-label" id="timerStateLabel">READY</span>
+          </div>
+        </div>
+        <div class="timer-presets">
+          <button class="preset-pill" data-sec="10">10s 蹬压</button>
+          <button class="preset-pill" data-sec="30">30s 夹腿</button>
+          <button class="preset-pill active" data-sec="40">40s 锁死</button>
+          <button class="preset-pill" data-sec="45">45s 进阶</button>
+        </div>
+        <div class="timer-controls">
+          <button class="btn btn-trail" id="timerMainBtn" style="flex:1">开始静止发力</button>
+          <button class="btn" id="timerResetBtn">重置</button>
+        </div>
+      </div>
+
+      <div class="panel-card">
+        <div class="panel-head">
+          <h3><svg class="icon" viewBox="0 0 24 24"><path d="M3 12h4l3 8 4-16 3 8h4"/></svg>今日打卡流水</h3>
+          <span style="font-size:.72rem;color:var(--text-muted)" id="logCount">0 组</span>
+        </div>
+        <ul class="timeline-log" id="todayLog"><li class="empty-hint">今天还没有打卡记录</li></ul>
+      </div>
+
+      <div class="panel-card">
+        <div class="panel-head">
+          <h3><svg class="icon" viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>近 7 天趋势</h3>
+          <span style="font-size:.73rem;color:var(--text-muted)" id="weekAvgText">周均 --%</span>
+        </div>
+        <div class="chart-container" id="weekChart"></div>
+      </div>
+
+      <div class="guide-banner-card">
+        <div class="guide-banner-title">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm1 15h-2v-6h2zm0-8h-2V7h2z"/></svg>
+          核心密匙：单腿悬膝锁死
+        </div>
+        <div class="guide-banner-text">下坡膝前痛与打颤？关键是激活膝内上方<strong>股内侧肌(VMO)</strong>。微屈 5° 防超伸，抬高 3–5cm，手摸硬如磐石。</div>
+        <button class="btn" style="width:100%" id="openGuideInnerBtn">查看动作剖析与防错自检</button>
+      </div>
+
+      <div class="data-row">
+        <button class="link-btn" id="exportDataBtn">导出备份</button>
+        <button class="link-btn" id="importDataBtn">导入数据</button>
+        <button class="link-btn" id="clearDataBtn">清空历史</button>
+        <input type="file" id="importFileInput" accept=".json" style="display:none">
+      </div>
+    </aside>
+  </div>
+
+  <div class="keyboard-hint-row">
+    <span><span class="kbd">空格</span> 开始/暂停计时</span>
+    <span><span class="kbd">C</span> 工位伪装</span>
+    <span><span class="kbd">←</span> / <span class="kbd">→</span> 切换日期</span>
+    <span><span class="kbd">N</span> 练完打卡下一组</span>
+    <span><span class="kbd">Esc</span> 关闭弹窗</span>
+  </div>
+</main>
+
+<!-- 姿态指南 -->
+<div class="modal-backdrop" id="guideModal">
+  <div class="modal-box">
+    <div class="modal-header">
+      <h3>下坡神技：单腿坐姿悬膝锁死 (Isometric Knee Extension)</h3>
+      <button class="btn" id="closeGuideModalBtn" style="padding:.18rem .5rem">✕</button>
+    </div>
+    <div class="modal-body">
+      <p style="color:var(--text-muted);margin-bottom:.8rem">这是越野跑者在办公室防下坡膝关节崩溃的核心动作。静止状态下绷紧股内侧肌与髌腱末端，构建液压阻尼器般的承载刚度。</p>
+
+      <div class="diagram-panel">
+  [ 上身挺直，腹部微收 ]
+           │
+ ( 坐于椅子前 1/3 处 ) ──────── 坐骨垂直扎实（严禁葛优瘫）
+    ┌──────┴──────┐
+    │             │
+[支撑腿]       [训练腿]
+屈膝90度平踩   向前伸直 ─── 留 5° 微屈角（绝对禁止反关节锁死）
+               脚尖极限勾向面部 ↑
+               脚跟离地 3-5 厘米（仅两指厚度，悬空静止）
+               触摸膝内上方 ──── 股内侧肌(VMO) 坚硬如石头
+      </div>
+
+      <ul class="key-points-list">
+        <li class="key-point-item"><span>①</span><div><strong>位置：坐椅子前 1/3 处</strong><span>坐骨垂直插在椅面，后背完全脱离椅背，保持腰椎自然中立。</span></div></li>
+        <li class="key-point-item"><span>②</span><div><strong>角度：伸膝留 5° 微屈角</strong><span>严禁死死下压超伸，否则受力砸在十字韧带而非肌肉。</span></div></li>
+        <li class="key-point-item"><span>③</span><div><strong>张力：脚尖极限勾紧（背屈）</strong><span>串联胫前肌、比目鱼肌与股四头肌张力链。</span></div></li>
+        <li class="key-point-item"><span>④</span><div><strong>高度：脚跟悬空 3–5 厘米</strong><span>过高变髂腰肌代偿，过低容易蹭地，低位悬空才给膝盖最大力臂负荷。</span></div></li>
+        <li class="key-point-item"><span>⑤</span><div><strong>自检：股内侧肌硬如磐石</strong><span>摸膝内上方水滴形肌肉，静止保持 40 秒，绝不憋气。</span></div></li>
+      </ul>
+
+      <div class="warning-box">⚠️ <strong>避坑清单：</strong><br>1. 绝不向后瘫坐（骨盆后倾把受力转移给腰椎 L4-L5）；<br>2. 保持完全静止，桌椅与显示器不得抖动，开会、敲代码即可完成。</div>
+    </div>
+    <div class="modal-footer"><button class="btn btn-trail" id="closeGuideModalBtn2">领会要领，立即开练</button></div>
+  </div>
+</div>
+
+<!-- 云端同步 / 多设备共享 -->
+<div class="modal-backdrop" id="cloudModal">
+  <div class="modal-box" style="max-width:520px">
+    <div class="modal-header">
+      <h3>云端同步 · 多设备共享</h3>
+      <button class="btn" id="closeCloudModalBtn" style="padding:.18rem .5rem">✕</button>
+    </div>
+    <div class="modal-body">
+      <p style="color:var(--text-muted);margin-bottom:.6rem">
+        打卡数据已自动同步到云端（每分钟自动拉取一次，切后台再回来也会同步）。在手机、平板或另一台电脑打开下面的链接，就能看到同一份进度。
+      </p>
+      <div class="share-field">
+        <input type="text" id="shareLinkInput" readonly>
+        <button class="btn" id="copyLinkBtn">复制</button>
+      </div>
+      <ul class="key-points-list" style="margin:.4rem 0 0">
+        <li class="key-point-item"><span>①</span><div><strong>换设备 / 换浏览器</strong><span>打开上面链接即可，数据自动合并，按「每天最后修改时间」取新的一方。</span></div></li>
+        <li class="key-point-item"><span>②</span><div><strong>断网也能用</strong><span>网络不可用时先存本机，恢复后自动补传，右上角状态会标「离线保存」。</span></div></li>
+        <li class="key-point-item"><span>③</span><div><strong>只在你的命名空间里</strong><span>云端键独立申请，和站内保姆工时、以宁清单等其他工具互不影响。</span></div></li>
+      </ul>
+      <div style="font-size:.75rem;color:var(--text-dim);margin-top:.7rem" id="cloudMeta"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" id="pullCloudBtn">立即拉取云端</button>
+      <button class="btn btn-trail" id="closeCloudModalBtn2">知道了</button>
+    </div>
+  </div>
+</div>
+
+<!-- 通用确认框 -->
+<div class="modal-backdrop" id="confirmModal">
+  <div class="modal-box" style="max-width:430px">
+    <div class="modal-header"><h3 id="confirmTitle">确认操作</h3></div>
+    <div class="modal-body" id="confirmMessage" style="font-size:.88rem">您确定要执行此操作吗？</div>
+    <div class="modal-footer">
+      <button class="btn" id="confirmCancelBtn">取消</button>
+      <button class="btn btn-trail" id="confirmOkBtn">确认执行</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast-container" id="toastContainer"></div>
+
+<script>
+(function () {
+  'use strict';
+
+  /* ==========================================================
+     1. 训练时序表
+     ========================================================== */
+  var ROUTINE_SCHEMA = [
+    {
+      id: 'morning_wake', timeSlot: '09:30 – 10:00', start: '09:30', end: '10:00',
+      title: '晨间唤醒：足底筋膜与胫前链', target: '踝足避震第一道防线', secsPerSet: 30,
+      desc: '脱鞋用硬球松解足底紧张筋膜，激活胫骨前肌，为全天关节对线和碎石路面的触地缓冲奠定本体感觉。',
+      weightVMO: 0, weightSoleus: 2, quickTimerSec: 30, subTaskSecs: 30,
+      subTasks: [
+        { id: 'roll_l', label: '左脚滚球 2min' },
+        { id: 'roll_r', label: '右脚滚球 2min' },
+        { id: 'tib_1', label: '胫前勾脚 20次 (组1)' },
+        { id: 'tib_2', label: '胫前勾脚 20次 (组2)' },
+        { id: 'tib_3', label: '胫前勾脚 20次 (组3)' }
+      ]
+    },
+    {
+      id: 'focus_vmo_lock', timeSlot: '10:30 – 11:30', start: '10:30', end: '11:30',
+      title: '上午专注：单腿坐姿悬膝锁死', target: '核心下坡防痛抗溃退', isCore: true, secsPerSet: 40,
+      desc: '【核心重器】椅子前 1/3，微屈 5° 防超伸，脚尖极度回勾，悬空 3–5cm。强力收缩股内侧肌 40 秒，解决下坡髌骨研磨与大腿打颤。',
+      weightVMO: 8, weightSoleus: 0, quickTimerSec: 40, subTaskSecs: 40,
+      subTasks: [
+        { id: 'vmo_r1_l', label: '轮1 左腿 40s' }, { id: 'vmo_r1_r', label: '轮1 右腿 40s' },
+        { id: 'vmo_r2_l', label: '轮2 左腿 40s' }, { id: 'vmo_r2_r', label: '轮2 右腿 40s' },
+        { id: 'vmo_r3_l', label: '轮3 左腿 40s' }, { id: 'vmo_r3_r', label: '轮3 右腿 40s' },
+        { id: 'vmo_r4_l', label: '轮4 左腿 40s' }, { id: 'vmo_r4_r', label: '轮4 右腿 40s' }
+      ]
+    },
+    {
+      id: 'noon_adductor', timeSlot: '11:30 – 12:00', start: '11:30', end: '12:00',
+      title: '午饭收尾：双膝夹物等长对抗', target: '消除跑动膝关节内扣', secsPerSet: 30,
+      desc: '双膝间夹水杯或双拳，双腿向内全力夹紧 30 秒。唤醒久坐沉睡的大腿内收肌群，锁死着地时膝外翻剪切力。',
+      weightVMO: 2, weightSoleus: 0, quickTimerSec: 30, subTaskSecs: 30,
+      subTasks: [
+        { id: 'add_1', label: '夹紧对抗 30s (组1)' },
+        { id: 'add_2', label: '夹紧对抗 30s (组2)' },
+        { id: 'add_3', label: '夹紧对抗 30s (组3)' }
+      ]
+    },
+    {
+      id: 'afternoon_soleus', timeSlot: '14:00 – 15:00', start: '14:00', end: '15:00',
+      title: '午后解困：坐姿比目鱼肌提踵', target: '下坡液压避震泵', secsPerSet: 45,
+      desc: '双脚屈膝 90 度，慢速推起后跟并在顶点悬停 1 秒。比目鱼肌抗疲劳性强，吸收下坡超过 50% 的垂直冲击。',
+      weightVMO: 1, weightSoleus: 6, quickTimerSec: 45, subTaskSecs: 45,
+      subTasks: [
+        { id: 'sol_1', label: '慢提 45次 (组1)' }, { id: 'sol_2', label: '慢提 45次 (组2)' },
+        { id: 'sol_3', label: '慢提 45次 (组3)' }, { id: 'sol_4', label: '慢提 45次 (组4)' }
+      ]
+    },
+    {
+      id: 'tea_glute_band', timeSlot: '15:30 – 16:30', start: '15:30', end: '16:30',
+      title: '下午茶间歇：弹力带微幅外展', target: '唤醒臀中肌·骨盆水平锁', secsPerSet: 40,
+      desc: '弹力带套于膝上，双脚踩实向外对抗张力保持 40 秒。激活骨盆侧向悬挂系统，预防长坡导致的髂胫束摩擦综合征(ITBS)。',
+      weightVMO: 1, weightSoleus: 1, quickTimerSec: 40, subTaskSecs: 40,
+      subTasks: [
+        { id: 'gmed_1', label: '外展张力 40s (组1)' },
+        { id: 'gmed_2', label: '外展张力 40s (组2)' },
+        { id: 'gmed_3', label: '外展张力 40s (组3)' }
+      ]
+    },
+    {
+      id: 'evening_drive', timeSlot: '17:30 – 18:30', start: '17:30', end: '18:30',
+      title: '下班整合：下肢交替推蹬', target: '屈髋核心与足踝动态踩蹬', secsPerSet: 10,
+      desc: '单脚掌用力踩压地面仿佛踩下刹车阻尼，双手压膝给予抗阻。把白天零散的肌力整合为越野跑单腿蹬伸反射。',
+      weightVMO: 2, weightSoleus: 2, quickTimerSec: 10, subTaskSecs: 10,
+      subTasks: [
+        { id: 'drv_1', label: '单脚踩压 10s (第1次)' }, { id: 'drv_2', label: '单脚踩压 10s (第2次)' },
+        { id: 'drv_3', label: '单脚踩压 10s (第3次)' }, { id: 'drv_4', label: '单脚踩压 10s (第4次)' },
+        { id: 'drv_5', label: '单脚踩压 10s (第5次)' }
+      ]
+    }
+  ];
+
+  var TASK_INDEX = {};   // taskId -> { routine, task }
+  ROUTINE_SCHEMA.forEach(function (r) {
+    r.subTasks.forEach(function (st) { TASK_INDEX[st.id] = { routine: r, task: st }; });
+  });
+  var TOTAL_SUBTASKS = Object.keys(TASK_INDEX).length;
+
+  /* ==========================================================
+     2. 存储（独立命名空间，与站内其他工具互不干扰）
+     ========================================================== */
+  var NS = 'kneelab.v1';
+  var STORAGE_KEY = NS + '.checkins';
+  var PREFS_KEY = NS + '.prefs';
+  var CLOUD_ID_KEY = NS + '.cloudId';
+  var API_BASE = 'https://time.taizhendong.com';   // 与站内其他工具共用的 Cloudflare Worker KV
+
+  var appStore = { v: 2, days: {}, stamps: {} };   // stamps: 每天最后修改时间，用于多端合并
+  var userPrefs = { theme: 'dark', stealth: false, sound: true, defaultTimerSec: 40 };
+
+  function dateKeyOf(d) {
+    return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+  }
+  function todayKey() { return dateKeyOf(new Date()); }
+
+  var activeDateKey = todayKey();
+
+  function loadStorage() {
+    try {
+      var raw = localStorage.getItem(STORAGE_KEY);
+      if (raw) {
+        var parsed = JSON.parse(raw);
+        appStore.days = (parsed && parsed.days) ? parsed.days : (parsed && typeof parsed === 'object' ? parsed : {});
+        appStore.stamps = (parsed && parsed.stamps) ? parsed.stamps : {};
+      }
+      var rawPrefs = localStorage.getItem(PREFS_KEY);
+      if (rawPrefs) {
+        var p = JSON.parse(rawPrefs);
+        if (p && typeof p === 'object') {
+          Object.keys(userPrefs).forEach(function (k) { if (k in p) userPrefs[k] = p[k]; });
+        }
+      }
+    } catch (e) { console.warn('[knee-lab] 读取本地存储失败，使用空状态', e); }
+  }
+
+  function saveStorage() {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({
+        v: 2, updatedAt: new Date().toISOString(), days: appStore.days, stamps: appStore.stamps
+      }));
+      localStorage.setItem(PREFS_KEY, JSON.stringify(userPrefs));
+    } catch (e) { console.error('[knee-lab] 写入本地存储失败', e); }
+  }
+
+  function getDayChecks(key) {
+    if (!appStore.days[key]) appStore.days[key] = {};
+    return appStore.days[key];
+  }
+  function isDone(dayChecks, taskId) {
+    var v = dayChecks[taskId];
+    return v === true || (typeof v === 'number' && v > 0);
+  }
+  function doneList(key) {
+    var checks = appStore.days[key] || {};
+    var out = [];
+    Object.keys(checks).forEach(function (id) {
+      if (isDone(checks, id) && TASK_INDEX[id]) out.push({ id: id, at: checks[id] });
+    });
+    out.sort(function (a, b) {
+      if (typeof a.at === 'number' && typeof b.at === 'number') return a.at - b.at;
+      return 0;
+    });
+    return out;
+  }
+
+  /* ==========================================================
+     2.5 云端同步（按天合并，按最后修改时间取新）
+     ========================================================== */
+  var cloudId = null;
+  var cloudReady = false;
+  var isSyncing = false;
+  var syncTimer = null;
+  var lastSyncedAt = 0;
+
+  function setSyncStatus(status, text) {
+    var dot = $('syncDot'), label = $('syncText');
+    if (!dot || !label) return;
+    dot.className = 'sync-dot ' + status;
+    label.textContent = text;
+  }
+
+  function cloudPayload() {
+    return {
+      app: 'knee-lab', schema: 2, updatedAt: new Date().toISOString(),
+      days: appStore.days, stamps: appStore.stamps
+    };
+  }
+
+  // 把云端数据按「每天最后修改时间」合并进本地，返回是否有变化
+  function mergeRemote(remote) {
+    if (!remote || typeof remote !== 'object') return false;
+    var remoteDays = remote.days || {};
+    var remoteStamps = remote.stamps || {};
+    var changed = false;
+    var keys = Object.keys(remoteDays);
+    // 本地有、云端没有的天：首次合并时也要并进去
+    Object.keys(appStore.days).forEach(function (k) { if (keys.indexOf(k) === -1) keys.push(k); });
+
+    keys.forEach(function (dayKey) {
+      var localT = Number(appStore.stamps[dayKey]) || 0;
+      var remoteT = Number(remoteStamps[dayKey]) || 0;
+      var localObj = appStore.days[dayKey] || {};
+      var remoteObj = remoteDays[dayKey] || {};
+
+      if (remoteT > localT) {
+        appStore.days[dayKey] = remoteObj;
+        appStore.stamps[dayKey] = remoteT;
+        changed = true;
+      } else if (localT > remoteT) {
+        changed = true;                       // 本地更新，稍后推送覆盖云端
+      } else {
+        // 时间相同：逐条取并集（都算完成），保证不丢数据
+        var merged = {};
+        var localChanged = false;
+        Object.keys(localObj).forEach(function (t) { merged[t] = localObj[t]; });
+        Object.keys(remoteObj).forEach(function (t) {
+          if (!(t in merged)) { merged[t] = remoteObj[t]; localChanged = true; }
+        });
+        if (localChanged) {
+          appStore.days[dayKey] = merged;
+          appStore.stamps[dayKey] = Date.now();
+          changed = true;
+        }
+      }
+    });
+    return changed;
+  }
+
+  function ensureCloudId() {
+    if (cloudId) return Promise.resolve(cloudId);
+    return fetch(API_BASE + '/data', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(cloudPayload())
+    }).then(function (res) {
+      if (!res.ok) throw new Error('创建云端存储失败 ' + res.status);
+      return res.json();
+    }).then(function (data) {
+      cloudId = data.id;
+      try { localStorage.setItem(CLOUD_ID_KEY, cloudId); } catch (e) { /* 忽略 */ }
+      lastSyncedAt = Date.now();
+      setSyncStatus('success', '已同步');
+      updateCloudMeta();
+      return cloudId;
+    });
+  }
+
+  function pushToCloud() {
+    if (!cloudReady || !cloudId || isSyncing) return Promise.resolve(false);
+    isSyncing = true;
+    setSyncStatus('pending', '同步中…');
+    return fetch(API_BASE + '/data/' + cloudId, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(cloudPayload())
+    }).then(function (res) {
+      if (!res.ok) throw new Error('保存失败 ' + res.status);
+      lastSyncedAt = Date.now();
+      setSyncStatus('success', '已同步 ' + pad2(new Date().getHours()) + ':' + pad2(new Date().getMinutes()));
+      updateCloudMeta();
+      return true;
+    }).catch(function (err) {
+      console.warn('[knee-lab] 云端保存失败：', err.message);
+      setSyncStatus('error', '离线保存');
+      return false;
+    }).then(function (ok) {
+      isSyncing = false;
+      return ok;
+    });
+  }
+
+  function debouncedSync() {
+    if (syncTimer) clearTimeout(syncTimer);
+    if (cloudId) setSyncStatus('pending', '等待同步…');
+    syncTimer = setTimeout(function () { pushToCloud(); }, 1200);
+  }
+
+  function pullFromCloud(silent) {
+    if (!cloudId) return Promise.resolve(false);
+    return fetch(API_BASE + '/data/' + cloudId)
+      .then(function (res) {
+        if (!res.ok) throw new Error('读取失败 ' + res.status);
+        return res.json();
+      })
+      .then(function (remote) {
+        var changed = mergeRemote(remote);
+        if (changed) { saveStorage(); renderAll(); }
+        lastSyncedAt = Date.now();
+        setSyncStatus('success', '已同步 ' + pad2(new Date().getHours()) + ':' + pad2(new Date().getMinutes()));
+        updateCloudMeta();
+        if (changed && !silent) showToast('已合并云端最新打卡');
+        // 本地比云端新时补推一次
+        var localNewer = Object.keys(appStore.stamps).some(function (k) {
+          return (Number(appStore.stamps[k]) || 0) > (Number((remote.stamps || {})[k]) || 0);
+        });
+        if (localNewer) return pushToCloud();
+        return true;
+      })
+      .catch(function (err) {
+        console.warn('[knee-lab] 云端读取失败：', err.message);
+        if (!silent) setSyncStatus('error', '离线保存');
+        return false;
+      });
+  }
+
+  function pad2(n) { return String(n).padStart(2, '0'); }
+
+  function updateCloudMeta() {
+    var el = $('cloudMeta');
+    if (!el) return;
+    if (!cloudId) { el.textContent = '尚未连接云端'; return; }
+    var t = lastSyncedAt ? new Date(lastSyncedAt) : null;
+    el.textContent = '云端编号 ' + cloudId + (t ? ' · 最近同步 ' + pad2(t.getHours()) + ':' + pad2(t.getMinutes()) + ':' + pad2(t.getSeconds()) : '');
+    var input = $('shareLinkInput');
+    if (input) input.value = shareLink();
+  }
+
+  function shareLink() {
+    var base = window.location.origin + window.location.pathname;
+    return cloudId ? (base + '?id=' + cloudId) : base;
+  }
+
+  function initCloud() {
+    if (typeof fetch !== 'function') {           // 极老浏览器不支持 fetch：纯本地模式，不影响使用
+      setSyncStatus('error', '本机模式');
+      return;
+    }
+    // ?id=xxx 优先生效（从另一台设备打开分享链接的场景）
+    var fromUrl = null;
+    try {
+      var params = new URLSearchParams(window.location.search);
+      fromUrl = params.get('id');
+    } catch (e) { /* 忽略 */ }
+    if (fromUrl) {
+      cloudId = fromUrl;
+      try { localStorage.setItem(CLOUD_ID_KEY, cloudId); } catch (e) { /* 忽略 */ }
+      try { history.replaceState(null, '', window.location.pathname); } catch (e) { /* 忽略 */ }
+    } else {
+      try { cloudId = localStorage.getItem(CLOUD_ID_KEY) || null; } catch (e) { /* 忽略 */ }
+    }
+
+    setSyncStatus('pending', '连接云端…');
+
+    var task;
+    if (cloudId) {
+      task = pullFromCloud(true).then(function (ok) {
+        if (!ok) setSyncStatus('error', '离线保存');
+        cloudReady = true;
+        return ok;
+      });
+    } else {
+      task = ensureCloudId().then(function () { cloudReady = true; return true; })
+        .catch(function (err) {
+          console.warn('[knee-lab] 云端初始化失败：', err.message);
+          setSyncStatus('error', '离线保存');
+          cloudReady = false;
+          return false;
+        });
+    }
+
+    task.then(function () {
+      // 本机数据比云端新（或首次有用过）时补推
+      if (cloudReady && Object.keys(appStore.days).length) pushToCloud();
+      updateCloudMeta();
+
+      // 每分钟拉一次；切回前台也拉，保证多设备同步
+      setInterval(function () { if (!document.hidden) pullFromCloud(true); }, 60000);
+      window.addEventListener('focus', function () { pullFromCloud(true); });
+      document.addEventListener('visibilitychange', function () {
+        if (!document.hidden) pullFromCloud(true);
+      });
+    });
+  }
+
+  /* ==========================================================
+     3. 音效（Web Audio，无外部资源）
+     ========================================================== */
+  var audioCtx = null;
+  function getAudioContext() {
+    try {
+      if (!audioCtx) {
+        var C = window.AudioContext || window.webkitAudioContext;
+        if (C) audioCtx = new C();
+      }
+      if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+    } catch (e) { audioCtx = null; }
+    return audioCtx;
+  }
+  function playTone(freq, type, duration, gainVal) {
+    if (!userPrefs.sound) return;
+    try {
+      var ctx = getAudioContext();
+      if (!ctx) return;
+      var osc = ctx.createOscillator(), gain = ctx.createGain();
+      osc.type = type || 'sine';
+      osc.frequency.setValueAtTime(freq, ctx.currentTime);
+      gain.gain.setValueAtTime(gainVal || 0.08, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + duration);
+      osc.connect(gain); gain.connect(ctx.destination);
+      osc.start(); osc.stop(ctx.currentTime + duration);
+    } catch (e) { /* 忽略 */ }
+  }
+  function playStartBeep() { playTone(523.25, 'triangle', 0.15, 0.1); }
+  function playTickBeep() { playTone(440, 'sine', 0.06, 0.05); }
+  function playFinishChime() {
+    if (!userPrefs.sound) return;
+    playTone(659.25, 'sine', 0.25, 0.12);
+    setTimeout(function () { playTone(880, 'triangle', 0.4, 0.15); }, 120);
+  }
+
+  /* ==========================================================
+     4. DOM 引用
+     ========================================================== */
+  var $ = function (id) { return document.getElementById(id); };
+  var bodyEl = document.body;
+  var displayDateEl = $('displayDate'), cardsListEl = $('cardsList');
+  var completedFractionEl = $('completedFraction'), progressPercentageEl = $('progressPercentage');
+  var progressPillEl = $('progressPill'), progressBarEl = $('progressBar'), todayVolumeEl = $('todayVolume');
+  var armorScoreEl = $('armorScore'), armorBadgeEl = $('armorBadge'), armorDescEl = $('armorDesc');
+  var streakDaysEl = $('streakDays'), weekChartEl = $('weekChart'), weekAvgTextEl = $('weekAvgText');
+  var nextUpBar = $('nextUpBar'), nextUpName = $('nextUpName'), nextUpSub = $('nextUpSub');
+  var nextUpTimerBtn = $('nextUpTimerBtn'), nextUpDoneBtn = $('nextUpDoneBtn');
+  var todayLogEl = $('todayLog'), logCountEl = $('logCount');
+  var timerSecsDisplay = $('timerSecsDisplay'), timerStateLabel = $('timerStateLabel');
+  var timerCircle = $('timerCircle'), timerMainBtn = $('timerMainBtn'), timerResetBtn = $('timerResetBtn');
+  var timerTargetText = $('timerTargetText');
+  var presetBtns = document.querySelectorAll('.preset-pill');
+  var guideModal = $('guideModal'), confirmModal = $('confirmModal'), cloudModal = $('cloudModal');
+  var toastContainer = $('toastContainer');
+
+  /* ==========================================================
+     5. Toast / 确认框
+     ========================================================== */
+  function showToast(text, icon) {
+    var toast = document.createElement('div');
+    toast.className = 'toast-pill';
+    toast.innerHTML = '<span style="color:var(--accent-trail);font-weight:bold">' + (icon || '✓') + '</span> <span></span>';
+    toast.lastChild.textContent = text;
+    toastContainer.appendChild(toast);
+    setTimeout(function () {
+      toast.style.opacity = '0';
+      toast.style.transform = 'translateY(8px)';
+      toast.style.transition = 'all .25s ease';
+      setTimeout(function () { if (toast.parentNode) toast.parentNode.removeChild(toast); }, 250);
+    }, 2200);
+  }
+
+  var confirmCallback = null;
+  function customConfirm(title, message, onOk) {
+    $('confirmTitle').textContent = title;
+    $('confirmMessage').textContent = message;
+    confirmCallback = onOk;
+    confirmModal.classList.add('open');
+  }
+  $('confirmCancelBtn').onclick = function () { confirmModal.classList.remove('open'); confirmCallback = null; };
+  $('confirmOkBtn').onclick = function () {
+    confirmModal.classList.remove('open');
+    if (typeof confirmCallback === 'function') confirmCallback();
+    confirmCallback = null;
+  };
+  confirmModal.addEventListener('click', function (e) { if (e.target === confirmModal) confirmModal.classList.remove('open'); });
+
+  /* ==========================================================
+     6. 日期切换
+     ========================================================== */
+  function shiftDate(offset) {
+    var p = activeDateKey.split('-');
+    var d = new Date(parseInt(p[0], 10), parseInt(p[1], 10) - 1, parseInt(p[2], 10));
+    d.setDate(d.getDate() + offset);
+    activeDateKey = dateKeyOf(d);
+    renderAll();
+  }
+  $('prevDayBtn').onclick = function () { shiftDate(-1); };
+  $('nextDayBtn').onclick = function () { shiftDate(1); };
+  $('todayJumpBtn').onclick = function () { activeDateKey = todayKey(); renderAll(); };
+
+  /* ==========================================================
+     7. 打卡
+     ========================================================== */
+  function toggleTaskCheck(taskId) {
+    var checks = getDayChecks(activeDateKey);
+    if (isDone(checks, taskId)) {
+      delete checks[taskId];
+    } else {
+      checks[taskId] = Date.now();
+    }
+    appStore.stamps[activeDateKey] = Date.now();
+    saveStorage();
+    debouncedSync();
+    playTone(600, 'sine', 0.08, 0.06);
+    renderAll();
+  }
+
+  function checkTask(taskId, silent) {
+    var checks = getDayChecks(activeDateKey);
+    if (!isDone(checks, taskId)) {
+      checks[taskId] = Date.now();
+      appStore.stamps[activeDateKey] = Date.now();
+      saveStorage();
+      debouncedSync();
+      if (!silent) playTone(720, 'sine', 0.1, 0.07);
+    }
+    renderAll();
+  }
+
+  function bulkRoutine(routineId, value) {
+    var r = ROUTINE_SCHEMA.filter(function (x) { return x.id === routineId; })[0];
+    if (!r) return;
+    var checks = getDayChecks(activeDateKey);
+    r.subTasks.forEach(function (st) {
+      if (value) { if (!isDone(checks, st.id)) checks[st.id] = Date.now(); }
+      else { delete checks[st.id]; }
+    });
+    appStore.stamps[activeDateKey] = Date.now();
+    saveStorage();
+    debouncedSync();
+    showToast((value ? '已完成 ' : '已撤销 ') + r.title.split('：')[0] + (value ? ' 全部 ' + r.subTasks.length + ' 组' : ''));
+    renderAll();
+  }
+
+  // 下一个未完成的任务
+  function nextPendingTask() {
+    var checks = appStore.days[activeDateKey] || {};
+    for (var i = 0; i < ROUTINE_SCHEMA.length; i++) {
+      var r = ROUTINE_SCHEMA[i];
+      for (var j = 0; j < r.subTasks.length; j++) {
+        var st = r.subTasks[j];
+        if (!isDone(checks, st.id)) return { routine: r, task: st };
+      }
+    }
+    return null;
+  }
+
+  // 当前时间落在哪个时段
+  function currentSlotId(viewingToday) {
+    if (!viewingToday) return null;
+    var now = new Date();
+    var minutes = now.getHours() * 60 + now.getMinutes();
+    function toMin(hhmm) { var p = hhmm.split(':'); return parseInt(p[0], 10) * 60 + parseInt(p[1], 10); }
+    var candidate = null;
+    for (var i = 0; i < ROUTINE_SCHEMA.length; i++) {
+      var r = ROUTINE_SCHEMA[i];
+      if (minutes >= toMin(r.start) && minutes <= toMin(r.end)) return r.id;
+      if (minutes < toMin(r.end) && !candidate) candidate = r.id;
+    }
+    var checks = appStore.days[activeDateKey] || {};
+    var pending = null;
+    for (var k = 0; k < ROUTINE_SCHEMA.length; k++) {
+      var rr = ROUTINE_SCHEMA[k];
+      var allDone = rr.subTasks.every(function (st) { return isDone(checks, st.id); });
+      if (!allDone) { pending = rr.id; break; }
+    }
+    return pending;
+  }
+
+  /* ==========================================================
+     8. 渲染
+     ========================================================== */
+  function renderTimelineCards() {
+    var checks = getDayChecks(activeDateKey);
+    var nowSlot = currentSlotId(activeDateKey === todayKey());
+    cardsListEl.innerHTML = '';
+
+    ROUTINE_SCHEMA.forEach(function (routine) {
+      var doneCount = routine.subTasks.filter(function (st) { return isDone(checks, st.id); }).length;
+      var allCompleted = doneCount === routine.subTasks.length;
+
+      var card = document.createElement('article');
+      var cls = 'routine-card';
+      if (routine.isCore) cls += ' core-spotlight';
+      if (allCompleted) cls += ' completed';
+      if (routine.id === nowSlot && !allCompleted) cls += ' is-now';
+      card.className = cls;
+
+      var top = document.createElement('div');
+      top.className = 'card-top';
+
+      var left = document.createElement('div');
+      left.className = 'slot-left';
+      var tagHtml = '<span class="time-slot-tag">' +
+        '<svg class="icon" viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm.5 5H11v6l5.2 3.1.8-1.2-4.5-2.7z"/></svg>' +
+        routine.timeSlot + '</span>';
+      if (routine.id === nowSlot && !allCompleted) tagHtml += ' <span class="now-tag">现在</span>';
+      left.innerHTML = tagHtml +
+        '<span class="routine-title">' + routine.title + ' <span class="routine-target-pill">' + routine.target + '</span></span>';
+
+      var right = document.createElement('div');
+      right.className = 'routine-progress';
+      right.textContent = doneCount + ' / ' + routine.subTasks.length + ' 组';
+
+      top.appendChild(left);
+      top.appendChild(right);
+
+      var descEl = document.createElement('p');
+      descEl.className = 'routine-desc';
+      descEl.textContent = routine.desc;
+
+      var setsGrid = document.createElement('div');
+      setsGrid.className = 'sets-grid';
+      routine.subTasks.forEach(function (st) {
+        var checked = isDone(checks, st.id);
+        var ts = typeof checks[st.id] === 'number' ? new Date(checks[st.id]) : null;
+        var timeStr = ts ? (String(ts.getHours()).padStart(2, '0') + ':' + String(ts.getMinutes()).padStart(2, '0')) : '';
+        var btn = document.createElement('button');
+        btn.className = 'set-check-btn' + (checked ? ' checked' : '');
+        btn.innerHTML = '<span class="set-check-box">' + (checked ? '✓' : '') + '</span><span>' + st.label +
+          (timeStr ? ' <span class="set-time">' + timeStr + '</span>' : '') + '</span>';
+        btn.onclick = function () { toggleTaskCheck(st.id); };
+        setsGrid.appendChild(btn);
+      });
+
+      var actionRow = document.createElement('div');
+      actionRow.className = 'action-row';
+
+      var launchBtn = document.createElement('button');
+      launchBtn.className = 'quick-timer-btn';
+      launchBtn.innerHTML = '<svg class="icon" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>启动 ' + routine.quickTimerSec + 's 倒计时';
+      launchBtn.onclick = function () {
+        loadTimerFor(routine.quickTimerSec, routine.title.split('：')[0]);
+        startTimer();
+      };
+
+      var bulkBtn = document.createElement('button');
+      bulkBtn.className = 'quick-timer-btn bulk-btn';
+      if (allCompleted) {
+        bulkBtn.textContent = '撤销本项';
+        bulkBtn.onclick = function () { bulkRoutine(routine.id, false); };
+      } else {
+        bulkBtn.textContent = '本项全部打卡';
+        bulkBtn.onclick = function () { bulkRoutine(routine.id, true); };
+      }
+
+      actionRow.appendChild(launchBtn);
+      if (routine.isCore) {
+        var g = document.createElement('button');
+        g.className = 'quick-timer-btn';
+        g.style.color = 'var(--accent-trail)';
+        g.textContent = '姿态图解与防错自检 ➔';
+        g.onclick = openGuide;
+        actionRow.appendChild(g);
+      }
+      actionRow.appendChild(bulkBtn);
+
+      card.appendChild(top);
+      card.appendChild(descEl);
+      card.appendChild(setsGrid);
+      card.appendChild(actionRow);
+      cardsListEl.appendChild(card);
+    });
+  }
+
+  function renderDailyProgress() {
+    var checks = getDayChecks(activeDateKey);
+    var list = doneList(activeDateKey);
+    var pct = TOTAL_SUBTASKS ? Math.round((list.length / TOTAL_SUBTASKS) * 100) : 0;
+
+    completedFractionEl.textContent = list.length + ' / ' + TOTAL_SUBTASKS + ' 组';
+    progressPercentageEl.textContent = pct + '%';
+    progressBarEl.style.width = pct + '%';
+
+    if (pct === 100) {
+      progressPillEl.textContent = '今日封顶 🏅';
+      progressPillEl.style.background = 'rgba(16,185,129,.2)'; progressPillEl.style.color = '#10b981';
+    } else if (pct >= 60) {
+      progressPillEl.textContent = '稳健推进';
+      progressPillEl.style.background = 'rgba(59,130,246,.2)'; progressPillEl.style.color = '#3b82f6';
+    } else if (pct > 0) {
+      progressPillEl.textContent = '已唤醒';
+      progressPillEl.style.background = 'rgba(234,179,8,.2)'; progressPillEl.style.color = '#eab308';
+    } else {
+      progressPillEl.textContent = '未启动';
+      progressPillEl.style.background = 'var(--bg-card)'; progressPillEl.style.color = 'var(--text-muted)';
+    }
+
+    // 今日累计等长时长（按每组标称秒数估算）
+    var secs = 0;
+    list.forEach(function (item) {
+      var meta = TASK_INDEX[item.id];
+      if (meta) secs += meta.routine.subTaskSecs;
+    });
+    todayVolumeEl.textContent = '今日累计等长时长 ' + secs + ' 秒（约 ' + Math.round(secs / 60 * 10) / 10 + ' 分钟）';
+  }
+
+  function renderNextUp() {
+    var pending = nextPendingTask();
+    if (!pending) {
+      nextUpName.textContent = '今日全部完成 🎉';
+      nextUpSub.textContent = '共 ' + TOTAL_SUBTASKS + ' 组已打卡，明天保持';
+      nextUpTimerBtn.disabled = true; nextUpDoneBtn.disabled = true;
+      nextUpTimerBtn.style.opacity = nextUpDoneBtn.style.opacity = '.5';
+      return;
+    }
+    nextUpTimerBtn.disabled = false; nextUpDoneBtn.disabled = false;
+    nextUpTimerBtn.style.opacity = nextUpDoneBtn.style.opacity = '1';
+    nextUpName.textContent = pending.task.label;
+    nextUpSub.textContent = pending.routine.title + ' · ' + pending.routine.timeSlot;
+    nextUpTimerBtn.onclick = function () {
+      loadTimerFor(pending.routine.quickTimerSec, pending.task.label);
+      startTimer();
+    };
+    nextUpDoneBtn.onclick = function () {
+      checkTask(pending.task.id);
+      showToast('已打卡：' + pending.task.label);
+      var next = nextPendingTask();
+      if (next) loadTimerFor(next.routine.quickTimerSec, next.task.label);
+    };
+  }
+
+  function renderTodayLog() {
+    var list = doneList(activeDateKey);
+    logCountEl.textContent = list.length + ' 组';
+    todayLogEl.innerHTML = '';
+    if (!list.length) {
+      var li = document.createElement('li');
+      li.className = 'empty-hint';
+      li.textContent = '今天还没有打卡记录';
+      todayLogEl.appendChild(li);
+      return;
+    }
+    list.forEach(function (item) {
+      var meta = TASK_INDEX[item.id];
+      var li = document.createElement('li');
+      li.className = 'log-item';
+      var t = typeof item.at === 'number' ? new Date(item.at) : null;
+      var timeStr = t ? (String(t.getHours()).padStart(2, '0') + ':' + String(t.getMinutes()).padStart(2, '0')) : '--:--';
+      li.innerHTML = '<span class="log-time">' + timeStr + '</span><span>' + (meta ? meta.task.label : item.id) + '</span>';
+      todayLogEl.appendChild(li);
+    });
+  }
+
+  function calculateStreak() {
+    var streak = 0;
+    var cursor = new Date();
+    var today = todayKey();
+    // 今天没打卡时给一次宽限，从昨天开始算
+    var countToday = doneList(today).length;
+    if (countToday < 4) cursor.setDate(cursor.getDate() - 1);
+
+    for (var i = 0; i < 365; i++) {
+      var key = dateKeyOf(cursor);
+      if (doneList(key).length >= 4) {
+        streak++;
+      } else {
+        break;
+      }
+      cursor.setDate(cursor.getDate() - 1);
+    }
+    return streak;
+  }
+
+  function calculateDownhillArmor() {
+    var totalVMO = 0, totalSoleus = 0, activeDays = 0;
+    var now = new Date();
+    for (var i = 0; i < 7; i++) {
+      var d = new Date(now);
+      d.setDate(d.getDate() - i);
+      var key = dateKeyOf(d);
+      var list = doneList(key);
+      list.forEach(function (item) {
+        var meta = TASK_INDEX[item.id];
+        if (!meta) return;
+        totalVMO += meta.routine.weightVMO;
+        totalSoleus += meta.routine.weightSoleus;
+      });
+      if (list.length >= 4) activeDays++;
+    }
+    var vmoScore = Math.min(100, (totalVMO / 50) * 100);
+    var soleusScore = Math.min(100, (totalSoleus / 40) * 100);
+    var consistScore = Math.min(100, (activeDays / 5) * 100);
+    return Math.min(100, Math.round(vmoScore * 0.45 + soleusScore * 0.35 + consistScore * 0.2));
+  }
+
+  function renderWeekAnalytics() {
+    weekChartEl.innerHTML = '';
+    var weekdayNames = ['日', '一', '二', '三', '四', '五', '六'];
+    var today = new Date();
+    var weekTotal = 0;
+    for (var i = 6; i >= 0; i--) {
+      var d = new Date(today);
+      d.setDate(d.getDate() - i);
+      var key = dateKeyOf(d);
+      var count = doneList(key).length;
+      var pct = TOTAL_SUBTASKS ? Math.min(100, Math.round((count / TOTAL_SUBTASKS) * 100)) : 0;
+      weekTotal += pct;
+
+      var col = document.createElement('div');
+      col.className = 'chart-col' + (key === activeDateKey ? ' is-active' : '');
+      col.title = key + '：完成 ' + pct + '%（' + count + '/' + TOTAL_SUBTASKS + ' 组）';
+      (function (k) {
+        col.onclick = function () { activeDateKey = k; renderAll(); };
+      })(key);
+
+      var barBg = document.createElement('div');
+      barBg.className = 'chart-bar-bg';
+      var fill = document.createElement('div');
+      fill.className = 'chart-bar-fill';
+      fill.style.height = pct + '%';
+      if (pct === 100) fill.style.background = 'var(--accent-spring)';
+      barBg.appendChild(fill);
+
+      var label = document.createElement('span');
+      label.className = 'chart-day-label';
+      label.textContent = i === 0 ? '今' : weekdayNames[d.getDay()];
+
+      col.appendChild(barBg);
+      col.appendChild(label);
+      weekChartEl.appendChild(col);
+    }
+    weekAvgTextEl.textContent = '周均 ' + Math.round(weekTotal / 7) + '%';
+
+    var armor = calculateDownhillArmor();
+    armorScoreEl.textContent = armor;
+    armorBadgeEl.className = 'armor-badge';
+    if (armor >= 80) { armorBadgeEl.classList.add('armor-lv4'); armorBadgeEl.textContent = '飞檐装甲级'; armorDescEl.textContent = '股四头肌离心与跟腱弹性极佳，长下坡坚固如液压阻尼'; }
+    else if (armor >= 60) { armorBadgeEl.classList.add('armor-lv3'); armorBadgeEl.textContent = '液压避震级'; armorDescEl.textContent = '髌骨力线平稳，应对 15–20km 越野跑下坡游刃有余'; }
+    else if (armor >= 30) { armorBadgeEl.classList.add('armor-lv2'); armorBadgeEl.textContent = '基础自卫级'; armorDescEl.textContent = '肌耐力正在构建，陡坡与碎石路段仍需控制冲速'; }
+    else { armorBadgeEl.classList.add('armor-lv1'); armorBadgeEl.textContent = '软骨裸奔级'; armorDescEl.textContent = '股内侧肌与比目鱼肌缺乏激活，长坡落地易髌腱吃痛'; }
+
+    streakDaysEl.textContent = calculateStreak();
+  }
+
+  function renderAll() {
+    var t = todayKey();
+    displayDateEl.textContent = activeDateKey === t ? '今日 (' + activeDateKey.slice(5) + ')' : activeDateKey;
+    renderDailyProgress();
+    renderTimelineCards();
+    renderNextUp();
+    renderTodayLog();
+    renderWeekAnalytics();
+  }
+
+  /* ==========================================================
+     9. 计时器
+     ========================================================== */
+  var CIRC = 2 * Math.PI * 70;
+  timerCircle.style.strokeDasharray = String(CIRC);
+  var timerTotalSecs = 40, timerRemaining = 40, timerInterval = null, isTimerRunning = false;
+
+  function updateTimerDisplay() {
+    timerSecsDisplay.textContent = timerRemaining;
+    var frac = timerTotalSecs ? timerRemaining / timerTotalSecs : 0;
+    timerCircle.style.strokeDashoffset = CIRC * (1 - frac);
+  }
+
+  function loadTimerFor(sec, label) {
+    if (isTimerRunning) pauseTimer();
+    timerTotalSecs = sec;
+    timerRemaining = sec;
+    timerTargetText.textContent = label ? ('目标：' + label) : '自由练习模式';
+    Array.prototype.forEach.call(presetBtns, function (b) {
+      b.classList.toggle('active', parseInt(b.getAttribute('data-sec'), 10) === sec);
+    });
+    timerStateLabel.textContent = 'READY';
+    timerStateLabel.style.color = '';
+    updateTimerDisplay();
+  }
+
+  Array.prototype.forEach.call(presetBtns, function (b) {
+    b.onclick = function () { loadTimerFor(parseInt(b.getAttribute('data-sec'), 10), null); };
+  });
+
+  function startTimer() {
+    if (isTimerRunning) return;
+    getAudioContext();
+    isTimerRunning = true;
+    timerMainBtn.textContent = '暂停保持';
+    timerStateLabel.textContent = 'HOLD TIGHT';
+    timerStateLabel.style.color = 'var(--accent-trail)';
+    playStartBeep();
+    timerInterval = setInterval(function () {
+      timerRemaining--;
+      updateTimerDisplay();
+      if (timerRemaining <= 3 && timerRemaining > 0) playTickBeep();
+      if (timerRemaining <= 0) {
+        pauseTimer();
+        timerRemaining = 0;
+        updateTimerDisplay();
+        timerStateLabel.textContent = 'COMPLETE! 👏';
+        timerStateLabel.style.color = 'var(--accent-spring)';
+        playFinishChime();
+        showToast('一组完成！顺手点「练完打卡」记一笔');
+      }
+    }, 1000);
+  }
+
+  function pauseTimer() {
+    isTimerRunning = false;
+    if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
+    timerMainBtn.textContent = '继续等长';
+    timerStateLabel.textContent = 'PAUSED';
+    timerStateLabel.style.color = 'var(--text-muted)';
+  }
+
+  function resetTimer() {
+    pauseTimer();
+    timerRemaining = timerTotalSecs;
+    timerStateLabel.textContent = 'READY';
+    timerStateLabel.style.color = '';
+    timerMainBtn.textContent = '开始静止发力';
+    updateTimerDisplay();
+  }
+
+  timerMainBtn.onclick = function () {
+    if (isTimerRunning) pauseTimer();
+    else { if (timerRemaining <= 0) timerRemaining = timerTotalSecs; startTimer(); }
+  };
+  timerResetBtn.onclick = resetTimer;
+
+  /* ==========================================================
+     10. 主题 / 伪装 / 声音
+     ========================================================== */
+  function applyTheme() { document.documentElement.setAttribute('data-theme', userPrefs.theme); }
+
+  $('themeToggleBtn').onclick = function () {
+    userPrefs.theme = userPrefs.theme === 'dark' ? 'light' : 'dark';
+    applyTheme(); saveStorage();
+  };
+
+  function applyStealth() {
+    var stealth = userPrefs.stealth;
+    if (stealth) {
+      bodyEl.classList.add('stealth-mode');
+      $('stealthToggleBtn').classList.add('btn-stealth-active');
+      $('brandName').textContent = '[Doc] 关节力学遥测日志';
+      $('brandSub').textContent = 'Joint Dynamic Telemetry v2.4';
+      $('stealthBtnText').textContent = '恢复原貌';
+      document.title = 'Daily Dev Telemetry & Task Monitor';
+    } else {
+      bodyEl.classList.remove('stealth-mode');
+      $('stealthToggleBtn').classList.remove('btn-stealth-active');
+      $('brandName').textContent = '越野跑·膝盖动力舱';
+      $('brandSub').textContent = 'Trail Desk Knee Lab';
+      $('stealthBtnText').textContent = '工位伪装';
+      document.title = "越野跑·工位膝盖动力舱 - Warden's Life";
+    }
+  }
+  function toggleStealth() {
+    userPrefs.stealth = !userPrefs.stealth;
+    applyStealth(); saveStorage();
+    showToast(userPrefs.stealth ? '已开启极简防窥模式' : '已恢复户外仪表盘');
+  }
+  $('stealthToggleBtn').onclick = toggleStealth;
+
+  function updateSoundBtn() {
+    $('soundStatusText').textContent = userPrefs.sound ? '声音: 开' : '静音模式';
+    $('soundToggleBtn').style.opacity = userPrefs.sound ? '1' : '.6';
+  }
+  $('soundToggleBtn').onclick = function () {
+    userPrefs.sound = !userPrefs.sound;
+    updateSoundBtn(); saveStorage();
+    showToast(userPrefs.sound ? '倒计时蜂鸣器已打开' : '已静音（开会安全）');
+  };
+
+  /* ==========================================================
+     11. 弹窗 / 导入导出
+     ========================================================== */
+  function openGuide() { guideModal.classList.add('open'); }
+  function closeGuide() { guideModal.classList.remove('open'); }
+  $('openGuideBtn').onclick = openGuide;
+  $('openGuideInnerBtn').onclick = openGuide;
+  $('closeGuideModalBtn').onclick = closeGuide;
+  $('closeGuideModalBtn2').onclick = closeGuide;
+  guideModal.addEventListener('click', function (e) { if (e.target === guideModal) closeGuide(); });
+
+  $('exportDataBtn').onclick = function () {
+    var payload = { app: 'knee-lab', schema: 1, exportedAt: new Date().toISOString(), days: appStore.days };
+    var blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url;
+    a.download = 'knee-lab-backup-' + todayKey() + '.json';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
+    showToast('打卡历史已导出');
+  };
+
+  var importFileInput = $('importFileInput');
+  $('importDataBtn').onclick = function () { importFileInput.click(); };
+  importFileInput.onchange = function (e) {
+    var file = e.target.files && e.target.files[0];
+    if (!file) return;
+    var reader = new FileReader();
+    reader.onload = function (ev) {
+      var parsed;
+      try { parsed = JSON.parse(ev.target.result); }
+      catch (err) { showToast('JSON 解析失败', '✕'); return; }
+      var incoming = (parsed && parsed.days) ? parsed.days : null;
+      if (!incoming || typeof incoming !== 'object') { showToast('文件格式不匹配', '✕'); return; }
+      var n = 0;
+      Object.keys(incoming).forEach(function (dayKey) {
+        if (!appStore.days[dayKey]) appStore.days[dayKey] = {};
+        Object.keys(incoming[dayKey]).forEach(function (taskId) {
+          if (!TASK_INDEX[taskId]) return;
+          var v = incoming[dayKey][taskId];
+          if (!isDone(appStore.days[dayKey], taskId) && (v === true || typeof v === 'number')) {
+            appStore.days[dayKey][taskId] = v; n++;
+          }
+        });
+      });
+      saveStorage();
+      renderAll();
+      showToast('已合并导入 ' + n + ' 条新打卡记录');
+      if (n) debouncedSync();
+    };
+    reader.readAsText(file);
+    e.target.value = '';
+  };
+
+  $('clearDataBtn').onclick = function () {
+    customConfirm('清空本地打卡记录', '将删除本工具的全部历史打卡与战力指数，云端同名记录也会被一并清空（仅影响 /knee-lab/ 这一个工具），无法撤销。确定继续？', function () {
+      appStore.days = {};
+      appStore.stamps = {};
+      saveStorage();
+      renderAll();
+      debouncedSync();
+      showToast('历史数据已清空');
+    });
+  };
+
+  /* ---- 云端弹窗 ---- */
+  function openCloudModal() { updateCloudMeta(); cloudModal.classList.add('open'); }
+  function closeCloudModal() { cloudModal.classList.remove('open'); }
+  $('syncLinkBtn').onclick = openCloudModal;
+  $('closeCloudModalBtn').onclick = closeCloudModal;
+  $('closeCloudModalBtn2').onclick = closeCloudModal;
+  cloudModal.addEventListener('click', function (e) { if (e.target === cloudModal) closeCloudModal(); });
+  $('pullCloudBtn').onclick = function () {
+    pullFromCloud(false).then(function (ok) { showToast(ok ? '已与云端对齐' : '拉取失败，稍后重试', ok ? '✓' : '✕'); });
+  };
+  $('copyLinkBtn').onclick = function () {
+    var input = $('shareLinkInput');
+    input.select();
+    var done = false;
+    try { done = document.execCommand('copy'); } catch (e) { done = false; }
+    if (!done && navigator.clipboard) {
+      navigator.clipboard.writeText(input.value).then(function () { showToast('链接已复制'); });
+      return;
+    }
+    showToast(done ? '链接已复制，发给自己的另一台设备' : '请手动复制上方链接', done ? '✓' : '✕');
+  };
+
+  /* ==========================================================
+     12. 快捷键
+     ========================================================== */
+  window.addEventListener('keydown', function (e) {
+    var tag = (e.target && e.target.tagName) || '';
+    if (tag === 'INPUT' || tag === 'TEXTAREA') return;
+    var anyModalOpen = guideModal.classList.contains('open') || confirmModal.classList.contains('open') ||
+      cloudModal.classList.contains('open');
+
+    if (e.code === 'Space') {
+      if (anyModalOpen) return;
+      e.preventDefault();
+      timerMainBtn.click();
+    } else if (e.key === 'c' || e.key === 'C') {
+      toggleStealth();
+    } else if (e.key === 'n' || e.key === 'N') {
+      if (!nextUpDoneBtn.disabled) nextUpDoneBtn.click();
+    } else if (e.key === 'Escape') {
+      closeGuide();
+      closeCloudModal();
+      confirmModal.classList.remove('open');
+    } else if (e.key === 'ArrowLeft') {
+      shiftDate(-1);
+    } else if (e.key === 'ArrowRight') {
+      shiftDate(1);
+    }
+  });
+
+  /* ==========================================================
+     初始化
+     ========================================================== */
+  loadStorage();
+  applyTheme();
+  applyStealth();
+  updateSoundBtn();
+  loadTimerFor(userPrefs.defaultTimerSec || 40, null);
+  renderAll();
+  initCloud();
+})();
+</script>
+</body>
+</html>
