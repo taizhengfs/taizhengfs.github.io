@@ -24,6 +24,14 @@
   table.q td { border: 1px solid #e3e8f0; padding: 5px 6px; font-size: 13px; height: 30px; }
   table.q td.q { font-family: "SF Mono",Menlo,monospace; }
   table.q .n { color: #a8b0c0; font-size: 10px; margin-right: 3px; }
+  /* 题目网格：桌面 5 列，手机自动折 2 列（见 @media） */
+  .qgrid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 2px 6px; margin: 6px 0; }
+  .qgrid.ans { grid-template-columns: repeat(8, 1fr); }
+  .qgrid > .q { font-family: "SF Mono",Menlo,monospace; font-size: 13px; padding: 4px 5px;
+                border: 1px solid #e3e8f0; border-radius: 4px; white-space: nowrap;
+                overflow: hidden; text-overflow: ellipsis; }
+  .qgrid.ans > .q { font-family: inherit; }
+  .qgrid .n { color: #a8b0c0; font-size: 10px; margin-right: 3px; }
   .blk { margin: 7px 0; }
   .blk .sub { font-weight: 600; font-size: 13px; }
   .blk .body { background: #f7f9fc; border: 1px solid #e6ebf3; border-radius: 5px;
@@ -35,20 +43,20 @@
   .settle { background: #f4f0ff; border: 1px solid #d9cff5; border-radius: 6px;
              padding: 10px 12px; font-size: 13px; line-height: 1.9; }
   .ans { font-size: 12.5px; color: #40506b; margin-top: 6px; }
-  /* 每日五字 · 田字格 */
+  /* 每日五字 · 字卡（大字 + 拼音 + 参考组词 + 四项打勾） */
   .steps { background:#f2f6ff; border:1px solid #d6e2fb; border-radius:6px;
             padding:9px 11px; font-size:12.5px; line-height:1.85; margin:8px 0; }
-  .zirow { display:flex; gap:8px; justify-content:space-between; margin:12px 0 6px; }
-  .zi { flex:1; text-align:center; }
-  .zi .zinum { font-size:11px; color:#a8b0c0; }
-  .tg { width:100%; max-width:78px; height:78px; margin:0 auto 4px; position:relative;
-         border:1px solid #8a94a8; }
-  .tg::before { content:""; position:absolute; left:50%; top:0; bottom:0; border-left:1px dashed #ccd4e4; }
-  .tg::after  { content:""; position:absolute; top:50%; left:0; right:0; border-top:1px dashed #ccd4e4; }
-  .tg .ghost { position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
-                font-family:"KaiTi","STKaiti","Kaiti SC",serif; font-size:44px; color:#d5dce8; }
-  .zimeta { font-size:12px; color:#5a6478; font-weight:600; }
-  .checks { font-size:10.5px; color:#7a8497; margin-top:3px; line-height:1.5; }
+  .zirow { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin: 10px 0 6px; }
+  .zc { border: 1px solid #d6e2fb; border-radius: 9px; background: #fff;
+         text-align: center; padding: 7px 4px 5px; }
+  .zc.rev { border-color: #f0c987; background: #fffcf5; }
+  .zc-n { font-size: 10.5px; color: #a8b0c0; }
+  .zc-ch { font-family: "KaiTi","STKaiti","Kaiti SC",serif; font-size: 40px;
+            line-height: 1.15; color: #1b2030; }
+  .zc-py { font-size: 12.5px; font-weight: 600; color: #2f6bd8; }
+  .zc-w { font-size: 11px; color: #5a6478; margin: 2px 0 5px; line-height: 1.4; }
+  .zc-ck { font-size: 10.5px; color: #7a8497; line-height: 1.6;
+            border-top: 1px dashed #e3e8f0; padding-top: 4px; }
   .sign { background:#f7f9fc; border:1px solid #e6ebf3; border-radius:6px; padding:10px 12px;
            font-size:12.5px; line-height:2.2; margin-top:6px; }
   .sign .line { display:inline-block; border-bottom:1px solid #9aa5ba; width:110px;
@@ -59,7 +67,39 @@
               padding:8px 10px; font-size:12px; margin-top:8px; }
   .pagebreak { page-break-before: always; }
   .foot { font-size: 11px; color: #98a1b3; text-align: center; margin-top: 14px; }
-  @media print { body { background: #fff; padding: 0; } .sheet { box-shadow: none; max-width: none; } }
+  /* ── 手机：全部单列化，表格摊成卡片 ── */
+  @media (max-width: 720px) {
+    body { padding: 8px; }
+    .sheet { padding: 12px 12px 8px; border-radius: 8px; }
+    h1 { font-size: 18px; }
+    h2 { font-size: 15px; margin: 15px 0 7px; }
+    .meta, .coord { font-size: 12px; }
+    ol.goals { font-size: 13px; margin-left: 16px; }
+    .qgrid { grid-template-columns: repeat(2, 1fr); gap: 4px; }
+    .qgrid > .q { font-size: 12.5px; padding: 5px; }
+    .qgrid.ans { grid-template-columns: repeat(4, 1fr); }
+    .zirow { grid-template-columns: repeat(2, 1fr); }
+    /* 120 分钟时间盒：一行变成一张小卡片 */
+    table.tl, table.tl tbody { display: block; width: 100%; }
+    table.tl tr { display: grid; gap: 2px 7px;
+        grid-template-columns: auto auto 1fr auto;
+        grid-template-areas: "nm t m box" "task task task task";
+        border: 1px solid #dbe1ea; border-radius: 8px; margin-bottom: 6px; padding: 7px 9px; }
+    table.tl td { border: 0 !important; padding: 1px 0 !important; width: auto !important; }
+    table.tl td.nm  { grid-area: nm; font-size: 12.5px; }
+    table.tl td.t   { grid-area: t; font-size: 11px; color: #98a1b3; }
+    table.tl td.m   { grid-area: m; font-size: 11px; text-align: right; }
+    table.tl td.box { grid-area: box; font-size: 21px; text-align: right; }
+    table.tl td:nth-child(4) { grid-area: task; font-size: 12.5px; color: #3d4761;
+        border-top: 1px dashed #e6ebf3 !important; margin-top: 3px; padding-top: 4px !important; }
+    .sign { line-height: 2; }
+  }
+  @media print {
+    body { background: #fff; padding: 0; }
+    .sheet { box-shadow: none; max-width: none; }
+    .qgrid { grid-template-columns: repeat(5, 1fr); }
+    .qgrid.ans { grid-template-columns: repeat(8, 1fr); }
+  }
 </style></head><body>
 
 <div class="sheet">
@@ -80,7 +120,7 @@
 <tr><td class="t">00:02–00:26</td><td class="m">24′</td><td class="nm">① 数学关</td><td>1) 学校数学作业（优先）　2) 数学弹药包 · 计时</td><td class="box">□</td></tr>
 <tr><td class="t">00:26–00:31</td><td class="m">5′</td><td class="nm">🔋 补给站</td><td>站起来动一动：开合跳 30 个 + 喝水，不许碰屏幕</td><td class="box">□</td></tr>
 <tr><td class="t">00:31–00:41</td><td class="m">10′</td><td class="nm">② 语文·学校作业</td><td>老师在群里布置的语文作业，先吃掉</td><td class="box">□</td></tr>
-<tr><td class="t">00:41–00:52</td><td class="m">11′</td><td class="nm">② 每日五字 ✍️</td><td>每日五字：天、地、人、你、我 —— 认读 + 笔顺 + 田字格书写（老师督促）</td><td class="box">□</td></tr>
+<tr><td class="t">00:41–00:52</td><td class="m">11′</td><td class="nm">② 每日五字 ✍️</td><td>每日五字：叶、向、和、回、在 —— 认读 + 笔顺 + 写字本上写 3 遍（老师督促）</td><td class="box">□</td></tr>
 <tr><td class="t">00:52–01:00</td><td class="m">8′</td><td class="nm">② 语文弹药包</td><td>拼音地基 · 单韵母 / 声母 / 整体认读音节　＋　今日古诗</td><td class="box">□</td></tr>
 <tr><td class="t">01:00–01:05</td><td class="m">5′</td><td class="nm">🔋 补给站</td><td>闭眼 1 分钟 + 拉伸，或者趴一会儿</td><td class="box">□</td></tr>
 <tr><td class="t">01:05–01:18</td><td class="m">13′</td><td class="nm">③ 英语关</td><td>自然拼读 · CVC</td><td class="box">□</td></tr>
@@ -92,19 +132,18 @@
 
   
   <h2>👩‍🏫 给晚托老师 · 今日五字（请督促并签字）</h2>
-  <div class="meta">今日生字：第 <b>1–5</b> 字　|　
-    累计已学 <b>5</b> 字　|　今日：
-    <b style="font-size:15px">天、地、人、你、我</b></div>
+  <div class="meta">今日五字：<b style="font-size:15px">叶、向、和、回、在</b>
+    　|　认字簿今天的候选字（还没点「确定」）　|　认字簿已学会 <b>91</b> 字</div>
   <div class="steps">
     <b>过关四步（每字都要走完，走完一项打一个勾）</b><br>
     ① <b>会读</b>：老师教读 2 遍 → 孩子自读 2 遍　
     ② <b>懂笔顺</b>：手指书空，边写边念笔画名（横竖撇捺点提折钩）<br>
-    ③ <b>会写</b>：田字格写 3 遍（第 1 格可描红），注意占格　
-    ④ <b>会组词</b>：口头组 2 个词
+    ③ <b>会写</b>：<b>写在孩子自己的写字本上，每字 3 遍</b>，注意占格与间架　
+    ④ <b>会组词</b>：口头组 2 个词（卡上有参考词）
   </div>
   
-  <div class="zirow"><div class="zi"><div class="zinum">1 新</div><div class="tg"><span class="ghost">天</span></div><div class="tg"></div><div class="tg"></div><div class="tg"></div><div class="zimeta">tiān</div><div class="checks">☐读 ☐笔顺<br>☐写 ☐组词</div></div><div class="zi"><div class="zinum">2 新</div><div class="tg"><span class="ghost">地</span></div><div class="tg"></div><div class="tg"></div><div class="tg"></div><div class="zimeta">dì</div><div class="checks">☐读 ☐笔顺<br>☐写 ☐组词</div></div><div class="zi"><div class="zinum">3 新</div><div class="tg"><span class="ghost">人</span></div><div class="tg"></div><div class="tg"></div><div class="tg"></div><div class="zimeta">rén</div><div class="checks">☐读 ☐笔顺<br>☐写 ☐组词</div></div><div class="zi"><div class="zinum">4 新</div><div class="tg"><span class="ghost">你</span></div><div class="tg"></div><div class="tg"></div><div class="tg"></div><div class="zimeta">nǐ</div><div class="checks">☐读 ☐笔顺<br>☐写 ☐组词</div></div><div class="zi"><div class="zinum">5 新</div><div class="tg"><span class="ghost">我</span></div><div class="tg"></div><div class="tg"></div><div class="tg"></div><div class="zimeta">wǒ</div><div class="checks">☐读 ☐笔顺<br>☐写 ☐组词</div></div></div>
-  <div class="note">📌 写错的字<b>不要擦掉重写一整页</b> —— 只在旁边改 1 遍。错的明天会以「温故」形式再出现。</div>
+  <div class="zirow"><div class="zc"><div class="zc-n">1</div><div class="zc-ch">叶</div><div class="zc-py">yè</div><div class="zc-w">叶子、叶片</div><div class="zc-ck">☐会读 ☐笔顺<br>☐会写 ☐组词</div></div><div class="zc"><div class="zc-n">2</div><div class="zc-ch">向</div><div class="zc-py">xiàng</div><div class="zc-w">向上、向来</div><div class="zc-ck">☐会读 ☐笔顺<br>☐会写 ☐组词</div></div><div class="zc"><div class="zc-n">3</div><div class="zc-ch">和</div><div class="zc-py">hé</div><div class="zc-w">和气、和好</div><div class="zc-ck">☐会读 ☐笔顺<br>☐会写 ☐组词</div></div><div class="zc"><div class="zc-n">4</div><div class="zc-ch">回</div><div class="zc-py">huí</div><div class="zc-w">回去、回头</div><div class="zc-ck">☐会读 ☐笔顺<br>☐会写 ☐组词</div></div><div class="zc"><div class="zc-n">5</div><div class="zc-ch">在</div><div class="zc-py">zài</div><div class="zc-w">正在、不在</div><div class="zc-ck">☐会读 ☐笔顺<br>☐会写 ☐组词</div></div></div>
+  <div class="note">📌 写错的字<b>不要擦掉重写一整页</b> —— 在写字本旁边改 1 遍。错的明天会以「♻️ 补漏」形式再出现。</div>
   <div class="sign">
     老师签字：<span class="line"></span>　日期：<span class="line short"></span>　
     今日五字全部过关：☐ 是　☐ 否<br>
@@ -114,14 +153,9 @@
 
   <h2>① 数学弹药包 · 100以内进退位加减</h2>
   <div class="meta">达标线：口算+竖式，正确率≥95%　|　限时 ____ 分钟，正确率目标 ≥95%</div>
-  <table class="q"><tr><td class="q"><span class="n">1</span>32 + 39 = ____</td><td class="q"><span class="n">2</span>21 + 69 = ____</td><td class="q"><span class="n">3</span>62 + 18 = ____</td><td class="q"><span class="n">4</span>76 − 47 = ____</td><td class="q"><span class="n">5</span>58 + 35 = ____</td></tr>
-<tr><td class="q"><span class="n">6</span>34 + 18 = ____</td><td class="q"><span class="n">7</span>72 − 64 = ____</td><td class="q"><span class="n">8</span>31 + 49 = ____</td><td class="q"><span class="n">9</span>44 − 26 = ____</td><td class="q"><span class="n">10</span>45 − 17 = ____</td></tr>
-<tr><td class="q"><span class="n">11</span>65 − 39 = ____</td><td class="q"><span class="n">12</span>26 + 48 = ____</td><td class="q"><span class="n">13</span>42 + 28 = ____</td><td class="q"><span class="n">14</span>47 − 18 = ____</td><td class="q"><span class="n">15</span>21 + 19 = ____</td></tr>
-<tr><td class="q"><span class="n">16</span>73 + 19 = ____</td><td class="q"><span class="n">17</span>62 + 28 = ____</td><td class="q"><span class="n">18</span>28 + 46 = ____</td><td class="q"><span class="n">19</span>45 − 18 = ____</td><td class="q"><span class="n">20</span>35 + 36 = ____</td></tr>
-<tr><td class="q"><span class="n">21</span>93 − 56 = ____</td><td class="q"><span class="n">22</span>20 − 17 = ____</td><td class="q"><span class="n">23</span>37 − 19 = ____</td><td class="q"><span class="n">24</span>26 + 64 = ____</td><td></td></tr></table>
-  <div class="note">♻️ <b>温故（100以内加减（不进退位））</b> —— 防止「学过就忘」</div><table class="q"><tr><td class="q"><span class="n">1</span>70 + 26 = ____</td><td class="q"><span class="n">2</span>85 + 12 = ____</td><td class="q"><span class="n">3</span>77 − 16 = ____</td><td class="q"><span class="n">4</span>58 − 13 = ____</td><td class="q"><span class="n">5</span>66 − 54 = ____</td><td class="q"><span class="n">6</span>83 + 10 = ____</td></tr></table>
-  <div class="note">🏗️ <b>每日地基 · 20以内进位加 / 退位减（凑十·破十）</b> —— 整个小学数学的底层能力，每天必练，做到 3 秒内脱口而出。做题时<b>说出方法</b>：「9+6，把 6 分成 1 和 5，9+1=10，10+5=15」。</div><table class="q"><tr><td class="q"><span class="n">1</span>18 − 9 = ____</td><td class="q"><span class="n">2</span>8 + 6 = ____</td><td class="q"><span class="n">3</span>14 − 4 = ____</td><td class="q"><span class="n">4</span>5 + 8 = ____</td><td class="q"><span class="n">5</span>8 + 3 = ____</td></tr>
-<tr><td class="q"><span class="n">6</span>6 + 7 = ____</td><td class="q"><span class="n">7</span>9 + 5 = ____</td><td class="q"><span class="n">8</span>9 + 6 = ____</td><td class="q"><span class="n">9</span>16 − 6 = ____</td><td class="q"><span class="n">10</span>8 + 5 = ____</td></tr></table>
+  <div class="qgrid "><div class="q"><span class="n">1</span>32 + 39 = ____</div><div class="q"><span class="n">2</span>21 + 69 = ____</div><div class="q"><span class="n">3</span>62 + 18 = ____</div><div class="q"><span class="n">4</span>76 − 47 = ____</div><div class="q"><span class="n">5</span>58 + 35 = ____</div><div class="q"><span class="n">6</span>34 + 18 = ____</div><div class="q"><span class="n">7</span>72 − 64 = ____</div><div class="q"><span class="n">8</span>31 + 49 = ____</div><div class="q"><span class="n">9</span>44 − 26 = ____</div><div class="q"><span class="n">10</span>45 − 17 = ____</div><div class="q"><span class="n">11</span>65 − 39 = ____</div><div class="q"><span class="n">12</span>26 + 48 = ____</div><div class="q"><span class="n">13</span>42 + 28 = ____</div><div class="q"><span class="n">14</span>47 − 18 = ____</div><div class="q"><span class="n">15</span>21 + 19 = ____</div><div class="q"><span class="n">16</span>73 + 19 = ____</div><div class="q"><span class="n">17</span>62 + 28 = ____</div><div class="q"><span class="n">18</span>28 + 46 = ____</div><div class="q"><span class="n">19</span>45 − 18 = ____</div><div class="q"><span class="n">20</span>35 + 36 = ____</div><div class="q"><span class="n">21</span>93 − 56 = ____</div><div class="q"><span class="n">22</span>20 − 17 = ____</div><div class="q"><span class="n">23</span>37 − 19 = ____</div><div class="q"><span class="n">24</span>26 + 64 = ____</div></div>
+  <div class="note">♻️ <b>温故（100以内加减（不进退位））</b> —— 防止「学过就忘」</div><div class="qgrid "><div class="q"><span class="n">1</span>70 + 26 = ____</div><div class="q"><span class="n">2</span>85 + 12 = ____</div><div class="q"><span class="n">3</span>77 − 16 = ____</div><div class="q"><span class="n">4</span>58 − 13 = ____</div><div class="q"><span class="n">5</span>66 − 54 = ____</div><div class="q"><span class="n">6</span>83 + 10 = ____</div></div>
+  <div class="note">🏗️ <b>每日地基 · 20以内进位加 / 退位减（凑十·破十）</b> —— 整个小学数学的底层能力，每天必练，做到 3 秒内脱口而出。做题时<b>说出方法</b>：「9+6，把 6 分成 1 和 5，9+1=10，10+5=15」。</div><div class="qgrid "><div class="q"><span class="n">1</span>18 − 9 = ____</div><div class="q"><span class="n">2</span>8 + 6 = ____</div><div class="q"><span class="n">3</span>14 − 4 = ____</div><div class="q"><span class="n">4</span>5 + 8 = ____</div><div class="q"><span class="n">5</span>8 + 3 = ____</div><div class="q"><span class="n">6</span>6 + 7 = ____</div><div class="q"><span class="n">7</span>9 + 5 = ____</div><div class="q"><span class="n">8</span>9 + 6 = ____</div><div class="q"><span class="n">9</span>16 − 6 = ____</div><div class="q"><span class="n">10</span>8 + 5 = ____</div></div>
 
   <h2>② 语文弹药包 · 拼音地基 · 单韵母 / 声母 / 整体认读音节</h2>
   <div class="meta">达标线：听写默写全对，倒背如流</div>
@@ -155,12 +189,8 @@
 <div class="sheet pagebreak">
   <h2>🔑 答案页（家长专用，打印后单独一页）</h2>
   <h2>数学 · 今日主练</h2>
-  <table class="q"><tr><td class="q"><span class="n">1</span>71</td><td class="q"><span class="n">2</span>90</td><td class="q"><span class="n">3</span>80</td><td class="q"><span class="n">4</span>29</td><td class="q"><span class="n">5</span>93</td><td class="q"><span class="n">6</span>52</td></tr>
-<tr><td class="q"><span class="n">7</span>8</td><td class="q"><span class="n">8</span>80</td><td class="q"><span class="n">9</span>18</td><td class="q"><span class="n">10</span>28</td><td class="q"><span class="n">11</span>26</td><td class="q"><span class="n">12</span>74</td></tr>
-<tr><td class="q"><span class="n">13</span>70</td><td class="q"><span class="n">14</span>29</td><td class="q"><span class="n">15</span>40</td><td class="q"><span class="n">16</span>92</td><td class="q"><span class="n">17</span>90</td><td class="q"><span class="n">18</span>74</td></tr>
-<tr><td class="q"><span class="n">19</span>27</td><td class="q"><span class="n">20</span>71</td><td class="q"><span class="n">21</span>37</td><td class="q"><span class="n">22</span>3</td><td class="q"><span class="n">23</span>18</td><td class="q"><span class="n">24</span>90</td></tr></table>
-  <h2>数学 · 温故</h2><table class="q"><tr><td class="q"><span class="n">1</span>96</td><td class="q"><span class="n">2</span>97</td><td class="q"><span class="n">3</span>61</td><td class="q"><span class="n">4</span>45</td><td class="q"><span class="n">5</span>12</td><td class="q"><span class="n">6</span>93</td></tr></table><h2>数学 · 每日地基</h2><table class="q"><tr><td class="q"><span class="n">1</span>9</td><td class="q"><span class="n">2</span>14</td><td class="q"><span class="n">3</span>10</td><td class="q"><span class="n">4</span>13</td><td class="q"><span class="n">5</span>11</td><td class="q"><span class="n">6</span>13</td></tr>
-<tr><td class="q"><span class="n">7</span>14</td><td class="q"><span class="n">8</span>15</td><td class="q"><span class="n">9</span>10</td><td class="q"><span class="n">10</span>13</td><td></td><td></td></tr></table>
+  <div class="qgrid ans"><div class="q"><span class="n">1</span>71</div><div class="q"><span class="n">2</span>90</div><div class="q"><span class="n">3</span>80</div><div class="q"><span class="n">4</span>29</div><div class="q"><span class="n">5</span>93</div><div class="q"><span class="n">6</span>52</div><div class="q"><span class="n">7</span>8</div><div class="q"><span class="n">8</span>80</div><div class="q"><span class="n">9</span>18</div><div class="q"><span class="n">10</span>28</div><div class="q"><span class="n">11</span>26</div><div class="q"><span class="n">12</span>74</div><div class="q"><span class="n">13</span>70</div><div class="q"><span class="n">14</span>29</div><div class="q"><span class="n">15</span>40</div><div class="q"><span class="n">16</span>92</div><div class="q"><span class="n">17</span>90</div><div class="q"><span class="n">18</span>74</div><div class="q"><span class="n">19</span>27</div><div class="q"><span class="n">20</span>71</div><div class="q"><span class="n">21</span>37</div><div class="q"><span class="n">22</span>3</div><div class="q"><span class="n">23</span>18</div><div class="q"><span class="n">24</span>90</div></div>
+  <h2>数学 · 温故</h2><div class="qgrid ans"><div class="q"><span class="n">1</span>96</div><div class="q"><span class="n">2</span>97</div><div class="q"><span class="n">3</span>61</div><div class="q"><span class="n">4</span>45</div><div class="q"><span class="n">5</span>12</div><div class="q"><span class="n">6</span>93</div></div><h2>数学 · 每日地基</h2><div class="qgrid ans"><div class="q"><span class="n">1</span>9</div><div class="q"><span class="n">2</span>14</div><div class="q"><span class="n">3</span>10</div><div class="q"><span class="n">4</span>13</div><div class="q"><span class="n">5</span>11</div><div class="q"><span class="n">6</span>13</div><div class="q"><span class="n">7</span>14</div><div class="q"><span class="n">8</span>15</div><div class="q"><span class="n">9</span>10</div><div class="q"><span class="n">10</span>13</div></div>
   
   <div class="note">
     记录正确率（脚本会自动据此调难度）：<br>
