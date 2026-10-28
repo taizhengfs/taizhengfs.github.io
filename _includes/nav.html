@@ -19,10 +19,16 @@
                     <li>
                         <a href="{{ site.baseurl }}/">Home</a>
                     </li>
+                    {% comment %} 顶部导航：只放显式声明了 title 的页面。
+                       在页面 front matter 写 nav_exclude: true 可把该页面从导航里隐藏
+                       （页面本身仍可访问）。fitness/diary/ 下的月度健康日记属于
+                       数据实验室的内部页，统一不进导航。 {% endcomment %}
                     {% for page in site.pages %}{% if page.title %}
+                    {% unless page.nav_exclude %}{% unless page.url contains '/fitness/diary/' %}
                     <li>
                         <a href="{{ page.url | prepend: site.baseurl }}">{{ page.title }}</a>
                     </li>
+                    {% endunless %}{% endunless %}
                     {% endif %}{% endfor %}
                 </ul>
             </div>
