@@ -1,9 +1,9 @@
 {
- "generatedAt": "2026-10-27T14:30:37",
+ "generatedAt": "2026-10-28T08:01:54",
  "range": {
   "start": "2026-06-16",
-  "end": "2026-10-27",
-  "days": 134
+  "end": "2026-10-28",
+  "days": 135
  },
  "daily": [
   {
@@ -3594,7 +3594,7 @@
   {
    "acuteLoad": 85,
    "bbCharged": 51,
-   "bbDrained": 28,
+   "bbDrained": 51,
    "bbMax": 56,
    "bbMin": 5,
    "date": "2026-10-27",
@@ -3615,6 +3615,33 @@
    "recoveryH": 87,
    "respAwake": 15.0,
    "respHigh": 25.0,
+   "respLow": 6.0,
+   "respSleep": 16.0
+  },
+  {
+   "acuteLoad": 66,
+   "bbCharged": 78,
+   "bbDrained": 1,
+   "bbMax": 82,
+   "bbMin": 5,
+   "date": "2026-10-28",
+   "hrvHigh": 96,
+   "hrvLow": 59,
+   "hrvNight": 65,
+   "hrvStatus": "BALANCED",
+   "hrvUpper": 72,
+   "hrvWeekly": 60,
+   "rAcwrFactor": 100,
+   "rHrvFactor": 80,
+   "rSleepFactor": 61,
+   "rSleepHistFactor": 44,
+   "rStressFactor": 32,
+   "readinessFeedback": "GOOD_SLEEP_HISTORY",
+   "readinessLevel": "MODERATE",
+   "readinessScore": 64,
+   "recoveryH": 1,
+   "respAwake": 13.0,
+   "respHigh": 20.0,
    "respLow": 8.0,
    "respSleep": 16.0
   }
@@ -3632,17 +3659,17 @@
   "realAge": 33,
   "fitnessAgeAchievable": 27.0,
   "bmiValue": 19.5,
-  "enduranceScore": 5838,
+  "enduranceScore": 5835,
   "enduranceClass": 3,
   "enduranceNext": 5800,
   "hillScore": 29,
   "hillClass": 2,
   "race": {
-   "date": "2026-10-27",
+   "date": "2026-10-28",
    "5k": 1375,
-   "10k": 2957,
-   "half": 6683,
-   "full": 15373
+   "10k": 2958,
+   "half": 6688,
+   "full": 15383
   }
  }
 }
