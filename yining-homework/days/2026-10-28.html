@@ -69,8 +69,8 @@
   .foot { font-size: 11px; color: #98a1b3; text-align: center; margin-top: 14px; }
   /* ── 手机：全部单列化，表格摊成卡片 ── */
   @media (max-width: 720px) {
-    body { padding: 8px; }
-    .sheet { padding: 12px 12px 8px; border-radius: 8px; }
+    body { padding: 8px; overflow-x: hidden; }
+    .sheet { padding: 12px 12px 8px; border-radius: 8px; overflow-wrap: anywhere; }
     h1 { font-size: 18px; }
     h2 { font-size: 15px; margin: 15px 0 7px; }
     .meta, .coord { font-size: 12px; }
@@ -79,20 +79,23 @@
     .qgrid > .q { font-size: 12.5px; padding: 5px; }
     .qgrid.ans { grid-template-columns: repeat(4, 1fr); }
     .zirow { grid-template-columns: repeat(2, 1fr); }
-    /* 120 分钟时间盒：一行变成一张小卡片 */
+    /* 120 分钟时间盒：一行变成一张小卡片
+       第一行：关卡名（可换行）+ 打勾；第二行：时段 · 分钟；第三行：任务描述 */
     table.tl, table.tl tbody { display: block; width: 100%; }
-    table.tl tr { display: grid; gap: 2px 7px;
-        grid-template-columns: auto auto 1fr auto;
-        grid-template-areas: "nm t m box" "task task task task";
+    table.tl tr { display: grid; gap: 1px 7px;
+        grid-template-columns: auto 1fr auto auto;
+        grid-template-areas: "nm nm nm box" "t t t m" "task task task task";
         border: 1px solid #dbe1ea; border-radius: 8px; margin-bottom: 6px; padding: 7px 9px; }
     table.tl td { border: 0 !important; padding: 1px 0 !important; width: auto !important; }
-    table.tl td.nm  { grid-area: nm; font-size: 12.5px; }
-    table.tl td.t   { grid-area: t; font-size: 11px; color: #98a1b3; }
-    table.tl td.m   { grid-area: m; font-size: 11px; text-align: right; }
-    table.tl td.box { grid-area: box; font-size: 21px; text-align: right; }
+    table.tl td.nm  { grid-area: nm; font-size: 13px; white-space: normal !important;
+                       overflow-wrap: anywhere; }
+    table.tl td.t   { grid-area: t; font-size: 11px; color: #98a1b3; margin-top: 2px; }
+    table.tl td.m   { grid-area: m; font-size: 11px; text-align: right; color: #98a1b3; }
+    table.tl td.box { grid-area: box; font-size: 20px; text-align: right; line-height: 1; }
     table.tl td:nth-child(4) { grid-area: task; font-size: 12.5px; color: #3d4761;
-        border-top: 1px dashed #e6ebf3 !important; margin-top: 3px; padding-top: 4px !important; }
+        border-top: 1px dashed #e6ebf3 !important; margin-top: 4px; padding-top: 5px !important; }
     .sign { line-height: 2; }
+    .sign .line.long { width: 100%; }
   }
   @media print {
     body { background: #fff; padding: 0; }

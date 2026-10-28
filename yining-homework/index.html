@@ -86,7 +86,8 @@
   }
 
   /* ── 主体 ── */
-  main{max-width:1180px;margin:0 auto;padding:0 14px 26px}
+  main{max-width:1180px;margin:0 auto;padding:0 14px 26px;overflow-x:clip}
+  .panel{max-width:100%}
   .panel{
     background:var(--card); border-radius:var(--radius); box-shadow:var(--shadow);
     border:1px solid rgba(20,30,60,.04); overflow:hidden;
@@ -139,13 +140,22 @@
   .toast.on{opacity:1;transform:translate(-50%,0)}
 
   @media (max-width:640px){
+    .hd{gap:6px}
     .hd .sub{display:none}
-    .hd h1{font-size:15px}
-    iframe{height:calc(100vh - 208px);min-height:420px}
-    .bar{padding:8px 10px}
-    .bar .meta{order:3;flex-basis:100%}
-    .bar .acts{margin-left:auto}
+    .hd h1{font-size:15px;min-width:0;overflow:hidden}
+    .hd .btn{padding:6px 9px;font-size:12px}
     main{padding:0 10px 20px}
+    /* 工具条重排成两行：上一行日期，下一行按钮均分整宽（5 个按钮挤一行会撑破屏幕） */
+    .bar{flex-direction:column;align-items:stretch;gap:6px;padding:8px 10px}
+    .bar .day{font-size:13px}
+    .bar .meta{order:0;flex:0 0 auto;white-space:normal;min-width:0}
+    .bar .acts{display:grid;grid-template-columns:auto auto 1fr 1fr 1fr;gap:6px;margin-left:0}
+    .bar .acts .btn{justify-content:center;padding:7px 6px;min-width:0;overflow:hidden;text-overflow:ellipsis}
+    /* 元信息一行横滑，别占三行高度 */
+    .info{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none}
+    .info::-webkit-scrollbar{display:none}
+    .kv{flex:0 0 auto}
+    iframe{height:calc(100vh - 268px);min-height:360px}
   }
   @media print{
     header,.strip,.bar,.info,.plan-card,footer{display:none!important}
