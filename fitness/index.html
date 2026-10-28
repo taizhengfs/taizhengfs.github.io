@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <title>方盛的数据实验室</title>
-<link rel="stylesheet" href="assets/style.css?v=10">
+<link rel="stylesheet" href="assets/style.css?v=11">
 <script>
   // 腾讯地图：仅在密钥代理已被运行时注入时（本地 WorkBuddy 环境）才加载底图。
   // 部署到 GitHub Pages 等静态站点时无代理，跳过加载，直接使用内置的纯 SVG 轨迹图。
@@ -28,6 +28,11 @@
       <h1>方盛的数据实验室</h1>
       <span class="tagline">跑过的每一步，都算数</span>
       <span class="sub" id="hdr-sub">加载中…</span>
+      <button class="refresh-btn" id="refreshBtn" title="重新加载最新数据（绕过缓存）">
+        <svg viewBox="0 0 24 24" width="14" height="14"><path d="M21 12a9 9 0 1 1-2.64-6.36M21 3v6h-6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span id="refreshText">刷新</span>
+      </button>
+      <span class="freshness" id="freshness" title="本页数据由 Mac mini 上的定时管线生成并推送，页面刷新只是重新拉取最新一份"></span>
     </div>
     <nav class="tabs" id="tabs">
       <button data-tab="briefing" class="on">每日简报</button>
@@ -475,6 +480,6 @@
 <div class="tip" id="tip"></div>
 <div id="errbar"></div>
 
-<script src="assets/app.js?v=10"></script>
+<script src="assets/app.js?v=11"></script>
 </body>
 </html>

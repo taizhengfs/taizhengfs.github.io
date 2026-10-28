@@ -69,6 +69,26 @@ header {
 }
 .brand .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); display: inline-block; }
 
+/* 刷新按钮 + 数据新鲜度 */
+.refresh-btn {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 4px 10px; font-size: 12.5px; font-weight: 600;
+  color: var(--fg-mute); background: transparent;
+  border: 1px solid var(--line); border-radius: 999px;
+  cursor: pointer; transition: all .15s ease;
+}
+.refresh-btn:hover { color: var(--accent); border-color: var(--accent); }
+.refresh-btn:active { transform: scale(.96); }
+.refresh-btn.busy { opacity: .6; pointer-events: none; }
+.refresh-btn.busy svg { animation: spin .8s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.freshness { font-size: 12px; color: var(--fg-mute); }
+.freshness.stale { color: var(--danger, #e0533d); font-weight: 600; }
+@media (max-width: 640px) {
+  .refresh-btn { font-size: 12px; padding: 3px 8px; }
+  .freshness { flex-basis: 100%; }
+}
+
 nav.tabs {
   display: flex;
   gap: 4px;

@@ -300,18 +300,63 @@ function legend(node, items) {
 }
 
 /* ============================ 数据加载 ============================ */
-async function load() {
+// 数据新鲜度：管线由 Mac mini 上的定时任务生成（每天 6 次），页面只能显示最新一份，
+// 超过 10 小时没更新说明同步链路可能断了（夜间 22:00→07:00 有 9 小时间隔，故取 10 小时为阈值）
+function renderFreshness(generatedAt) {
+  const el = $('#freshness');
+  if (!el || !generatedAt) return;
+  const mins = Math.round((Date.now() - new Date(generatedAt).getTime()) / 60000);
+  let text, stale = false;
+  if (mins < 1) text = '数据刚刚生成';
+  else if (mins < 60) text = `数据 ${mins} 分钟前生成`;
+  else if (mins < 600) text = `数据 ${(mins / 60).toFixed(1)} 小时前生成`;
+  else { text = `⚠ 数据已 ${Math.floor(mins / 60)} 小时未更新，同步可能中断`; stale = true; }
+  el.textContent = text;
+  el.classList.toggle('stale', stale);
+  el.title = stale
+    ? '生成时间：' + new Date(generatedAt).toLocaleString('zh-CN') + '。请检查 Mac mini 上的定时任务或腕表同步状态。'
+    : '生成时间：' + new Date(generatedAt).toLocaleString('zh-CN');
+}
+
+// 手动刷新：重新拉一遍 JSON（带缓存穿透），不触发新的采集
+async function refreshData() {
+  const btn = $('#refreshBtn');
+  const before = (STATE.core || {}).generatedAt;
+  await load(true);
+  if (btn) { btn.classList.remove('busy'); $('#refreshText').textContent = '刷新'; }
+  if (!STATE.core) return;
+  const changed = before && before !== STATE.core.generatedAt;
+  // 用一次轻量提示，不打断浏览
+  const tip = document.createElement('div');
+  tip.style.cssText = 'position:fixed;left:50%;bottom:26px;transform:translateX(-50%);z-index:999;' +
+    'background:var(--card,#1c1f26);border:1px solid var(--line,#333);color:var(--fg,#eee);' +
+    'padding:8px 14px;border-radius:999px;font-size:13px;box-shadow:0 6px 20px rgba(0,0,0,.35)';
+  tip.textContent = changed ? '已刷新：拉到新数据 ✓' : '已刷新：当前已是最新一份数据';
+  document.body.appendChild(tip);
+  setTimeout(() => { tip.style.opacity = '0'; tip.style.transition = 'opacity .3s'; }, 1800);
+  setTimeout(() => tip.remove(), 2200);
+}
+
+// 缓存穿透参数：刷新时给所有 JSON 请求加 ?t=时间戳，绕过浏览器与 CDN 缓存
+let CB = '';
+let lastLoadedAt = 0;
+const u = p => p + (CB ? '?t=' + CB : '');
+
+async function load(bust) {
+  if (bust) CB = String(Date.now());
+  const btn = $('#refreshBtn');
+  if (btn && bust) { btn.classList.add('busy'); $('#refreshText').textContent = '刷新中'; }
   try {
     const [core, health] = await Promise.all([
-      fetch('data/core.json').then(r => r.json()),
-      fetch('data/health.json').then(r => r.json()),
+      fetch(u('data/core.json')).then(r => r.json()),
+      fetch(u('data/health.json')).then(r => r.json()),
     ]);
     STATE.core = core; STATE.health = health;
 
     // 每日简报为可选数据，缺失时不阻断整页
     let insight = null;
     try {
-      const res = await fetch('data/insight.json');
+      const res = await fetch(u('data/insight.json'));
       if (res.ok) insight = await res.json();
     } catch (_) { /* 忽略：尚未生成简报 */ }
     STATE.insight = insight;
@@ -319,7 +364,7 @@ async function load() {
     // AI 健康日记索引（由 scripts/diary.py 从 diary/*.md 生成）
     let diary = null;
     try {
-      const dres = await fetch('data/diary.json');
+      const dres = await fetch(u('data/diary.json'));
       if (dres.ok) diary = await dres.json();
     } catch (_) { /* 忽略：尚未有日记 */ }
     STATE.diary = diary;
@@ -327,7 +372,7 @@ async function load() {
     // 卧室环境（可选数据，由 build_environment.py 生成）
     let envDaily = null;
     try {
-      const eres = await fetch('data/environment_daily.json');
+      const eres = await fetch(u('data/environment_daily.json'));
       if (eres.ok) envDaily = await eres.json();
     } catch (_) { /* 忽略：尚未生成环境聚合 */ }
     STATE.envDaily = envDaily;
@@ -343,6 +388,8 @@ async function load() {
       `<div style="margin-bottom:6px">方盛 · 腕上设备自动同步 · ${core.range.n} 次活动 / ${health.range.days} 天生理数据${aiTag}</div>` +
       `<div style="opacity:.75">数据生成于 ${gen} · 重新解析：<code>python3 scripts/parse_fit.py &amp;&amp; python3 scripts/split_data.py</code></div>`;
     renderBriefing(); renderDiary(); renderSleepGrid(); renderOverview(); renderHealth(); renderTraining(); renderActivityTab(); renderPB(); renderEnvironment();
+    lastLoadedAt = Date.now();
+    renderFreshness(core.generatedAt);
     const h = location.hash.replace('#', '');
     if (h && $('#tab-' + h)) { switchTab(h); if (h === 'activity') ensureActivitySelected(); }
   } catch (e) {
@@ -2368,3 +2415,15 @@ addEventListener('resize', () => {
 });
 
 load();
+
+// 刷新按钮
+const rb = $('#refreshBtn');
+if (rb) rb.addEventListener('click', () => refreshData());
+
+// 回到前台 / 每 15 分钟自动补一次：数据陈旧时无感更新（页面可见才拉，隐藏时不打扰）
+setInterval(() => {
+  if (!document.hidden && Date.now() - lastLoadedAt > 15 * 60 * 1000) load(true);
+}, 60000);
+document.addEventListener('visibilitychange', () => {
+  if (!document.hidden && Date.now() - lastLoadedAt > 10 * 60 * 1000) load(true);
+});
