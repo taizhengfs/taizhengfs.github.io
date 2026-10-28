@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>以宁 · 学业作战计划（2026.10 起）</title>
+<style>
+:root{
+  --bg:#0e1116; --card:#161b25; --card2:#1b2130; --line:#252c3b;
+  --tx:#e7ecf5; --tx2:#9aa5ba; --tx3:#6b7689;
+  --blue:#5b9bff; --blue-d:#2a4a8f; --orange:#ffb454; --green:#4ade80;
+  --red:#ff7b72; --purple:#b08bff; --cyan:#4fd1c5;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);
+  font-family:"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+  font-size:14px;line-height:1.75;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1060px;margin:0 auto;padding:28px 22px 80px}
+h1{font-size:26px;margin:0 0 6px;letter-spacing:.5px}
+h2{font-size:19px;margin:38px 0 14px;padding:8px 0 8px 12px;border-left:4px solid var(--blue);
+   background:linear-gradient(90deg,rgba(91,155,255,.13),transparent 70%);border-radius:0 6px 6px 0}
+h3{font-size:15px;margin:22px 0 8px;color:var(--orange)}
+p{margin:8px 0}
+.sub{color:var(--tx2);font-size:13px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px 18px;margin:14px 0}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+@media(max-width:820px){.grid2,.grid3{grid-template-columns:1fr}}
+table{width:100%;border-collapse:collapse;font-size:12.5px;margin:10px 0}
+th,td{border:1px solid var(--line);padding:7px 9px;text-align:left;vertical-align:top}
+th{background:var(--card2);color:var(--tx2);font-weight:600;white-space:nowrap}
+td.k{font-weight:600;white-space:nowrap}
+.tag{display:inline-block;font-size:11px;padding:1px 7px;border-radius:20px;margin-right:5px;
+  border:1px solid var(--line);color:var(--tx2)}
+.tag.b{color:var(--blue);border-color:var(--blue-d);background:rgba(91,155,255,.10)}
+.tag.o{color:var(--orange);border-color:#5c4520;background:rgba(255,180,84,.10)}
+.tag.g{color:var(--green);border-color:#245c3c;background:rgba(74,222,128,.10)}
+.tag.r{color:var(--red);border-color:#5c2f2c;background:rgba(255,123,114,.10)}
+.tag.p{color:var(--purple);border-color:#453a6b;background:rgba(176,139,255,.10)}
+.kpi{display:flex;gap:10px;flex-wrap:wrap;margin:12px 0}
+.kpi div{flex:1;min-width:120px;background:var(--card2);border:1px solid var(--line);
+  border-radius:8px;padding:12px 14px}
+.kpi .n{font-size:22px;font-weight:700;color:var(--blue);line-height:1.2}
+.kpi .l{font-size:11.5px;color:var(--tx3);margin-top:2px}
+ol,ul{margin:8px 0;padding-left:22px}
+li{margin:4px 0}
+.hl{color:var(--orange);font-weight:600}
+.big{font-size:15px;color:var(--tx);background:var(--card2);border-left:3px solid var(--orange);
+  padding:10px 14px;border-radius:0 6px 6px 0;margin:12px 0}
+.warn{background:rgba(255,123,114,.08);border:1px solid #5c2f2c;border-radius:8px;padding:12px 14px;margin:12px 0}
+.ok{background:rgba(74,222,128,.07);border:1px solid #245c3c;border-radius:8px;padding:12px 14px;margin:12px 0}
+.bar{height:7px;background:var(--card2);border-radius:4px;overflow:hidden;margin:5px 0 10px}
+.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--blue),var(--cyan))}
+code{background:#0a0d13;border:1px solid var(--line);border-radius:4px;padding:1px 6px;
+  font-family:"SF Mono",Menlo,monospace;font-size:12px;color:var(--cyan)}
+pre{background:#0a0d13;border:1px solid var(--line);border-radius:8px;padding:12px 14px;
+  overflow-x:auto;font-size:12px;line-height:1.7;color:#c9d4e6}
+pre code{border:none;background:none;padding:0;color:inherit}
+.foot{color:var(--tx3);font-size:11.5px;text-align:center;margin-top:40px;border-top:1px solid var(--line);padding-top:14px}
+.road{position:relative;padding-left:18px;border-left:2px solid var(--line);margin-top:8px}
+.road .st{position:relative;margin-bottom:16px}
+.road .st::before{content:"";position:absolute;left:-25px;top:6px;width:10px;height:10px;
+  border-radius:50%;background:var(--blue);box-shadow:0 0 0 3px rgba(91,155,255,.18)}
+.road .st.big2::before{background:var(--orange);box-shadow:0 0 0 3px rgba(255,180,84,.2)}
+.road .st .t{font-weight:600;font-size:14px}
+.now{background:linear-gradient(90deg,rgba(255,180,84,.14),transparent);border-left:3px solid var(--orange);
+  padding-left:12px;margin-left:-12px}
+@media print{
+  body{background:#fff;color:#111}
+  .card,.grid2>*,.kpi div{border-color:#ccc;background:#fff}
+  h2{background:none}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<h1>以宁 · 学业作战计划</h1>
+<div class="sub">起点：2026-10-28（一年级上册 · 在校日 #37）　|　终点：2035 年 6 月杭州中考　|　坐标：杭州 · 2024 版新教材</div>
+
+<div class="big">
+<b>一句话战略：</b>不要把目标定成"考高分"，要把目标定成
+<span class="hl">"到初三时，他在自己那所初中里，稳定排进前 5%"</span>。
+因为杭州的重高门票，70% 是按<b>初中校内排名</b>发的，不是按全市排名发的。
+</div>
+
+<!-- ══════════════ 1 ══════════════ -->
+<h2>一、先看懂终局：杭州的重高门票是怎么发的</h2>
+
+<p>很多家长从一年级就开始焦虑"能不能考上杭二"，但没搞清门票规则。规则决定了发力方向，先花 5 分钟看清它。</p>
+
+<div class="kpi">
+  <div><div class="n">650</div><div class="l">中考总分（620 文化课 + 30 体育）</div></div>
+  <div><div class="n">70%</div><div class="l">前八所重高招生中「分配生」占比</div></div>
+  <div><div class="n">20.5%</div><div class="l">2026 年市区分配生占毕业生比例</div></div>
+  <div><div class="n">3.2%</div><div class="l">前八所分配生占毕业生比例</div></div>
+</div>
+
+<h3>1. 中考科目与分值（浙江省统一命题，2026 口径）</h3>
+<table>
+<tr><th>科目</th><th>分值</th><th>形式</th><th>备注</th></tr>
+<tr><td class="k">科学</td><td>160</td><td>闭卷</td><td>物化生地综合，<span class="tag r">分值最大、最拉差距</span></td></tr>
+<tr><td class="k">语文</td><td>120</td><td>闭卷</td><td>靠 12 年积累，最短板难补</td></tr>
+<tr><td class="k">数学</td><td>120</td><td>闭卷</td><td>分层最明显的一科</td></tr>
+<tr><td class="k">英语</td><td>120</td><td>闭卷</td><td>笔试 100 + 听力 20，<span class="tag g">最适合提前学完</span></td></tr>
+<tr><td class="k">社会</td><td>100</td><td><b>2026 起闭卷</b></td><td>道法 + 历史与社会</td></tr>
+<tr><td class="k">体育</td><td>30</td><td>测试</td><td><span class="tag g">最该拿满的 30 分</span></td></tr>
+</table>
+
+<h3>2. 录取四批次与"分配生"这条主通道</h3>
+<p>2026 年杭州市区各类高中招生共四批次，按顺序依次是：中本一体化 → <b>名额分配招生</b> → 自主招生 → 集中统一招生。</p>
+<table>
+<tr><th>通道</th><th>规则</th><th>竞争范围</th></tr>
+<tr><td class="k">名额分配（分配生）</td><td>省一级重点高中按招生计划的 <b>70%</b> 招收分配生；名额按各初中<b>初三应届毕业生数</b>均衡分配到校，<b>逐校录取</b></td><td><span class="tag o">只跟本校同届比</span></td></tr>
+<tr><td class="k">自主招生（特长/特色/中外合作）</td><td>中考后按术科成绩 + 中考成绩折算，中考权重不低于 30%</td><td>全市，但赛道窄</td></tr>
+<tr><td class="k">集中统一招生（裸考）</td><td>全市按分录取</td><td><span class="tag r">全市竞争，最卷</span></td></tr>
+</table>
+
+<div class="ok">
+<b>这里藏着整个计划最大的一个杠杆。</b><br>
+2026 年杭州市区 4.4 万中考生，分配生 9021 个 —— <b>平均每 5 个学生就有 1 个能走分配生</b>。而这 9021 个名额不是全市抢的，
+是<b>按初中毕业生人数分到每一所学校、在校内按排名录取的</b>。<br><br>
+也就是说：<span class="hl">在行知中学排前 20%，拿到的杭二中/学军分配生名额，和在一所神仙初中排前 20% 拿到的是同一张票。</span>
+前者的难度远低于后者。这就是"田忌赛马"的正确用法 —— 不是让孩子变弱，而是<b>把同样的能力放在竞争强度更低的位置上兑现</b>。
+</div>
+
+<div class="warn">
+<b>但这个杠杆有两个前提，缺一不可：</b>
+<ol style="margin-bottom:0">
+<li><b>校内排名要真的靠前。</b>分配生是按校排名录的，不是"参与就有"。目标是校内前 5%（冲前八所）而不是前 20%（刚好够线）。</li>
+<li><b>中考分数不能垮。</b>分配生录取后仍有最低中考成绩要求，而且政策到 2035 年会变。
+所以真正的护城河不是押注政策，而是<span class="hl">真实的学科能力</span> —— 政策怎么改，能力强的人都吃亏不了。</li>
+</ol>
+</div>
+
+<h3>3. 目标学校（杭州"前八所"）</h3>
+<p>杭州高级中学贡院校区 · 杭州第二中学滨江校区 · 学军中学西溪校区 · 杭州第十四中学凤起校区 ·
+杭州第四中学下沙校区 · 浙江大学附属中学玉泉校区 · 杭州师范大学附属中学 · 杭州市长河高级中学。<br>
+<span class="sub">2026 年八所共招 5232 人，其中分配生 3662 人（70%）。</span></p>
+
+<!-- ══════════════ 2 ══════════════ -->
+<h2>二、三条战略原则（这决定了后面所有战术）</h2>
+
+<div class="grid3">
+  <div class="card">
+    <div><span class="tag b">原则一</span></div>
+    <h3 style="margin-top:6px">能力超前，不是教材超前</h3>
+    <p class="sub">提前把五年级课本刷一遍，是最低效的"抢跑"。真正有用的超前是三件：<br>
+    <b>计算自动化</b>（不用想的熟练度）、<b>识字量与阅读量</b>（语文的根）、<b>英语听说词汇</b>（技能型科目，越早越好）。
+    这三样提前了，课本内容到时候是"复习"而不是"新学"。</p>
+  </div>
+  <div class="card">
+    <div><span class="tag o">原则二</span></div>
+    <h3 style="margin-top:6px">数学优先，数学带语文</h3>
+    <p class="sub">这是有实证的：Duncan 等人对 6 个大型纵向数据库（约 3.5 万名儿童）的元分析发现，
+    <b>入学时的数学能力不仅预测后来的数学成绩，还同等强度地预测后来的阅读成绩</b>；反过来不成立。
+    一年级把数感打扎实，是投入产出比最高的一件事。</p>
+  </div>
+  <div class="card">
+    <div><span class="tag g">原则三</span></div>
+    <h3 style="margin-top:6px">先解决"愿意学"，再谈"学多少"</h3>
+    <p class="sub">他聪明但不爱学 —— 这说明瓶颈不在能力，在<b>动机</b>。
+    所有作业设计都要过一道筛子：这一项会不会让他更抵触？
+    如果会，就改成游戏、改成选择、改成 5 分钟能赢的小任务。<span class="hl">一年级保住兴趣，比多刷 1000 道题值钱得多。</span></p>
+  </div>
+</div>
+
+<h3>研究的支撑（为什么这么排优先级）</h3>
+<table>
+<tr><th>发现</th><th>来源</th><th>对本计划的指令</th></tr>
+<tr><td>入学时的<b>数学能力</b>（数数、数量比较、数的顺序）是后续学业成就最强的单一预测因子，并同等预测后续阅读</td><td>Duncan et al., 2007，6 个纵向数据库 · 约 3.5 万儿童</td><td>数学每天必练，地基模块（20 以内进位/退位）永不停止</td></tr>
+<tr><td><b>语音意识</b>（对语音结构的觉察）是小学阅读成就的强预测因子；字母知识同样关键</td><td>阅读发展研究综述（Lonigan / Moll 等）</td><td>拼音不能"差不多会"，要做到直呼音节；每天听写</td></tr>
+<tr><td><b>注意力 / 坚持性</b>稳定地预测后续成就，效应量中等但一致</td><td>Duncan et al., 2007</td><td>时间盒切成 25 分钟一段 + 5 分钟动一动</td></tr>
+<tr><td>清北学生家庭的共性：<b>重习惯甚于重分数</b>、父母自己读书、民主放手、错题本、做家务、不与人比较</td><td>多项针对清华北大学生家庭的调查</td><td>亲子阅读雷打不动；家长在旁边看自己的书；错题本改叫"怪兽图鉴"</td></tr>
+</table>
+
+<!-- ══════════════ 3 ══════════════ -->
+<h2>三、路线图：一年级到六年级，什么时候该掌握什么</h2>
+
+<div class="road">
+  <div class="st">
+    <div class="t">一年级上（2026.9 – 2027.2）· 现在在这里</div>
+    <table>
+    <tr><th>学科</th><th>期末必须达成</th></tr>
+    <tr><td class="k">语文</td><td>拼音全过关（23 声母 / 24 韵母 / 16 整体认读）<b>会听写会默写</b>；能直呼音节；识字 <b>300+</b>；写字 100 笔顺正确；古诗 10 首；亲子阅读不间断</td></tr>
+    <tr><td class="k">数学</td><td>20 以内进位加 / 退位减 <b>3 秒脱口而出</b>；100 以内进退位加减熟练；乘法口诀 2–5 起步；会讲凑十法、破十法</td></tr>
+    <tr><td class="k">英语</td><td>26 字母认读书写；CVC 自然拼读；高频词 40 个；RAZ aa/A 约 30 本；听力输入 50 小时</td></tr>
+    <tr><td class="k">习惯</td><td>晚托 2 小时坐得住；错题本（怪兽图鉴）建立；每天亲子阅读 20 分钟不断档</td></tr>
+    </table>
+  </div>
+
+  <div class="st">
+    <div class="t">一年级下（2027.2 – 2027.7）</div>
+    <table>
+    <tr><th>学科</th><th>期末必须达成</th></tr>
+    <tr><td class="k">语文</td><td>识字 <b>800</b>、写字 350；看图写话 3–5 句；古诗 30 首；累计阅读 5 万字</td></tr>
+    <tr><td class="k">数学</td><td>乘法口诀<b>全部自动化</b>；表内除法；100 以内两步混合；万以内加减起步</td></tr>
+    <tr><td class="k">英语</td><td>高频词 92（+Primer 52）；RAZ B–C；口语问答 30 句；听力累计 100 小时</td></tr>
+    <tr><td class="k">体育</td><td>跳绳 100 个/分钟（中考体育最省力的分，从一年级开始攒）</td></tr>
+    </table>
+  </div>
+
+  <div class="st">
+    <div class="t">二年级（2027.9 – 2028.7）</div>
+    <table>
+    <tr><th>学科</th><th>期末必须达成</th></tr>
+    <tr><td class="k">语文</td><td>识字 <b>1600</b>（可自主读桥梁书）；每日一句 → 日记习惯；古诗 60 首；累计 20 万字</td></tr>
+    <tr><td class="k">数学</td><td>万以内加减熟练；两位数 ×÷ 一位数；<b>思维题建模</b>起步（和差倍 / 植树 / 周期 / 鸡兔同笼）；简单分数</td></tr>
+    <tr><td class="k">英语</td><td>RAZ D–G；自然拼读进阶（长元音、辅音组合）；初章书起步；KET 词汇启动</td></tr>
+    <tr><td class="k">拓展</td><td>编程启蒙（Scratch）；科普阅读常态化 —— 为初中科学 160 分埋种子</td></tr>
+    </table>
+  </div>
+
+  <div class="st big2">
+    <div class="t">三年级（2028.9 – 2029.7）· <span class="hl">第一个分水岭</span></div>
+    <p class="sub">学校开始正式开英语、科学，作文起步。很多孩子在这里掉队 —— 因为前两年只有"聪明"，没有"阅读量"。</p>
+    <table>
+    <tr><th>学科</th><th>期末必须达成</th></tr>
+    <tr><td class="k">语文</td><td>作文 200–300 字结构完整；累计阅读 40 万字；开始小古文</td></tr>
+    <tr><td class="k">数学</td><td>小学奥数体系入门完成（计算 / 应用 / 数论 / 几何四大模块）</td></tr>
+    <tr><td class="k">英语</td><td><b>KET 通过（目标 130+）</b> —— 这一步做到，初中英语基本躺赢</td></tr>
+    <tr><td class="k">科学</td><td>校内科学 + 科普阅读并行，动手实验常态化</td></tr>
+    </table>
+  </div>
+
+  <div class="st">
+    <div class="t">四年级（2029.9 – 2030.7）</div>
+    <table>
+    <tr><th>学科</th><th>期末必须达成</th></tr>
+    <tr><td class="k">语文</td><td>《论语》选段 + 小古文 100 篇；作文 400 字；累计 80 万字</td></tr>
+    <tr><td class="k">数学</td><td>奥数系统完成；<b>AMC8 目标 15+</b>；校内提前到五年级水平</td></tr>
+    <tr><td class="k">英语</td><td><b>PET 通过</b>；原版章节书自主阅读</td></tr>
+    <tr><td class="k">信息学</td><td>启动 C++/Python，<b>CSP-J 备赛</b> —— 这是一条独立于中考分数的赛道，对高中自主招生有用</td></tr>
+    </table>
+  </div>
+
+  <div class="st big2">
+    <div class="t">五年级（2030.9 – 2031.7）· <span class="hl">初中预修年</span></div>
+    <table>
+    <tr><th>学科</th><th>期末必须达成</th></tr>
+    <tr><td class="k">数学</td><td>小学奥数收官；<b>初中数学预修完成 60%</b>（有理数、整式、一元一次方程）</td></tr>
+    <tr><td class="k">英语</td><td>FCE 或 <b>中考英语 110+/120</b>；开始高中英语 —— 英语从此"结课"，初中三年不用再花时间</td></tr>
+    <tr><td class="k">语文</td><td>古诗文 75 首全背；累计 120 万字</td></tr>
+    <tr><td class="k">信息学</td><td><b>CSP-J 首战</b>，目标一等奖</td></tr>
+    <tr><td class="k">决策</td><td>小升初路径定案：对口直升 vs 民办摇号（结合当年政策与校内排名）</td></tr>
+    </table>
+  </div>
+
+  <div class="st">
+    <div class="t">六年级（2031.9 – 2032.7）</div>
+    <table>
+    <tr><th>学科</th><th>期末必须达成</th></tr>
+    <tr><td class="k">数学</td><td>初一数学全部 + 初二上部分</td></tr>
+    <tr><td class="k">科学</td><td><b>初中科学预修</b>（七上物理化学生物）—— 对应中考 160 分最大科目</td></tr>
+    <tr><td class="k">语文</td><td>文言文实词 100 + 现代文阅读题型体系</td></tr>
+    <tr><td class="k">英语</td><td>维持性阅读，不投入新时间</td></tr>
+    </table>
+  </div>
+
+  <div class="st big2">
+    <div class="t">初中（2032.9 – 2035.6）</div>
+    <p class="sub">核心 KPI 切换为：<span class="hl">校内排名稳定前 5%</span>。
+    前两年把数学、科学拉到绝对领先，初三全年只做两件事 —— 保持排名 + 中考标准化训练。</p>
+  </div>
+</div>
+
+<div class="warn">
+<b>关于这张路线图的两点提醒：</b><br>
+① 它是<b>方向</b>不是<b>军令状</b>。孩子的发展不是线性的，某半年慢下来很正常，不要为了对表而牺牲兴趣。<br>
+② 每年 8 月做一次复盘，用实际掌握情况校准下一年的目标；政策（中考分值、分配生比例）每年 4 月更新，届时同步修正策略。
+</div>
+
+<!-- ══════════════ 4 ══════════════ -->
+<h2>四、当下：一上收官阶段（2026.10.28 → 期末，约 60 个在校日）</h2>
+
+<p>今天在校日 #37，语文在第三单元（g k h / j q x / z c s / zh ch sh r / y w），数学在"6~10 的认识和加减法"。
+<b>老师的作业已经点出了要害</b>："熟记单韵母声母整体认读音节，会听写默写""今天听写默写很多同学不会，错误多" ——
+这说明拼音全班都还没自动化，<span class="hl">这是以宁第一个可以拉开身位的窗口</span>。</p>
+
+<table>
+<tr><th>阶段</th><th>时间</th><th>语文主攻</th><th>数学主攻</th><th>英语/其他</th></tr>
+<tr><td class="k">第 1–2 周</td><td>10.28 – 11.10</td><td><b>拼音攻坚</b>：声母 23 + 单韵母 + 整体认读 16，每天听写，错哪个抄哪个；第四单元复韵母鼻韵母跟学校同步</td><td><b>20 以内进位/退位自动化</b>（每天地基模块，讲出凑十破十）</td><td>字母 + CVC；跳绳每天 3 组</td></tr>
+<tr><td class="k">第 3–4 周</td><td>11.11 – 11.24</td><td>拼音收尾 → <b>直呼音节</b>训练；识字启动，目标 150 字</td><td>100 以内进退位加减 → 正确率 ≥95%</td><td>Dolch Pre-primer 40 词</td></tr>
+<tr><td class="k">第 5–6 周</td><td>11.25 – 12.8</td><td>进入课文单元；识字 300；写字表启动</td><td>乘法口诀 <b>2–5</b></td><td>RAZ aa/A 每日 2 本</td></tr>
+<tr><td class="k">第 7–8 周</td><td>12.9 – 12.22</td><td>识字 400；写字 100 笔顺；古诗 10 首</td><td>乘法口诀 <b>6–9</b></td><td>口语 10 句 + 听力</td></tr>
+<tr><td class="k">第 9–12 周</td><td>12.23 – 期末</td><td>校内期末复习 + 超前不停止（识字继续冲 500）</td><td>表内乘除互逆 + 综合</td><td>RAZ A 完成 30 本</td></tr>
+</table>
+
+<!-- ══════════════ 5 ══════════════ -->
+<h2>五、晚托 2 小时怎么用：作战系统</h2>
+
+<h3>1. 时间盒（在校日版）</h3>
+<table>
+<tr><th>时段</th><th>时长</th><th>关卡</th><th>做什么</th></tr>
+<tr><td class="k">00:00–00:02</td><td>2′</td><td>⚡ 战前动员</td><td>看一遍今天的 3 个目标；自己挑"今天要用的武器"（笔/橡皮）—— 给选择权</td></tr>
+<tr><td class="k">00:02–00:26</td><td>24′</td><td>① 数学关</td><td>学校数学作业（优先）→ 三段弹药包：主练 / 温故 / 每日地基</td></tr>
+<tr><td class="k">00:26–00:31</td><td>5′</td><td>🔋 补给站</td><td>站起来动一动，不许碰屏幕</td></tr>
+<tr><td class="k">00:31–00:41</td><td>10′</td><td>② 语文·学校作业</td><td>老师在群里布置的语文作业，先吃掉</td></tr>
+<tr style="background:rgba(255,180,84,.07)"><td class="k">00:41–00:52</td><td>11′</td><td>② 每日五字 ✍️</td><td><b>今日 5 个新字：认读 → 笔顺 → 田字格书写 → 组词</b>，晚托老师督促并签字</td></tr>
+<tr><td class="k">00:52–01:00</td><td>8′</td><td>② 语文弹药包</td><td>拼音 / 识字 + 今日古诗</td></tr>
+<tr><td class="k">01:00–01:05</td><td>5′</td><td>🔋 补给站</td><td>闭眼或趴一会儿</td></tr>
+<tr><td class="k">01:05–01:18</td><td>13′</td><td>③ 英语关</td><td>自然拼读 / 高频词 / 分级阅读</td></tr>
+<tr><td class="k">01:18–01:34</td><td>16′</td><td>📖 亲子阅读</td><td><b>雷打不动</b>，家长陪读</td></tr>
+<tr><td class="k">01:34–01:41</td><td>7′</td><td>🍎 补给站</td><td>点心 + 自由活动（家长不谈学习）</td></tr>
+<tr><td class="k">01:41–01:53</td><td>12′</td><td>👑 Boss 关</td><td>四天一轮：奥数思维题 / 语文实践 / 科学实验 / 表达挑战</td></tr>
+<tr><td class="k">01:53–02:00</td><td>7′</td><td>🏁 结算</td><td>盖章 → 说一句"今天我比昨天厉害的地方" → <b>老师签字</b></td></tr>
+</table>
+
+<h3>2. 📝 每日五字：识字量的发动机</h3>
+<p>语文这条线上，<span class="hl">识字量是唯一的硬通货</span>。识字 300 才能自己读题，识字 800 才能自主阅读，
+识字 1600 才能读章节书 —— 后面所有语文能力都建在这上面。所以每天固定 5 个新字，<b>全年不停，寒暑假也不停</b>。</p>
+
+<table>
+<tr><th>环节</th><th>做法</th></tr>
+<tr><td class="k">字从哪来</td><td>按<b>课本识字表的出现顺序</b>推进 —— 老师可以直接对照课本找注音和笔顺，不需要额外备课</td></tr>
+<tr><td class="k">过关四步</td><td>① <b>会读</b>（老师教读 2 遍 → 孩子自读 2 遍）② <b>懂笔顺</b>（手指书空，边写边念笔画名）③ <b>会写</b>（田字格 3 遍，第 1 格描红）④ <b>会组词</b>（口头组 2 个词）</td></tr>
+<tr><td class="k">老师做什么</td><td>作业单上有独立的<b>「给晚托老师」督促栏</b>：田字格 + 四项打勾 + 签字位。老师只需要照着过一遍，不用出题</td></tr>
+<tr><td class="k">没过关怎么办</td><td>只改 1 遍，<b>不罚抄</b>。家长执行 <code>--char-fail 天 地</code>，这两个字第二天自动出现在「♻️ 补漏」里重过；过关了用 <code>--char-pass 天 地</code> 出列</td></tr>
+<tr><td class="k">进度</td><td>一年级上约 250 字（50 天）→ 一年级结束累计约 530 字 → 二年级结束累计约 1300 字</td></tr>
+</table>
+
+<div class="ok">
+<b>为什么是"每天 5 个"而不是 10 个：</b>5 个 × 四步 ≈ 11 分钟，是能长期坚持的量。
+识字这件事，<b>连续性远比单日强度重要</b> —— 每天 5 个坚持一年是 1800 字，每天 20 个坚持两周然后停掉是 0。
+</div>
+
+<h3>2. 三条铁律</h3>
+<div class="grid3">
+  <div class="card"><b><span class="tag b">铁律一</span> 学校作业优先</b>
+    <p class="sub">老师在群里发的作业先吃掉。超前训练是"加餐"，不能替代正餐 —— 否则他会觉得学校的活儿不重要，课堂专注力会掉。</p></div>
+  <div class="card"><b><span class="tag o">铁律二</span> 熟练度 > 会做</b>
+    <p class="sub">"纸上勉强算得出来"不算掌握。标准是<b>不用想、3 秒内出答案、连续 3 天正确率 ≥95%</b> 才算过关，才升下一档。</p></div>
+  <div class="card"><b><span class="tag g">铁律三</span> 25 分钟必停</b>
+    <p class="sub">一年级的持续注意力上限就在 20–25 分钟。硬撑到第 40 分钟，那 20 分钟是负收益 —— 还搭进去对学习的厌恶感。</p></div>
+</div>
+
+<h3>3. 每日作业的三轨结构（这是"遥遥领先"的引擎）</h3>
+<div class="grid3">
+  <div class="card"><span class="tag b">轨一 · 同步</span>
+    <p class="sub">跟着学校单元走。<b>只在校内日推进</b>，保证和课堂、单元测、期末考同频。今天 = 语文第三单元 + 数学二单元。</p></div>
+  <div class="card"><span class="tag o">轨二 · 超前</span>
+    <p class="sub">能力阶梯自动爬升，<b>寒暑假也不停</b>（强度降到 55%）。连续 3 次正确率 ≥95% 自动晋级下一档。</p></div>
+  <div class="card"><span class="tag g">轨三 · 地基</span>
+    <p class="sub">20 以内进位/退位、拼音自动化、高频词 —— 这三样<b>永远不毕业</b>。它们是所有上层能力的底座。</p></div>
+</div>
+
+<!-- ══════════════ 6 ══════════════ -->
+<h2>六、他"不爱学"怎么办：动机工程</h2>
+
+<p>聪明但不爱学，本质上不是态度问题，是<b>三个心理需求没被满足</b>：自主感、胜任感、归属感。
+对应的解法不是讲道理，是改设计。</p>
+
+<table>
+<tr><th>问题</th><th>做法</th><th>具体话术 / 动作</th></tr>
+<tr><td class="k">没有自主感</td><td><b>给选择权，不给命令</b></td><td>不说"快写作业"，说"今晚三关，你先打哪一关？"；抵触时给缩水选项："那就只做 5 题，做完就算赢"</td></tr>
+<tr><td class="k">没有胜任感</td><td><b>难度永远落在 85% 区间</b>（会做，但要努力）</td><td>错得多不是批评理由，是"下一关的怪物清单"。连续 3 天 ≥95% 才升档 —— 让他常常体验"我赢了"</td></tr>
+<tr><td class="k">反馈太慢</td><td><b>即时、小额、可视化</b></td><td>计时器（"我猜你 8 分钟干掉这一页，赌不赌？"）、集章卡、积分、勋章（闪电算 / 拼音王 / 识字鹰 / 朗读星）</td></tr>
+<tr><td class="k">学习=痛苦联想</td><td><b>改名字、改叙事</b></td><td>错题本叫「怪兽图鉴」，改错叫「收服」，Boss 关每天换花样（思维题/实践/实验/写话）</td></tr>
+<tr><td class="k">没有归属感</td><td><b>你在旁边学你自己的</b></td><td>他写作业时你也在看书/办公。多项清北家庭调查的第一共性：<span class="hl">父母在孩子面前专注地看书</span></td></tr>
+</table>
+
+<div class="warn">
+<b>家长绝对不要做的五件事：</b>
+<ol style="margin-bottom:0">
+<li>不要拿他和别人比（"你看人家 XXX"）—— 比较是焦虑的来源，不是动力。</li>
+<li>不要在旁边刷手机却要求他专心。</li>
+<li>不要在吃饭时问成绩；问"今天有什么事让你笑了"。</li>
+<li>不要因为他错得多就骂 —— 先接情绪（"错得好，这些就是明天要打的怪"），再改错。</li>
+<li>不要把日程塞满 —— 留白的时间是内驱力的来源。</li>
+</ol>
+</div>
+
+<div class="ok">
+<b>夸的时候，夸策略不夸聪明。</b><br>
+❌ "你真聪明"　→　会让他害怕失败（因为失败=不聪明），于是回避难题。<br>
+✅ "你刚才第 7 题用的凑十法很漂亮，这叫会想办法"　→　让他相信<b>能力靠方法，方法可复制</b>。
+</div>
+
+<!-- ══════════════ 7 ══════════════ -->
+<h2>七、清北家庭都在做的事（落到我家）</h2>
+<table>
+<tr><th>共性</th><th>我家怎么落地</th></tr>
+<tr><td>重习惯甚于重分数</td><td>一年级只抓三个习惯：<b>每天亲子阅读不断档、错题必进图鉴、25 分钟专注块</b>。分数不进 KPI</td></tr>
+<tr><td>父母自己读书（第一共性）</td><td>晚托那 2 小时，家长同时看自己的书，不看手机。家里最常一起做的事 = 看书</td></tr>
+<tr><td>民主放手，需要时在场</td><td>学习计划、做题顺序让他选；遇到难题不直接给答案，问"这题在考什么？你试过几种办法？"</td></tr>
+<tr><td>错题本 + 定期复盘</td><td>「怪兽图鉴」每周日翻一次，只重做本周错的题</td></tr>
+<tr><td>从小做家务</td><td>收拾书包、摆碗筷 —— 责任感与规划能力的成本最低的训练</td></tr>
+<tr><td>有底线，无琐碎</td><td>底线：不说谎、不守时、不尊重人 → 绝不妥协。琐事：先做语文还是数学 → 他自己定</td></tr>
+<tr><td>先处理情绪，再处理事情</td><td>考砸/闹情绪时第一句是"没关系，先休息一下，我陪着你"，稳定后再复盘</td></tr>
+<tr><td>兴趣爱好是情绪出口</td><td>每天户外 ≥1 小时 + 一项运动长期坚持（同时为中考体育 30 分打底）</td></tr>
+</table>
+
+<!-- ══════════════ 8 ══════════════ -->
+<h2>八、每日作业自动生成系统</h2>
+
+<p>已在你电脑上部署好。每天下午自动出一张当天的晚托作战单，题目<b>每天不同、难度自动爬升</b>，不需要你出题。</p>
+
+<div class="card">
+<b>目录结构</b>
+<pre><code>以宁的作业/
+├── plan.html                   ← 本文件（长期作战计划）
+├── homework/
+│   ├── 2026-10-28.md           纯文本版，可直接复制到微信给老师/晚托班
+│   └── 2026-10-28.html         打印版（A4，答案自动排在最后一页）
+├── scripts/
+│   ├── progress.py             日期 → 校内单元 / 能力档位（进度引擎）
+│   ├── drills.py               题库生成器（数学·语文·英语·科学·体育）
+│   └── daily_homework.py       主入口，组装并输出当天作业单
+└── data/
+    ├── config.json             难度档、校准偏移
+    └── state.json              积分、连续天数、正确率记录
+</code></pre>
+</div>
+
+<h3>常用命令</h3>
+<pre><code># 生成今天的作业（默认）
+python3 scripts/daily_homework.py
+
+# 生成指定日期
+python3 scripts/daily_homework.py --date 2026-11-05
+
+# 记录今天的正确率（脚本据此自动调难度；连续 3 次 ≥95% 自动晋级）
+python3 scripts/daily_homework.py --feedback math=0.95 chinese=0.90 english=1.0
+
+# 每日五字：老师反馈哪几个字没过关 → 明天自动进「补漏」重过
+python3 scripts/daily_homework.py --char-fail 天 地
+python3 scripts/daily_homework.py --char-pass 天 地   # 补漏过关后出列
+
+# 手动调整难度档（比如学校进度对不上、或想加速）
+python3 scripts/daily_homework.py --set-level math=5 chinese=2
+
+# 加分
+python3 scripts/daily_homework.py --points 10
+
+# 只在屏幕上看，不落盘
+python3 scripts/daily_homework.py --print
+</code></pre>
+
+<h3>校准机制（重要）</h3>
+<p>脚本按校历推算校内单元。如果某天发现它推算的单元和老师在群里说的不一致（差几天很正常，因为有运动会、秋假等），改一个数字就好：</p>
+<pre><code>data/config.json  →  "sync_offset_days": 0
+# 脚本进度偏慢（学校已经讲到后面了）→ 填正数，如 3
+# 脚本进度偏快 → 填负数，如 -3
+</code></pre>
+<p class="sub">假期/周末会自动切换成"假期版"作业单：任务更少、块更长、保留阅读与地基，超前档推进速度降到 55%。</p>
+
+<!-- ══════════════ 9 ══════════════ -->
+<h2>九、家长操作日历</h2>
+<table>
+<tr><th>频率</th><th>做什么</th><th>耗时</th></tr>
+<tr><td class="k">每天</td><td>把老师群里发的作业粘进作战单最上方（学校作业优先）；晚托结束记录正确率并打卡盖章</td><td>5′</td></tr>
+<tr><td class="k">每周日</td><td>翻一次「怪兽图鉴」，只重做本周错题；称一下阅读存折；决定下周要不要手动调档</td><td>20′</td></tr>
+<tr><td class="k">每月</td><td>做一次小测（口算 100 题计时 / 拼音听写 / 识字抽查），看三条轨的达标线有没有过</td><td>30′</td></tr>
+<tr><td class="k">每学期</td><td>对照路线图校准下学期的目标；检查 sync_offset_days</td><td>1h</td></tr>
+<tr><td class="k">每年 4 月</td><td>看杭州市教育局当年招生通知（分配生比例/招生计划会变），更新终局判断</td><td>30′</td></tr>
+<tr><td class="k">每年 8 月</td><td>年度大复盘：实际掌握 vs 路线图，重排未来一年</td><td>2h</td></tr>
+</table>
+
+<!-- ══════════════ 10 ══════════════ -->
+<h2>十、红线（这些比多学一点重要得多）</h2>
+<div class="warn">
+<ol style="margin-bottom:0">
+<li><b>睡眠 ≥ 10 小时。</b>睡眠不足对记忆巩固的破坏，大于多做 20 道题的收益。</li>
+<li><b>每天户外 ≥ 1 小时。</b>既是视力保护，也是中考体育 30 分的长期投资，更是情绪出口。</li>
+<li><b>晚托 2 小时就是上限。</b>一年级回家不再加码。超额投入换来的短期领先，会在三年级以厌学的形式还回来。</li>
+<li><b>周末至少半天完全自由。</b>留白是内驱力的来源。</li>
+<li><b>不以"提前学完课本"为荣。</b>要看的是熟练度、理解度、能不能讲出来。</li>
+<li><b>家长情绪稳定是定海神针。</b>你焦虑一次，他要花三天恢复。</li>
+</ol>
+</div>
+
+<div class="big">
+<b>最后一句：</b>这份计划真正要赢的，不是同龄人，是<b>时间</b>。
+把"20 以内进退位"练到脱口而出、把"拼音"练到直呼音节、把"识字 800"和"每天阅读"变成像刷牙一样的习惯 ——
+这三件事在一年级做完，后面九年他都会自动跑在前面。而这三件事，恰恰是唯一不需要天赋、只需要的<b>每天 20 分钟 × 坚持</b>的东西。
+</div>
+
+<div class="foot">
+以宁 · 学业作战计划　|　生成于 2026-10-28　|　政策口径：杭州市教育局 2026 年市区各类高中招生工作通知、浙江省教育厅浙教基〔2023〕51 号<br>
+每年 4 月与 8 月各复盘一次，政策与实际进度变化时同步修正
+</div>
+
+</div>
+</body>
+</html>
