@@ -43,20 +43,16 @@
   .settle { background: #f4f0ff; border: 1px solid #d9cff5; border-radius: 6px;
              padding: 10px 12px; font-size: 13px; line-height: 1.9; }
   .ans { font-size: 12.5px; color: #40506b; margin-top: 6px; }
-  /* 每日五字 · 字卡（大字 + 拼音 + 参考组词 + 四项打勾） */
+  /* 每日五字 · 跳转认字簿的大按钮 + 过关四步 */
   .steps { background:#f2f6ff; border:1px solid #d6e2fb; border-radius:6px;
             padding:9px 11px; font-size:12.5px; line-height:1.85; margin:8px 0; }
-  .zirow { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin: 10px 0 6px; }
-  .zc { border: 1px solid #d6e2fb; border-radius: 9px; background: #fff;
-         text-align: center; padding: 7px 4px 5px; }
-  .zc.rev { border-color: #f0c987; background: #fffcf5; }
-  .zc-n { font-size: 10.5px; color: #a8b0c0; }
-  .zc-ch { font-family: "KaiTi","STKaiti","Kaiti SC",serif; font-size: 40px;
-            line-height: 1.15; color: #1b2030; }
-  .zc-py { font-size: 12.5px; font-weight: 600; color: #2f6bd8; }
-  .zc-w { font-size: 11px; color: #5a6478; margin: 2px 0 5px; line-height: 1.4; }
-  .zc-ck { font-size: 10.5px; color: #7a8497; line-height: 1.6;
-            border-top: 1px dashed #e3e8f0; padding-top: 4px; }
+  .goto { display: block; margin: 10px 0 6px; padding: 13px 14px; border-radius: 12px;
+           background: #2f6bd8; color: #fff; text-decoration: none; text-align: center;
+           font-size: 16px; font-weight: 600; letter-spacing: .02em;
+           box-shadow: 0 4px 12px rgba(47,107,216,.28); }
+  .goto .arw { font-weight: 400; }
+  .gourl { font-size: 11px; color: #98a1b3; text-align: center; margin: 0 0 8px;
+            overflow-wrap: anywhere; }
   .sign { background:#f7f9fc; border:1px solid #e6ebf3; border-radius:6px; padding:10px 12px;
            font-size:12.5px; line-height:2.2; margin-top:6px; }
   .sign .line { display:inline-block; border-bottom:1px solid #9aa5ba; width:110px;
@@ -78,7 +74,7 @@
     .qgrid { grid-template-columns: repeat(2, 1fr); gap: 4px; }
     .qgrid > .q { font-size: 12.5px; padding: 5px; }
     .qgrid.ans { grid-template-columns: repeat(4, 1fr); }
-    .zirow { grid-template-columns: repeat(2, 1fr); }
+    .goto { font-size: 15px; padding: 12px; }
     /* 120 分钟时间盒：一行变成一张小卡片
        第一行：关卡名（可换行）+ 打勾；第二行：时段 · 分钟；第三行：任务描述 */
     table.tl, table.tl tbody { display: block; width: 100%; }
@@ -123,7 +119,7 @@
 <tr><td class="t">00:02–00:26</td><td class="m">24′</td><td class="nm">① 数学关</td><td>1) 学校数学作业（优先）　2) 数学弹药包 · 计时</td><td class="box">□</td></tr>
 <tr><td class="t">00:26–00:31</td><td class="m">5′</td><td class="nm">🔋 补给站</td><td>站起来动一动：开合跳 30 个 + 喝水，不许碰屏幕</td><td class="box">□</td></tr>
 <tr><td class="t">00:31–00:41</td><td class="m">10′</td><td class="nm">② 语文·学校作业</td><td>老师在群里布置的语文作业，先吃掉</td><td class="box">□</td></tr>
-<tr><td class="t">00:41–00:52</td><td class="m">11′</td><td class="nm">② 每日五字 ✍️</td><td>每日五字：他、一、二、三、四 —— 认读 + 笔顺 + 写字本上写 3 遍（老师督促）</td><td class="box">□</td></tr>
+<tr><td class="t">00:41–00:52</td><td class="m">11′</td><td class="nm">② 每日五字 ✍️</td><td>打开认字簿 → 今天的 5 个字（认读 + 笔顺 + 写字本上写 3 遍，老师督促）</td><td class="box">□</td></tr>
 <tr><td class="t">00:52–01:00</td><td class="m">8′</td><td class="nm">② 语文弹药包</td><td>拼音地基 · 单韵母 / 声母 / 整体认读音节　＋　今日古诗</td><td class="box">□</td></tr>
 <tr><td class="t">01:00–01:05</td><td class="m">5′</td><td class="nm">🔋 补给站</td><td>闭眼 1 分钟 + 拉伸，或者趴一会儿</td><td class="box">□</td></tr>
 <tr><td class="t">01:05–01:18</td><td class="m">13′</td><td class="nm">③ 英语关</td><td>自然拼读 · CVC</td><td class="box">□</td></tr>
@@ -134,25 +130,26 @@
   <div class="note">⚠️ 学校作业（老师群里发的）优先级最高，<b>先吃掉它</b>，再做本单的自选弹药。</div>
 
   
-  <h2>👩‍🏫 给晚托老师 · 今日五字（请督促并签字）</h2>
-  <div class="meta">今日五字：<b style="font-size:15px">他、一、二、三、四</b>
-    　|　认字簿今天还没选字，先用本地字表　|　认字簿已学会 <b>91</b> 字</div>
+  <h2>✍️ 每日五字 · 打开认字簿（请督促并签字）</h2>
+  <a class="goto" href="https://taizhendong.com/yining-literacy/" target="_blank" rel="noopener">
+    打开认字簿 · 学今天的 5 个字 <span class="arw">→</span>
+  </a>
+  <div class="gourl">taizhendong.com/yining-literacy　（手机上点不开就直接复制这个地址）</div>
+  <div class="meta">今天学哪 5 个字、哪些字要复习，<b>一律以认字簿为准</b>（App 自动定位到今天）。
+    这里不再抄一份字表 —— 只认一个地方，两边就不会对不上。</div>
   <div class="steps">
     <b>过关四步（每字都要走完，走完一项打一个勾）</b><br>
     ① <b>会读</b>：老师教读 2 遍 → 孩子自读 2 遍　
     ② <b>懂笔顺</b>：手指书空，边写边念笔画名（横竖撇捺点提折钩）<br>
     ③ <b>会写</b>：<b>写在孩子自己的写字本上，每字 3 遍</b>，注意占格与间架　
-    ④ <b>会组词</b>：口头组 2 个词（卡上有参考词）
+    ④ <b>会组词</b>：口头组 2 个词（认字簿里点开字就有拼音和组词）
   </div>
-  
-  <div class="zirow"><div class="zc"><div class="zc-n">1</div><div class="zc-ch">他</div><div class="zc-py">tā</div><div class="zc-w">他人、他日</div><div class="zc-ck">☐会读 ☐笔顺<br>☐会写 ☐组词</div></div><div class="zc"><div class="zc-n">2</div><div class="zc-ch">一</div><div class="zc-py">yī</div><div class="zc-w">一百、第一</div><div class="zc-ck">☐会读 ☐笔顺<br>☐会写 ☐组词</div></div><div class="zc"><div class="zc-n">3</div><div class="zc-ch">二</div><div class="zc-py">èr</div><div class="zc-w">二手、二月</div><div class="zc-ck">☐会读 ☐笔顺<br>☐会写 ☐组词</div></div><div class="zc"><div class="zc-n">4</div><div class="zc-ch">三</div><div class="zc-py">sān</div><div class="zc-w">三包、三国</div><div class="zc-ck">☐会读 ☐笔顺<br>☐会写 ☐组词</div></div><div class="zc"><div class="zc-n">5</div><div class="zc-ch">四</div><div class="zc-py">sì</div><div class="zc-w">四周、四边</div><div class="zc-ck">☐会读 ☐笔顺<br>☐会写 ☐组词</div></div></div>
-  <div class="note">📌 写错的字<b>不要擦掉重写一整页</b> —— 在写字本旁边改 1 遍。错的明天会以「♻️ 补漏」形式再出现。</div>
+  <div class="note">📌 没过关的字在认字簿里点「不太熟」，第二天自动进复习。
+    写错的字<b>不要擦掉重写一整页</b> —— 在写字本旁边改 1 遍，<b>不罚抄</b>。</div>
   <div class="sign">
     老师签字：<span class="line"></span>　日期：<span class="line short"></span>　
-    今日五字全部过关：☐ 是　☐ 否<br>
-    未过关的字：<span class="line long"></span>
+    今日五字全部过关：☐ 是　☐ 否
   </div>
-  
 
   <h2>① 数学弹药包 · 100以内进退位加减</h2>
   <div class="meta">达标线：口算+竖式，正确率≥95%　|　限时 ____ 分钟，正确率目标 ≥95%</div>
