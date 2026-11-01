@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-11-01T11:00:41",
+ "generatedAt": "2026-11-01T14:30:34",
  "range": {
   "start": "2026-06-16",
   "end": "2026-11-01",
@@ -3727,9 +3727,9 @@
    "respSleep": 16.0
   },
   {
-   "acuteLoad": 51,
-   "bbCharged": 66,
-   "bbDrained": 10,
+   "acuteLoad": 76,
+   "bbCharged": 67,
+   "bbDrained": 32,
    "bbMax": 79,
    "bbMin": 18,
    "date": "2026-11-01",
@@ -3746,9 +3746,9 @@
    "rStressFactor": 41,
    "readinessFeedback": "EXCELLENT_RECOVERY",
    "readinessLevel": "HIGH",
-   "readinessScore": 87,
-   "recoveryH": 1,
-   "respAwake": 12.0,
+   "readinessScore": 83,
+   "recoveryH": 317,
+   "respAwake": 13.0,
    "respHigh": 21.0,
    "respLow": 8.0,
    "respSleep": 17.0
@@ -3757,11 +3757,11 @@
  "latest": {
   "vo2max": 54.0,
   "vo2maxDate": "2026-10-18",
-  "loadAerobicLow": 195.7,
+  "loadAerobicLow": 211.4,
   "loadAnaerobic": 13.4,
   "loadTargetLow": 211,
   "loadTargetHigh": 474,
-  "loadFeedback": "AEROBIC_LOW_SHORTAGE",
+  "loadFeedback": "AEROBIC_HIGH_SHORTAGE",
   "deviceName": "Warden's 7X",
   "fitnessAge": 27.0,
   "realAge": 33,
