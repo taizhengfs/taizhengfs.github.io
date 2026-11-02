@@ -1,0 +1,2 @@
+{"ts": "2026-11-02T23:50:30", "chars": 13, "text": "播报通道自检：本机通知正常", "notify_rc": 1, "bark": "未配置（data/notify.json 里填 bark 可推到手机）"}
+{"ts": "2026-11-02T23:50:49", "chars": 13, "text": "播报通道自检：本机通知正常", "notify_rc": 0, "bark": "未配置（data/notify.json 里填 bark 可推到手机）"}

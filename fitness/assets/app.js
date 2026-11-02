@@ -369,7 +369,7 @@ async function load(bust) {
     } catch (_) { /* 忽略：尚未有日记 */ }
     STATE.diary = diary;
 
-    // 卧室环境（可选数据，由 build_environment.py 生成）
+    // 书房环境（可选数据，由 build_environment.py 生成，源为本机 BLE 直采）
     let envDaily = null;
     try {
       const eres = await fetch(u('data/environment_daily.json'));
@@ -1083,7 +1083,7 @@ function renderWellness(I) {
   $('#wl-sub').textContent = W.range ? `数据区间 ${W.range.start} — ${W.range.end}（${W.range.days} 天）` : '腕表长期积累的体能类指标';
 }
 
-/* ============================ 卧室环境（温湿度 vs 睡眠） ============================ */
+/* ============================ 书房环境（温湿度 vs 睡眠） ============================ */
 function renderEnvironment() {
   const E = STATE.envDaily;
   const box = $('#env-card');
@@ -1097,7 +1097,7 @@ function renderEnvironment() {
 
   $('#env-sub').textContent = cov.nightsSpan
     ? `${cov.nightsSpan[0]} — ${cov.nightsSpan[1]} · ${cov.nightsMatched} 个有效夜晚 · ${E.window || ''}`
-    : (E.source || '卧室「温度计」');
+    : (E.source || (E.roomLabel ? `${E.roomLabel}「温度计」` : '书房「温度计」'));
 
   // ---------- 尚无有效夜晚：明确告诉用户采集中、还差多少 ----------
   if (!nights.length) {
@@ -1111,7 +1111,7 @@ function renderEnvironment() {
       `<div style="font-size:13px;color:#97a3b6;line-height:1.8">
         原始采样已积累 <b style="color:var(--fg)">${cov.rawSamples ?? 0}</b> 点${cov.rawSpan ? `（${cov.rawSpan[0]} 起）` : ''}，
         但要凑够一整夜还需再等 —— 单晚至少 ${(E.thresholds || {}).minSamplesPerNight || 4} 个采样点才计入统计。<br>
-        建议：保持 Mac 不休眠（launchd <code>com.warden.miot-env</code> 夜间每 10 分钟采一次），
+        建议：保持 Mac 不休眠且蓝牙常开（launchd <code>com.warden.homesensors</code> 常驻 BLE 直采，夜间每 10 分钟一条），
         累计到 ${(E.thresholds || {}).minNightsForCorr || 10} 个有效夜晚后这里才会给出温度与睡眠的相关系数${need ? `（当前还差 ${need} 晚）` : ''}。
       </div>`;
     $('#env-note').textContent = E.generatedAt ? `聚合于 ${new Date(E.generatedAt).toLocaleString('zh-CN')}` : '';
