@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-02T23:53:50",
+  "generatedAt": "2026-11-03T07:00:04",
   "source": "本地 BLE 直采 LYWSD03MMC（书房「温度计」，mac a4:c1:38:78:21:bd）",
   "room": "study",
   "roomLabel": "书房",
@@ -19,10 +19,10 @@
     "minNightsForCorr": 10
   },
   "coverage": {
-    "rawSamples": 330,
+    "rawSamples": 450,
     "rawSpan": [
       "2026-10-13",
-      "2026-11-02"
+      "2026-11-03"
     ],
     "nightsMatched": 6,
     "nightsSpan": [
@@ -31,10 +31,10 @@
     ]
   },
   "latest": {
-    "ts": "2026-11-02T23:51:20",
-    "temp": 20.5,
-    "humidity": 71.0,
-    "batteryV": 2.958
+    "ts": "2026-11-03T06:56:03",
+    "temp": 19.4,
+    "humidity": 74.0,
+    "batteryV": 2.95
   },
   "today": {
     "date": "2026-10-20",
@@ -225,5 +225,5 @@
       "need": 4
     }
   },
-  "signature": "96227f7e315819b4cdc3096c23b0f4b2"
+  "signature": "f3dcbc5ce9ea3286fd406126361a06e6"
 }
