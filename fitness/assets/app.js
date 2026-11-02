@@ -1,4 +1,4 @@
-/* Garmin 数据实验室 —— 纯前端，无构建步骤 */
+/* 方盛的数据实验室 —— 纯前端，无构建步骤 */
 'use strict';
 
 const $ = (s, r = document) => r.querySelector(s);
@@ -10,7 +10,7 @@ const C = {
   z: ['#4c6ef5', '#22b8cf', '#51cf66', '#fab005', '#ff6b6b'],
 };
 
-const STATE = { core: null, health: null, tab: 'overview', act: null, stream: null, pbDist: '5000', rhrRange: 'all' };
+const STATE = { core: null, health: null, tab: 'overview', act: null, stream: null, pbDist: '5000', rhrRange: 'all', insight: null, diary: null, calMetric: 'score', envDaily: null };
 
 /* ============================ 全局错误捕获 ============================ */
 const APP_VERSION = 'v3';
@@ -22,7 +22,7 @@ function fatal(where, err) {
 }
 addEventListener('error', e => fatal('window.error', e.error || e.message));
 addEventListener('unhandledrejection', e => fatal('未捕获的 Promise 异常', e.reason));
-console.log('[garmin-fit-lab] app.js ' + APP_VERSION + ' 已加载');
+console.log('[fangsheng-fit-lab] app.js ' + APP_VERSION + ' 已加载');
 
 /* ============================ 工具 ============================ */
 const nf = (v, d = 0) => (v === null || v === undefined || !isFinite(v)) ? '—' : Number(v).toFixed(d);
@@ -300,18 +300,96 @@ function legend(node, items) {
 }
 
 /* ============================ 数据加载 ============================ */
-async function load() {
+// 数据新鲜度：管线由 Mac mini 上的定时任务生成（每天 6 次），页面只能显示最新一份，
+// 超过 10 小时没更新说明同步链路可能断了（夜间 22:00→07:00 有 9 小时间隔，故取 10 小时为阈值）
+function renderFreshness(generatedAt) {
+  const el = $('#freshness');
+  if (!el || !generatedAt) return;
+  const mins = Math.round((Date.now() - new Date(generatedAt).getTime()) / 60000);
+  let text, stale = false;
+  if (mins < 1) text = '数据刚刚生成';
+  else if (mins < 60) text = `数据 ${mins} 分钟前生成`;
+  else if (mins < 600) text = `数据 ${(mins / 60).toFixed(1)} 小时前生成`;
+  else { text = `⚠ 数据已 ${Math.floor(mins / 60)} 小时未更新，同步可能中断`; stale = true; }
+  el.textContent = text;
+  el.classList.toggle('stale', stale);
+  el.title = stale
+    ? '生成时间：' + new Date(generatedAt).toLocaleString('zh-CN') + '。请检查 Mac mini 上的定时任务或腕表同步状态。'
+    : '生成时间：' + new Date(generatedAt).toLocaleString('zh-CN');
+}
+
+// 手动刷新：重新拉一遍 JSON（带缓存穿透），不触发新的采集
+async function refreshData() {
+  const btn = $('#refreshBtn');
+  const before = (STATE.core || {}).generatedAt;
+  await load(true);
+  if (btn) { btn.classList.remove('busy'); $('#refreshText').textContent = '刷新'; }
+  if (!STATE.core) return;
+  const changed = before && before !== STATE.core.generatedAt;
+  // 用一次轻量提示，不打断浏览
+  const tip = document.createElement('div');
+  tip.style.cssText = 'position:fixed;left:50%;bottom:26px;transform:translateX(-50%);z-index:999;' +
+    'background:var(--card,#1c1f26);border:1px solid var(--line,#333);color:var(--fg,#eee);' +
+    'padding:8px 14px;border-radius:999px;font-size:13px;box-shadow:0 6px 20px rgba(0,0,0,.35)';
+  tip.textContent = changed ? '已刷新：拉到新数据 ✓' : '已刷新：当前已是最新一份数据';
+  document.body.appendChild(tip);
+  setTimeout(() => { tip.style.opacity = '0'; tip.style.transition = 'opacity .3s'; }, 1800);
+  setTimeout(() => tip.remove(), 2200);
+}
+
+// 缓存穿透参数：刷新时给所有 JSON 请求加 ?t=时间戳，绕过浏览器与 CDN 缓存
+let CB = '';
+let lastLoadedAt = 0;
+const u = p => p + (CB ? '?t=' + CB : '');
+
+async function load(bust) {
+  if (bust) CB = String(Date.now());
+  const btn = $('#refreshBtn');
+  if (btn && bust) { btn.classList.add('busy'); $('#refreshText').textContent = '刷新中'; }
   try {
     const [core, health] = await Promise.all([
-      fetch('data/core.json').then(r => r.json()),
-      fetch('data/health.json').then(r => r.json()),
+      fetch(u('data/core.json')).then(r => r.json()),
+      fetch(u('data/health.json')).then(r => r.json()),
     ]);
     STATE.core = core; STATE.health = health;
+
+    // 每日简报为可选数据，缺失时不阻断整页
+    let insight = null;
+    try {
+      const res = await fetch(u('data/insight.json'));
+      if (res.ok) insight = await res.json();
+    } catch (_) { /* 忽略：尚未生成简报 */ }
+    STATE.insight = insight;
+
+    // AI 健康日记索引（由 scripts/diary.py 从 diary/*.md 生成）
+    let diary = null;
+    try {
+      const dres = await fetch(u('data/diary.json'));
+      if (dres.ok) diary = await dres.json();
+    } catch (_) { /* 忽略：尚未有日记 */ }
+    STATE.diary = diary;
+
+    // 卧室环境（可选数据，由 build_environment.py 生成）
+    let envDaily = null;
+    try {
+      const eres = await fetch(u('data/environment_daily.json'));
+      if (eres.ok) envDaily = await eres.json();
+    } catch (_) { /* 忽略：尚未生成环境聚合 */ }
+    STATE.envDaily = envDaily;
+
     $('#loading').style.display = 'none';
     $('#hdr-sub').textContent =
-      `${core.range.start} — ${core.range.end} · ${core.range.n} 次活动 · ${health.range.days} 天生理数据 · 源自 560 个 FIT 原始文件`;
-    $('#foot').innerHTML = `数据生成于 ${new Date(core.generatedAt).toLocaleString('zh-CN')} · 重新解析： <code>python3 scripts/parse_fit.py && python3 scripts/split_data.py</code>`;
-    renderOverview(); renderHealth(); renderTraining(); renderActivityTab(); renderPB();
+      `${core.range.start} — ${core.range.end} · ${core.range.n} 次活动 · ${health.range.days} 天生理数据 · 源自 ${core.range.n} 个 FIT 原始文件`;
+    const gen = new Date(core.generatedAt).toLocaleString('zh-CN');
+    const aiTag = !insight ? '' : (insight.narrativeSource && insight.narrativeSource !== 'rule')
+      ? ` · 今日解读：<b style="color:var(--accent)">AI（${insight.narrativeSource}）</b>`
+      : ' · 今日解读：规则引擎';
+    $('#foot').innerHTML =
+      `<div style="margin-bottom:6px">方盛 · 腕上设备自动同步 · ${core.range.n} 次活动 / ${health.range.days} 天生理数据${aiTag}</div>` +
+      `<div style="opacity:.75">数据生成于 ${gen} · 重新解析：<code>python3 scripts/parse_fit.py &amp;&amp; python3 scripts/split_data.py</code></div>`;
+    renderBriefing(); renderDiary(); renderSleepGrid(); renderOverview(); renderHealth(); renderTraining(); renderActivityTab(); renderPB(); renderEnvironment();
+    lastLoadedAt = Date.now();
+    renderFreshness(core.generatedAt);
     const h = location.hash.replace('#', '');
     if (h && $('#tab-' + h)) { switchTab(h); if (h === 'activity') ensureActivitySelected(); }
   } catch (e) {
@@ -321,7 +399,7 @@ async function load() {
         <b style="color:#ff6b6b">数据加载失败</b><br><br>
         浏览器禁止 <code>file://</code> 下的本地数据读取。请在项目目录启动一个静态服务器：<br><br>
         <code style="background:#151a23;padding:8px 12px;border-radius:8px;display:block">
-        cd /Users/warden/Developer/garmin/fit-lab<br>python3 -m http.server 8848
+        cd /Users/warden/garmin/fit-lab<br>python3 -m http.server 8848
         </code><br>然后访问 <code>http://localhost:8848</code><br><br>
         <span style="color:#647084">${e.message}</span></div>`;
   }
@@ -329,6 +407,1124 @@ async function load() {
 
 const RUN_CN = ['跑步', '越野跑', '跑步机', '场地跑'];
 const isRun = a => RUN_CN.includes(a.sportCn);
+
+/* ============================ 每日简报 ============================ */
+const BR_LEVEL = {
+  good: { c: C.accent2, t: '良好' },
+  info: { c: C.dim, t: '提示' },
+  warn: { c: C.pace, t: '留意' },
+  bad: { c: C.hr, t: '警示' },
+};
+
+function renderBriefing() {
+  const I = STATE.insight;
+  if (!I) {
+    $('#br-kpi').innerHTML = '';
+    $('#br-findings').innerHTML = '';
+    $('#br-week').innerHTML = '';
+    $('#br-week-range').textContent = '—';
+    $('#br-workouts').innerHTML = '';
+    renderReadiness(null); renderBriefingAcwr(null); renderWellness(null);
+    return;
+  }
+
+  const t = I.today || {};
+  const n0 = v => (isNum(v) ? v.toFixed(0) : '—');
+  const int = v => (isNum(v) ? Math.round(v).toLocaleString() : '—');
+
+  // ---- KPI ----
+  $('#br-kpi').innerHTML = [
+    { l: '昨晚睡眠', v: isNum(t.sleepH) ? t.sleepH.toFixed(2) : '—', u: 'h', s: `月均 ${t.sleep30 ?? '—'} h · 深睡 ${t.deepH ?? '—'} h` },
+    { l: '睡眠评分', v: t.sleepScore ?? '—', u: '分', s: `7 日均 ${t.score7 ?? '—'} 分` },
+    { l: '静息心率', v: t.rhr ?? '—', u: 'bpm', s: `月均 ${t.rhr30 ?? '—'} bpm` },
+    { l: '今日步数', v: int(t.steps), u: '步', s: `月均 ${int(t.steps30)} 步` },
+  ].map(k => `<div class="card kpi"><div class="label">${k.l}</div>` +
+    `<div class="value">${k.v}<span class="unit">${k.u}</span></div>` +
+    `<div class="delta flat">${k.s}</div></div>`).join('');
+
+  // ---- 需要关注 ----
+  // （AI 解读与建议已迁到「AI 健康日记」页签，见 renderDiary）
+  $('#br-findings').innerHTML = (I.findings || []).map(f => {
+    const m = BR_LEVEL[f.level] || BR_LEVEL.info;
+    return `<div style="border-left:3px solid ${m.c};padding:10px 0 10px 12px;margin-bottom:10px">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+        <span style="font-size:11px;padding:1px 7px;border-radius:20px;background:${m.c}22;color:${m.c}">${m.t}</span>
+        <b style="font-size:13.5px">${f.title}</b>
+      </div>
+      <div style="font-size:12.5px;color:#97a3b6;line-height:1.65">${f.text}</div>
+    </div>`;
+  }).join('') || '<div style="color:#647084;font-size:13px">暂无异常提示，各项指标均在正常范围。</div>';
+
+  // ---- 近 7 天 vs 上周 ----
+  const w = I.week || {}, cur = w.cur || {}, prev = w.prev || {}, d = w.delta || {};
+  if (w.range) $('#br-week-range').textContent = `${w.range[0]} — ${w.range[1]}`;
+
+  // goodUp=false 表示「数值上升是坏事」（如静息心率）
+  const GOOD = C.z[2], BAD = C.hr;
+  const arrow = (v, digits, unit, goodUp = true) => {
+    if (!isNum(v)) return '<span style="color:#647084">—</span>';
+    const flat = Math.abs(v) < (digits ? 0.05 : 0.5);
+    const up = v > 0;
+    const col = flat ? '#647084' : (up === goodUp ? GOOD : BAD);
+    return `<span style="color:${col};font-variant-numeric:tabular-nums">${up ? '▲' : '▼'} ${Math.abs(v).toFixed(digits)}${unit || ''}</span>`;
+  };
+  const rows = [
+    ['平均睡眠', (cur.sleepAvg ?? '—') + ' h', (prev.sleepAvg ?? '—') + ' h', arrow(d.sleepAvg, 2, ' h')],
+    ['睡眠评分', cur.scoreAvg ?? '—', prev.scoreAvg ?? '—', arrow(d.scoreAvg, 1, '')],
+    ['静息心率', (cur.rhrAvg ?? '—') + ' bpm', (prev.rhrAvg ?? '—') + ' bpm', arrow(d.rhrAvg, 1, '', false)],
+    ['平均步数', int(cur.stepsAvg), int(prev.stepsAvg), arrow(d.stepsAvg, 0, '')],
+    ['活跃天数', (cur.activeDays ?? '—') + ' 天', (prev.activeDays ?? '—') + ' 天', ''],
+  ];
+  let html = '<table class="tbl" style="width:100%;font-size:12.5px"><thead><tr>' +
+    '<th style="text-align:left">指标</th><th style="text-align:right">近 7 天</th>' +
+    '<th style="text-align:right">前 7 天</th><th style="text-align:right">变化</th></tr></thead><tbody>';
+  rows.forEach(r => {
+    html += `<tr><td style="color:#97a3b6">${r[0]}</td><td style="text-align:right;font-variant-numeric:tabular-nums"><b>${r[1]}</b></td>` +
+      `<td style="text-align:right;color:#97a3b6;font-variant-numeric:tabular-nums">${r[2]}</td>` +
+      `<td style="text-align:right">${r[3]}</td></tr>`;
+  });
+  html += `<tr><td style="color:#97a3b6">训练次数</td><td style="text-align:right" colspan="3">` +
+    `<b>${w.workoutCount || 0}</b> 次 · ${w.totalKm || 0} km · ${n0(w.totalMin)} 分钟 · ${n0(w.totalCal)} kcal</td></tr>`;
+  $('#br-week').innerHTML = html + '</tbody></table>';
+
+  // ---- 近 14 天走势 ----
+  const S = I.series || [];
+  if (S.length) {
+    lineChart($('#br-series'), {
+      height: 240, x: S.map(s => s.date.slice(5).replace('-', '/')),
+      series: [
+        { name: '睡眠时长 h', color: C.sleep, data: S.map(s => s.sleepH), width: 2, dot: true },
+        { name: '静息心率 bpm', color: C.hr, data: S.map(s => s.rhr), width: 2, dot: true, axis: 'y2' },
+      ],
+      yFmt: v => v.toFixed(1), y2Fmt: v => v.toFixed(0),
+      tip: i => `<div class="t">${S[i].date}</div>` +
+        `<div class="r"><span>睡眠</span><b>${S[i].sleepH ?? '—'} h / ${S[i].sleepScore ?? '—'} 分</b></div>` +
+        `<div class="r"><span>静息心率</span><b>${S[i].rhr ?? '—'} bpm</b></div>` +
+        `<div class="r"><span>步数</span><b>${S[i].steps != null ? Math.round(S[i].steps).toLocaleString() : '—'}</b></div>`,
+    });
+    legend($('#br-series-lg'), [{ name: '睡眠时长 h', color: C.sleep }, { name: '静息心率 bpm', color: C.hr }]);
+  }
+
+  // ---- 近期运动 ----
+  const ws = w.workouts || [];
+  $('#br-workouts').innerHTML = ws.length
+    ? ws.map(a => `<div style="display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid #1b212c">
+        <span style="min-width:82px;font-size:12px;color:#97a3b6;font-variant-numeric:tabular-nums">${a.date}</span>
+        <span style="min-width:52px;font-size:11.5px;padding:1px 7px;border-radius:20px;background:${C.accent}22;color:${C.accent}">${a.sportCn}</span>
+        <span style="flex:1;font-size:12.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${a.name || ''}</span>
+        <span style="font-size:12.5px;font-variant-numeric:tabular-nums"><b>${a.distKm ?? '—'}</b> km</span>
+        <span style="width:52px;text-align:right;font-size:12px;color:#97a3b6">${n0(a.durMin)}′</span>
+        <span style="width:60px;text-align:right;font-size:12px;color:#97a3b6">${a.avgHR ?? '—'} bpm</span>
+      </div>`).join('')
+    : `<div style="color:#647084;font-size:13px">近 7 天没有训练记录${isNum(I.restDays) ? `，最近一次运动在 ${I.restDays} 天前` : ''}。</div>`;
+
+  renderReadiness(I);
+  renderBriefingAcwr(I);
+  renderWellness(I);
+}
+
+/* ============================ AI 健康日记 ============================ */
+const escHtml = s => String(s == null ? '' : s).replace(/[&<>"']/g,
+  c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+
+function aiLineHtml(items) {
+  return (items || [])
+    .map(s => `<div class="ai-line">${escHtml(String(s).replace(/^[-•*]\s*/, ''))}</div>`)
+    .join('');
+}
+
+function renderDiary() {
+  const I = STATE.insight;
+  const entries = (STATE.diary && STATE.diary.entries) || [];
+  const todayDate = I ? I.asOf : null;
+
+  // 今日卡片：insight 里已有 AI 文案就用它（build_insight 会从 diary 继承），
+  // 否则倒回日记库里翻同一天，保证任何一次同步之后都不会「凭空消失」。
+  let cur = null;
+  if (I && I.aiNarrative) {
+    cur = {
+      date: I.asOf,
+      narrative: I.aiNarrative,
+      advice: String(I.aiAdvice || '').split('\n').map(s => s.trim()).filter(Boolean),
+      model: I.aiModel || 'WorkBuddy AI',
+      at: I.aiAt || '',
+    };
+  } else if (todayDate) {
+    cur = entries.find(e => e.date === todayDate || e.asOf === todayDate) || null;
+  }
+
+  if (cur) {
+    $('#dj-src').innerHTML =
+      `截至 ${escHtml(cur.date)} · <b style="color:var(--accent)">${escHtml(cur.model || 'AI')} 生成</b>` +
+      (cur.at ? ` · ${new Date(cur.at).toLocaleString('zh-CN')}` : '');
+    $('#dj-narrative').textContent = cur.narrative;
+  } else {
+    $('#dj-src').textContent = I ? `截至 ${I.asOf}` : '—';
+    $('#dj-narrative').textContent = I
+      ? '今天的 AI 解读还没生成。同步任务会写入；也可以手动执行 ' +
+        'python3 scripts/apply_ai.py --json /tmp/ai_brief.json 补写。'
+      : '尚未生成每日简报，请先执行 python3 scripts/build_insight.py。';
+  }
+
+  // 规则引擎版本作为对照，AI 文案存在时才展示
+  if (I && I.narrative && cur) {
+    $('#dj-rule-wrap').style.display = '';
+    $('#dj-rule-narrative').textContent = I.narrative;
+  } else {
+    $('#dj-rule-wrap').style.display = 'none';
+  }
+
+  if (cur && cur.advice && cur.advice.length) {
+    $('#dj-advice-card').style.display = '';
+    $('#dj-advice-src').textContent =
+      (cur.model || 'AI') + ' 基于近 30 天数据给出' +
+      (cur.at ? ` · ${new Date(cur.at).toLocaleString('zh-CN')}` : '');
+    $('#dj-advice').innerHTML = aiLineHtml(cur.advice);
+  } else {
+    $('#dj-advice-card').style.display = 'none';
+  }
+
+  // 历史列表：按月分组
+  const groups = [];
+  entries.forEach(e => {
+    const m = e.date.slice(0, 7);
+    let g = groups.find(x => x.month === m);
+    if (!g) { g = { month: m, items: [] }; groups.push(g); }
+    g.items.push(e);
+  });
+  groups.sort((a, b) => b.month.localeCompare(a.month));
+
+  $('#dj-count').textContent = entries.length
+    ? `共 ${entries.length} 篇 · 最新 ${entries[0].date} · 按月归档于 diary/YYYY-MM.md`
+    : '暂无历史日记';
+
+  $('#dj-list').innerHTML = groups.map(g => `
+    <div class="dj-month">
+      <div class="dj-month-hd">${g.month.slice(0, 4)} 年 ${g.month.slice(5)} 月<span class="hint">${g.items.length} 篇</span></div>
+      ${g.items.map(e => {
+        const open = e.date === todayDate ? ' open' : '';
+        const preview = escHtml(String(e.narrative || '').replace(/\s+/g, ' ').slice(0, 70));
+        return `<details class="dj-item"${open}>
+          <summary>
+            <span class="dj-date">${escHtml(e.date)}</span>
+            <span class="dj-meta">${escHtml(e.model || 'AI')}${e.at ? ' · ' + escHtml(e.at.slice(5, 16).replace('T', ' ')) : ''}</span>
+            <span class="dj-preview">${preview}…</span>
+          </summary>
+          <div class="dj-body">
+            <div class="dj-sec-label">今天怎么说</div>
+            <div class="dj-text">${String(e.narrative || '').split('\n').filter(s => s.trim())
+              .map(s => `<p>${escHtml(s)}</p>`).join('')}</div>
+            ${(e.advice && e.advice.length)
+              ? `<div class="dj-sec-label">接下来怎么做</div>
+                 <div class="ai-advice">${aiLineHtml(e.advice)}</div>`
+              : ''}
+          </div>
+        </details>`;
+      }).join('')}
+    </div>`).join('') ||
+    '<div class="empty">还没有历史日记。AI 解读落盘后会自动归档到这里。</div>';
+}
+
+/* ============================ 睡眠年历（GitHub 贡献图风格） ============================ */
+/* 10 级色阶：等级 1（黑，最差）→ 10（深绿，最好）。
+   配色遵循「深绿 / 绿 / 浅绿 = 好，橙 = 开始留意，红 / 大红 = 差，黑 = 几乎没睡」。
+   分级不直接看 Garmin 评分，而是先合成「睡眠质量指数 SQI」再看落点（见 sgSleepIndex）。 */
+const SG_LEVELS = [
+  { min: 92, lv: 10, label: '极佳', color: '#166534', note: '深绿 · 年度顶级' },
+  { min: 86, lv: 9,  label: '优秀', color: '#2f9e44', note: '深绿 · 恢复充分' },
+  { min: 80, lv: 8,  label: '良好', color: '#51cf66', note: '绿 · 高于平均' },
+  { min: 74, lv: 7,  label: '达标', color: '#8ce99a', note: '浅绿 · 基本够用' },
+  { min: 68, lv: 6,  label: '一般', color: '#ffd43b', note: '黄 · 勉强及格' },
+  { min: 60, lv: 5,  label: '勉强', color: '#f59f00', note: '橙 · 开始留意' },
+  { min: 50, lv: 4,  label: '注意', color: '#e8590c', note: '深橙 · 敲响警钟' },
+  { min: 38, lv: 3,  label: '差',   color: '#e03131', note: '红 · 明显欠债' },
+  { min: 25, lv: 2,  label: '很差', color: '#a51111', note: '大红 · 严重不足' },
+  { min: 0,  lv: 1,  label: '极差', color: '#0d1017', note: '黑 · 几乎没睡' },
+];
+const SG_WEEK = ['日', '一', '二', '三', '四', '五', '六'];
+
+/* SQI 四个分项的权重。只靠 Garmin 评分不够：它会出现「睡 4 小时却给出 55 分」
+   这种偏高的判断，必须把时长、修复性睡眠（深睡+REM）、清醒占比都放进来。 */
+const SG_WEIGHTS = { score: 0.40, dur: 0.35, struct: 0.15, cont: 0.10 };
+const SG_PART_LABEL = { score: '评分', dur: '时长', struct: '修复', cont: '连续' };
+
+function sgIso(d) {
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+}
+
+function sgInterp(x, pts) {
+  if (x <= pts[0][0]) return pts[0][1];
+  for (let i = 1; i < pts.length; i++) {
+    const [x1, y1] = pts[i - 1], [x2, y2] = pts[i];
+    if (x <= x2) return y1 + (y2 - y1) * (x - x1) / (x2 - x1);
+  }
+  return pts[pts.length - 1][1];
+}
+
+/* 睡眠质量指数（0–100）+ 分项明细。缺项时分权重自动重分配给剩余项。 */
+function sgSleepIndex(r) {
+  // 设备未检出睡眠但有自述估算时（高原露营、通宵等），时长取估算值参与计算，
+  // 否则「几乎没睡」会退化成「无记录的空格」，语义上正好相反。
+  const est = !!(r && r.sleepH == null && r.sleepEstimatedH != null);
+  const h = r ? (r.sleepH || r.sleepEstimatedH || 0) : 0;
+  const p = {
+    score: (r && r.sleepScore != null) ? r.sleepScore : null,
+    dur: h ? sgInterp(h, [[0, 0], [3, 12], [4, 26], [5, 42], [6, 58], [7, 75], [8, 90], [9, 100], [12, 100]]) : null,
+    struct: (r && (r.deepH != null || r.remH != null))
+      ? Math.min(100, ((r.deepH || 0) + (r.remH || 0)) / 3 * 100) : null,
+    cont: (h && r.awakeH != null)
+      ? Math.max(0, Math.min(100, ((1 - r.awakeH / h) - 0.70) / 0.26 * 100)) : null,
+  };
+  const keys = Object.keys(p).filter(k => p[k] != null);
+  const tw = keys.reduce((s, k) => s + SG_WEIGHTS[k], 0);
+  if (!tw) return { index: null, parts: p, estimated: false };
+  const index = keys.reduce((s, k) => s + p[k] * SG_WEIGHTS[k], 0) / tw;
+  return { index, parts: p, estimated: est };
+}
+
+/* 落到 10 级；并叠一条硬约束：睡不够时长就封顶，避免「只睡 4 小时却因为
+   某一项好看而显得没那么糟」。返回 null band 表示当天无睡眠记录。 */
+function sgLevelOf(r) {
+  const { index, parts, estimated } = sgSleepIndex(r);
+  if (index == null) return { index: null, parts, band: null, capped: null, estimated };
+  let band = null;
+  for (const b of SG_LEVELS) if (index >= b.min) { band = b; break; }
+
+  let capped = null;
+  const h = (r && (r.sleepH || r.sleepEstimatedH)) || 0;
+  if (h > 0) {
+    let cap = null;
+    if (h < 3) cap = 1; else if (h < 4) cap = 3; else if (h < 5) cap = 4;
+    if (cap != null && band && band.lv > cap) {
+      band = SG_LEVELS.find(b => b.lv === cap);
+      capped = `只睡 ${h.toFixed(2)} 小时，已封顶到「${band.label}」`;
+    }
+  }
+  return { index, parts, band, capped, estimated };
+}
+
+function renderSleepGrid() {
+  const host = $('#sg-grid');
+  if (!host) return;
+  const daily = (STATE.health && STATE.health.daily) || [];
+  if (!daily.length) { $('#sg-sub').textContent = '暂无逐日睡眠数据'; return; }
+
+  const rec = {};
+  daily.forEach(d => { rec[d.date] = d; });
+
+  const today = (STATE.insight && STATE.insight.asOf) || daily[daily.length - 1].date;
+  const end = new Date(today + 'T00:00:00');
+  const start = new Date(end);
+  start.setDate(start.getDate() - 364);
+  start.setDate(start.getDate() - start.getDay());      // 第一列对齐到周日
+
+  const days = [];
+  for (const d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) days.push(new Date(d));
+  const colCount = Math.ceil(days.length / 7);
+
+  // ---- 格子：一列 = 一周，行 = 周日…周六 ----
+  const grid = days.map(d => {
+    const iso = sgIso(d);
+    const r = rec[iso] || {};
+    const res = sgLevelOf(r);
+    if (!res.band) return '<i class="sg-cell sg-none"></i>';
+    // 设备未检出睡眠的日子：加斜纹 + 小标注，避免被误读成「忘了戴表」
+    const missed = r.sleepMissing ? ' sg-missed' : '';
+    const tip = r.sleepMissing ? ` title="${(r.sleepMissingPlace || r.sleepMissingNote || '').replace(/"/g, '')}"` : '';
+    const cls = 'sg-cell' + missed + (iso === today ? ' sg-today' : '');
+    return `<i class="${cls}" data-date="${iso}" data-lv="${res.band.lv}" ` +
+           `data-sqi="${res.index.toFixed(1)}"${tip} style="background:${res.band.color}"></i>`;
+  });
+  while (grid.length < colCount * 7) grid.push('<i class="sg-cell sg-none sg-ghost"></i>');
+  host.style.gridTemplateColumns = `repeat(${colCount}, 13px)`;
+  host.innerHTML = grid.join('');
+
+  // ---- 顶部月份刻度 ----
+  const months = [];
+  let lastM = -1, lastLabel = -99;
+  for (let j = 0; j < colCount; j++) {
+    const first = days[j * 7];
+    let label = '';
+    if (first) {
+      const m = first.getMonth();
+      if (m !== lastM && j - lastLabel >= 3) { label = (m + 1) + '月'; lastLabel = j; }
+      lastM = m;
+    }
+    months.push(`<span class="sg-m">${label}</span>`);
+  }
+  const mh = $('#sg-months');
+  mh.style.gridTemplateColumns = `repeat(${colCount}, 13px)`;
+  mh.innerHTML = months.join('');
+
+  $('#sg-weekdays').innerHTML = SG_WEEK
+    .map((w, i) => `<span class="sg-w">${i % 2 === 1 ? w : ''}</span>`).join('');
+
+  // ---- 年度统计（全部改用 SQI）----
+  const rated = days.map(d => ({ rec: rec[sgIso(d)], date: sgIso(d) }))
+    .map(x => ({ ...sgLevelOf(x.rec || {}), date: x.date, rec: x.rec }))
+    .filter(x => x.index != null);
+  const ratedCount = rated.length || 1;
+  const avg = rated.reduce((s, x) => s + x.index, 0) / ratedCount;
+  const good = rated.filter(x => x.index >= 80).length;
+  const alarm = rated.filter(x => x.index < 50).length;
+  let streak = 0, best = 0, bestEnd = '';
+  rated.forEach(x => {
+    if (x.index >= 68) {
+      streak++;
+      if (streak > best) { best = streak; bestEnd = x.date; }
+    } else streak = 0;
+  });
+  const worst = rated.length ? rated.reduce((a, b) => (b.index < a.index ? b : a)) : null;
+
+  $('#sg-stats').innerHTML = [
+    { v: avg.toFixed(1), l: '年均睡眠指数 SQI', s: `${rated.length} 天有记录` },
+    { v: Math.round(good * 100 / ratedCount) + '%', l: '良好以上 (SQI≥80)', s: `${good} / ${rated.length} 天` },
+    { v: best + ' 天', l: '最长连续及格 (≥68)', s: bestEnd ? '截至 ' + bestEnd.slice(5) : '—' },
+    { v: alarm + ' 天', l: '警报 (SQI<50)', s: worst ? `最差 ${worst.date.slice(5)} · ${worst.index.toFixed(0)}` : '—' },
+  ].map(k => `<div class="sg-stat"><div class="sg-v">${k.v}</div>` +
+             `<div class="sg-l">${k.l}</div><div class="sg-s">${k.s}</div></div>`).join('');
+
+  $('#sg-sub').textContent =
+    `过去一年 ${sgIso(days[0])} → ${today} · ${days.length} 天 · ` +
+    `分级 = 评分 40% + 时长 35% + 深睡/REM 15% + 连续性 10% · 鼠标悬停，手机点按`;
+
+  // ---- 图例 ----
+  $('#sg-legend').innerHTML =
+    '<span class="sg-lg-t">差</span>' +
+    SG_LEVELS.slice().reverse()
+      .map(b => `<i class="sg-cell" title="${b.label}（SQI ≥ ${b.min}）" style="background:${b.color}"></i>`)
+      .join('') +
+    '<span class="sg-lg-t">好</span>' +
+    `<span class="sg-lg-note">${SG_LEVELS.slice().reverse()
+      .map(b => `${b.label} ${b.note.split(' · ')[0]}`).join(' → ')}</span>`;
+
+  attachSleepTip();
+}
+
+function sgTipHtml(iso) {
+  const daily = (STATE.health && STATE.health.daily) || [];
+  const r = daily.find(x => x.date === iso);
+  if (!r) return '';
+  const d = new Date(iso + 'T00:00:00');
+  const res = sgLevelOf(r);
+  const { index, parts, band, capped } = res;
+  const hh = v => (v == null ? '—' : Number(v).toFixed(2) + 'h');
+  const eff = (r.sleepH != null && r.awakeH != null) ? Math.max(0, r.sleepH - r.awakeH) : null;
+  const out = [`<div class="sg-tip-date">${iso} · 周${SG_WEEK[d.getDay()]}</div>`];
+
+  if (band) {
+    out.push(`<div class="sg-tip-score"><i class="sg-chip" style="background:${band.color}"></i>` +
+             `<b>${index.toFixed(0)}</b> SQI · ${band.label}` +
+             `<span class="sg-tip-note">${band.note.split(' · ')[0]}</span></div>`);
+    // 分项明细：哪一项拖后腿一眼可见
+    const rows2 = Object.keys(SG_WEIGHTS)
+      .filter(k => parts[k] != null)
+      .map(k => `${SG_PART_LABEL[k]} <b>${parts[k].toFixed(0)}</b>`)
+      .join(' · ');
+    out.push(`<div class="sg-tip-parts">${rows2}</div>`);
+  } else {
+    out.push('<div class="sg-tip-score">当天没有睡眠记录</div>');
+  }
+
+  out.push(`<div class="sg-tip-kv">Garmin 评分 <b>${r.sleepScore != null ? r.sleepScore : '—'}</b>` +
+           ` · 总睡眠 <b>${hh(r.sleepH)}</b>` + (eff != null ? ` · 有效 <b>${hh(eff)}</b>` : '') + `</div>`);
+  out.push(`<div class="sg-tip-kv">深睡 <b>${hh(r.deepH)}</b> · REM <b>${hh(r.remH)}</b> · 清醒 <b>${hh(r.awakeH)}</b></div>`);
+  // 设备未检出睡眠：说明真相，否则用户会以为那天忘了戴表
+  if (r.sleepMissing) {
+    const bits = [r.sleepMissingPlace, r.sleepMissingAltitudeM ? `${r.sleepMissingAltitudeM}m` : '']
+      .filter(Boolean).join(' · ');
+    out.push('<div class="sg-tip-missed">设备未检出睡眠 —— ' +
+             (bits ? `<b>${bits}</b><br>` : '') +
+             `${r.sleepMissingNote || '人工补录'}` +
+             (r.sleepEstimatedH != null
+               ? `<br>自述估算仅睡 <b>${Number(r.sleepEstimatedH).toFixed(2)}h</b>，据此推算 SQI，非设备实测值`
+               : '<br>无时长估算，不计入 SQI') + '</div>');
+  }
+  const extra = [];
+  if (r.rhr != null) extra.push(`静息心率 <b>${r.rhr}</b> bpm`);
+  if (r.steps != null) extra.push(`步数 <b>${Number(r.steps).toLocaleString('zh-CN')}</b>`);
+  if (extra.length) out.push(`<div class="sg-tip-kv">${extra.join(' · ')}</div>`);
+  if (capped) out.push(`<div class="sg-tip-warn">${capped}</div>`);
+  return out.join('');
+}
+
+function attachSleepTip() {
+  const host = $('#sg-grid');
+  const tip = $('#sg-tip');
+  const card = $('#sg-card');
+  if (!host || !tip || !card || host.dataset.bound) return;
+  host.dataset.bound = '1';
+
+  const place = e => {
+    const r = card.getBoundingClientRect();
+    let x = e.clientX - r.left + 14;
+    let y = e.clientY - r.top + 14;
+    if (x + tip.offsetWidth > r.width - 10) x = e.clientX - r.left - tip.offsetWidth - 12;
+    tip.style.left = Math.max(6, x) + 'px';
+    tip.style.top = Math.max(6, y) + 'px';
+  };
+  const show = (cell, e) => {
+    tip.innerHTML = sgTipHtml(cell.dataset.date);
+    tip.style.display = 'block';
+    if (e) place(e);
+  };
+  host.addEventListener('mouseover', e => {
+    const c = e.target.closest && e.target.closest('.sg-cell[data-date]');
+    if (c) show(c, e);
+  });
+  host.addEventListener('mousemove', e => { if (tip.style.display === 'block') place(e); });
+  host.addEventListener('mouseleave', () => { tip.style.display = 'none'; });
+  host.addEventListener('click', e => {
+    const c = e.target.closest && e.target.closest('.sg-cell[data-date]');
+    if (c) show(c, e);
+  });
+  document.addEventListener('click', e => {
+    if (!host.contains(e.target)) tip.style.display = 'none';
+  });
+}
+
+/* ============================ 训练效果 / 负荷比 / 状态分 ============================ */
+const TE_LABELS = ['无明显效果', '轻微效果', '保持体能', '提升有氧', '显著提升', '过度负荷'];
+const TE_BOUNDS = [0, 1, 2, 3, 4, 4.99, 99];
+const TE_COLORS = ['#2b3442', '#4c6ef5', '#22b8cf', '#51cf66', '#fab005', '#ff6b6b'];
+const RD_COLOR = { excellent: C.accent2, good: C.z[2], warn: C.pace, bad: C.hr };
+
+function teIdx(te) {
+  for (let i = 0; i < 6; i++) if (te >= TE_BOUNDS[i] && te < TE_BOUNDS[i + 1]) return i;
+  return 5;
+}
+
+/** 环状分数盘 */
+function donutRing(node, score, color, label) {
+  const S = 136, r = 52, c = S / 2, sw = 12;
+  const cir = 2 * Math.PI * r;
+  const pct = Math.max(0, Math.min(100, score)) / 100;
+  node.innerHTML = `<svg viewBox="0 0 ${S} ${S}">
+    <circle cx="${c}" cy="${c}" r="${r}" fill="none" stroke="#242c39" stroke-width="${sw}"/>
+    <circle cx="${c}" cy="${c}" r="${r}" fill="none" stroke="${color}" stroke-width="${sw}"
+      stroke-linecap="round" stroke-dasharray="${cir.toFixed(1)}"
+      stroke-dashoffset="${(cir * (1 - pct)).toFixed(1)}" transform="rotate(-90 ${c} ${c})"/>
+    <text x="${c}" y="${c + 4}" text-anchor="middle" font-size="34" font-weight="660" fill="#e6edf6">${score}</text>
+    <text x="${c}" y="${c + 22}" text-anchor="middle" font-size="11.5" fill="#647084">${label || '分'}</text>
+  </svg>`;
+}
+
+/** 由活动明细算 ACWR 序列（急性 7 天 / 慢性 28 天日均负荷） */
+function acwrSeries(days = 90) {
+  const acts = STATE.core.activities || [];
+  const loads = {};
+  acts.forEach(a => { if (a.date && a.load) loads[a.date] = (loads[a.date] || 0) + a.load; });
+  if (!Object.keys(loads).length) return [];
+  const last = acts.reduce((m, a) => (!m || a.date > m ? a.date : m), null);
+  const end = new Date(last + 'T00:00:00');
+  const total = days + 27;
+  const rows = [];
+  for (let i = 0; i < total; i++) {
+    const d = new Date(end.getTime() - (total - 1 - i) * 86400000);
+    const iso = d.toISOString().slice(0, 10);
+    let s7 = 0, s28 = 0;
+    for (let j = 0; j < 7; j++) s7 += loads[dateShift(iso, -j)] || 0;
+    for (let j = 0; j < 28; j++) s28 += loads[dateShift(iso, -j)] || 0;
+    rows.push({
+      date: iso, load: r1(loads[iso] || 0),
+      acute: r1(s7 / 7), chronic: r1(s28 / 28),
+      ratio: s28 / 28 > 0.05 ? r2(s7 / s28) : null,
+    });
+  }
+  return rows.slice(27);
+}
+const dateShift = (iso, deltaDays) =>
+  new Date(new Date(iso + 'T00:00:00').getTime() + deltaDays * 86400000).toISOString().slice(0, 10);
+const r1 = v => Math.round(v * 10) / 10;
+const r2 = v => Math.round(v * 100) / 100;
+
+/** ACWR 折线：带 0.8–1.3 最佳区间、1.3–1.5 警戒、>1.5 危险三条底色带 */
+function drawAcwr(node, rows, opt = {}) {
+  if (!rows.length) { node.innerHTML = '<div class="empty">无训练负荷数据</div>'; return; }
+  const W = node.clientWidth || 600, H = opt.height || 230;
+  const pad = { t: 12, r: 14, b: 26, l: 40 };
+  const iw = W - pad.l - pad.r, ih = H - pad.t - pad.b;
+  const n = rows.length;
+  const vals = rows.map(x => x.ratio).filter(isNum);
+  const yMax = Math.max(2.0, Math.min(5, (vals.length ? Math.max(...vals) : 1.3) * 1.15));
+  const X = i => pad.l + (n <= 1 ? iw / 2 : (i / (n - 1)) * iw);
+  const Y = v => pad.t + ih - (v / yMax) * ih;
+  const band = (lo, hi, fill) => {
+    const y1 = Y(Math.min(hi, yMax)), y2 = Y(lo);
+    return `<rect x="${pad.l}" y="${y1.toFixed(1)}" width="${iw}" height="${(y2 - y1).toFixed(1)}" fill="${fill}"/>`;
+  };
+  let s = `<svg viewBox="0 0 ${W} ${H}" height="${H}">`;
+  s += band(0.8, 1.3, 'rgba(81,207,102,0.10)');
+  s += band(1.3, 1.5, 'rgba(250,176,5,0.09)');
+  if (yMax > 1.5) s += band(1.5, yMax, 'rgba(255,107,107,0.09)');
+  for (let v = 0.5; v <= yMax; v += 0.5) {
+    const yy = Y(v);
+    if (yy < pad.t - 1) continue;
+    s += `<line x1="${pad.l}" y1="${yy.toFixed(1)}" x2="${W - pad.r}" y2="${yy.toFixed(1)}" stroke="#242c39"/>`;
+    s += `<text x="${pad.l - 8}" y="${(yy + 4).toFixed(1)}" fill="#647084" font-size="10.5" text-anchor="end">${v.toFixed(1)}</text>`;
+  }
+  let d = '', started = false;
+  rows.forEach((row, i) => {
+    const v = row.ratio;
+    if (!isNum(v)) { started = false; return; }
+    d += `${started ? 'L' : 'M'}${X(i).toFixed(1)},${Y(v).toFixed(1)}`;
+    started = true;
+  });
+  s += `<path d="${d}" fill="none" stroke="${C.accent}" stroke-width="2.2" stroke-linejoin="round"/>`;
+  const step = Math.max(1, Math.floor(n / (opt.xTicks || 6)));
+  for (let i = 0; i < n; i += step) s += `<text x="${X(i).toFixed(1)}" y="${H - 7}" fill="#647084" font-size="10.5" text-anchor="middle">${shortDate(rows[i].date)}</text>`;
+  rows.forEach((row, i) => {
+    const bw = iw / n;
+    s += `<rect x="${(X(i) - bw / 2).toFixed(1)}" y="${pad.t}" width="${bw.toFixed(1)}" height="${ih}" fill="transparent">
+      <title>${row.date}\n负荷比 ${row.ratio ?? '—'}\n急性 7 日均 ${row.acute}\n慢性 28 日均 ${row.chronic}\n当日负荷 ${row.load}</title></rect>`;
+  });
+  s += '</svg>';
+  node.innerHTML = s;
+}
+
+/* ---------------------------- 简报页：今日状态 ---------------------------- */
+function renderReadiness(I) {
+  const rd = I && I.readiness;
+  if (!rd) {
+    $('#rd-sub').textContent = '需先运行 scripts/build_insight.py';
+    $('#rd-ring').innerHTML = '<svg viewBox="0 0 136 136"><circle cx="68" cy="68" r="52" fill="none" stroke="#242c39" stroke-width="12"/></svg>';
+    $('#rd-comps').innerHTML = '<div class="empty">暂无数据</div>';
+    $('#rd-official').textContent = '';
+    return;
+  }
+  donutRing($('#rd-ring'), rd.score, RD_COLOR[rd.level] || C.accent2, rd.label);
+  $('#rd-sub').textContent = `截至 ${I.asOf} · ${rd.comps.length} 项加权 · ${rd.label}`;
+
+  $('#rd-comps').innerHTML = rd.comps.map(c => {
+    const col = RD_COLOR[c.score >= 85 ? 'excellent' : c.score >= 70 ? 'good' : c.score >= 55 ? 'warn' : 'bad'];
+    return `<div class="rc-row">
+      <div class="rc-head">
+        <span class="k">${c.label}<span class="w">权重 ${Math.round(c.effective || c.weight * 100)}%</span></span>
+        <span class="v">${c.value} · ${Math.round(c.score)} 分</span>
+      </div>
+      <div class="rc-bar"><i style="width:${Math.round(c.score)}%;background:${col}"></i></div>
+      ${c.hint ? `<div class="rc-hint">${c.hint}</div>` : ''}
+    </div>`;
+  }).join('');
+
+  const wd = (I.wellness && I.wellness.daily || []).slice(-1)[0];
+  const bits = [];
+  if (wd && wd.readinessScore != null) {
+    const cn = { PRIME: '巅峰状态', HIGH: '状态很好', MODERATE: '状态一般', LOW: '状态偏低', POOR: '状态很差' }[wd.readinessLevel] || wd.readinessLevel;
+    bits.push(`腕表官方训练准备度 <b>${wd.readinessScore} 分 · ${cn}</b>`);
+  }
+  if (wd && wd.hrvNight != null) bits.push(`昨夜 HRV <b>${wd.hrvNight} ms</b>（周均 ${wd.hrvWeekly ?? '—'}，${wd.hrvStatus === 'BALANCED' ? '基线内' : '偏离基线'}）`);
+  if (wd && wd.bbCharged != null) bits.push(`身体电量回充 <b>${wd.bbCharged}</b> / 消耗 ${wd.bbDrained ?? '—'}`);
+  if (rd.missing && rd.missing.length) bits.push(`缺失维度：${rd.missing.join('、')}（已自动把权重摊给其余项）`);
+  $('#rd-official').innerHTML = bits.join(' · ');
+}
+
+/* ---------------------------- 简报页：负荷平衡 ---------------------------- */
+function renderBriefingAcwr(I) {
+  const L = I && I.load;
+  if (!L || L.ratio == null) {
+    $('#acwr-sub').textContent = '—';
+    $('#acwr-top').innerHTML = '';
+    $('#br-acwr').innerHTML = '<div class="empty">无训练负荷数据</div>';
+    $('#acwr-note').textContent = '';
+    return;
+  }
+  const col = L.level === 'good' ? C.z[2] : L.level === 'warn' ? C.pace : L.level === 'bad' ? C.hr : C.dim;
+  $('#acwr-sub').textContent = `${L.range ? L.range[0] + ' — ' + L.range[1] : ''}`;
+  $('#acwr-top').innerHTML = `
+    <div class="col">
+      <div class="l">ACWR</div>
+      <div class="big" style="color:${col}">${L.ratio.toFixed(2)}</div>
+      <span class="acwr-badge" style="background:${col}22;color:${col}">${L.label}</span>
+    </div>
+    <div class="col"><div class="l">急性 7 日均</div><div class="s" style="font-size:20px;color:var(--fg)">${L.acute}</div>
+      <div class="s">近 7 天累计 ${Math.round(L.load7)}</div></div>
+    <div class="col"><div class="l">慢性 28 日均</div><div class="s" style="font-size:20px;color:var(--fg)">${L.chronic}</div>
+      <div class="s">近 28 天累计 ${Math.round(L.load28)}</div></div>`;
+  drawAcwr($('#br-acwr'), (L.series || []).slice(-45), { height: 190, xTicks: 5 });
+  $('#acwr-note').textContent = '比值 = 近 7 天日均负荷 ÷ 近 28 天日均负荷。0.8–1.3 是既能进步又不易受伤的区间。';
+}
+
+/* ---------------------------- 简报页：体能档案 ---------------------------- */
+function renderWellness(I) {
+  const W = I && I.wellness;
+  if (!W || !W.available || !W.latest) { $('#wl-card').style.display = 'none'; return; }
+  $('#wl-card').style.display = '';
+  const L = W.latest;
+  const d = (W.daily || []).slice(-1)[0] || {};
+  const raceLbl = sec => {
+    if (!isNum(sec)) return '—';
+    const h = Math.floor(sec / 3600), m = Math.floor(sec % 3600 / 60), s = Math.round(sec % 60);
+    return h ? `${h}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}` : `${m}:${String(s).padStart(2, '0')}`;
+  };
+  const kpis = [
+    { l: 'VO2 Max', v: L.vo2max ?? '—', u: 'ml/kg/min', s: L.vo2maxDate ? `最近测算 ${L.vo2maxDate}` : '腕表估值' },
+    { l: '体能年龄', v: L.fitnessAge ?? '—', u: '岁', s: L.realAge ? `实际年龄 ${L.realAge} 岁 · 年轻 ${(L.realAge - L.fitnessAge).toFixed(1)} 岁` : '' },
+    { l: '耐力分', v: L.enduranceScore ?? '—', u: '', s: L.enduranceNext ? `下一档门槛 ${L.enduranceNext}` : '' },
+    { l: '爬坡分', v: L.hillScore ?? '—', u: '', s: L.hillClass != null ? `腕表评级档位 ${L.hillClass}` : '' },
+  ];
+  $('#wl-grid').innerHTML = kpis.map(k =>
+    `<div class="card kpi"><div class="label">${k.l}</div><div class="value">${k.v}<span class="unit">${k.u}</span></div>` +
+    `<div class="delta flat">${k.s || '—'}</div></div>`).join('');
+
+  const extra = [];
+  if (L.race) extra.push(`<b>竞赛预测</b>：5 km ${raceLbl(L.race['5k'])} · 10 km ${raceLbl(L.race['10k'])} · 半马 ${raceLbl(L.race.half)} · 全马 ${raceLbl(L.race.full)}`);
+  if (isNum(L.loadAerobicLow)) {
+    const t = [L.loadTargetLow, L.loadTargetHigh].filter(isNum);
+    const pct = (L.loadTargetHigh && L.loadTargetHigh > 0) ? Math.round(L.loadAerobicLow / L.loadTargetHigh * 100) : null;
+    extra.push(`<b>本月负荷</b>：${L.loadAerobicLow}（目标区间 ${t.join('–')}）<b>${pct != null ? ` · 完成度 ${pct}%` : ''}</b>`
+      + (L.loadFeedback === 'BELOW_TARGETS' ? '，低于维持水平，掉体能中' : ''));
+  }
+  if (d.respSleep != null) extra.push(`<b>睡眠呼吸</b>：${d.respSleep} 次/分（全天 ${d.respLow ?? '—'}–${d.respHigh ?? '—'}）`);
+  if (d.spo2SleepAvg != null) extra.push(`<b>睡眠血氧</b>：均值 ${d.spo2SleepAvg}% · 最低 ${d.spo2Lowest ?? '—'}%`);
+  if (isNum(L.bmiValue)) extra.push(`BMI ${L.bmiValue}（${L.sampledLabel || '最新体测'}）`);
+  if (L.deviceName) extra.push(`数据源：${L.deviceName}`);
+  $('#wl-extra').innerHTML = extra.join('<br>');
+  $('#wl-sub').textContent = W.range ? `数据区间 ${W.range.start} — ${W.range.end}（${W.range.days} 天）` : '腕表长期积累的体能类指标';
+}
+
+/* ============================ 卧室环境（温湿度 vs 睡眠） ============================ */
+function renderEnvironment() {
+  const E = STATE.envDaily;
+  const box = $('#env-card');
+  if (!box) return;
+  if (!E) { box.style.display = 'none'; return; }
+
+  const nights = E.nights || [];
+  const cov = E.coverage || {};
+  const bands = E.bands || { temp: [18, 22], humidity: [40, 60] };
+  const tBand = bands.temp, hBand = bands.humidity;
+
+  $('#env-sub').textContent = cov.nightsSpan
+    ? `${cov.nightsSpan[0]} — ${cov.nightsSpan[1]} · ${cov.nightsMatched} 个有效夜晚 · ${E.window || ''}`
+    : (E.source || '卧室「温度计」');
+
+  // ---------- 尚无有效夜晚：明确告诉用户采集中、还差多少 ----------
+  if (!nights.length) {
+    const need = Math.max(...Object.values(E.corr || {}).map(c => c.need || 0), 0);
+    $('#env-kpi').innerHTML = '';
+    $('#env-temp').innerHTML = '';
+    $('#env-temp-lg').innerHTML = '';
+    $('#env-scatter').innerHTML = '';
+    $('#env-scatter-lg').innerHTML = '';
+    $('#env-corr').innerHTML =
+      `<div style="font-size:13px;color:#97a3b6;line-height:1.8">
+        原始采样已积累 <b style="color:var(--fg)">${cov.rawSamples ?? 0}</b> 点${cov.rawSpan ? `（${cov.rawSpan[0]} 起）` : ''}，
+        但要凑够一整夜还需再等 —— 单晚至少 ${(E.thresholds || {}).minSamplesPerNight || 4} 个采样点才计入统计。<br>
+        建议：保持 Mac 不休眠（launchd <code>com.warden.miot-env</code> 夜间每 10 分钟采一次），
+        累计到 ${(E.thresholds || {}).minNightsForCorr || 10} 个有效夜晚后这里才会给出温度与睡眠的相关系数${need ? `（当前还差 ${need} 晚）` : ''}。
+      </div>`;
+    $('#env-note').textContent = E.generatedAt ? `聚合于 ${new Date(E.generatedAt).toLocaleString('zh-CN')}` : '';
+    return;
+  }
+
+  // ---------- KPI ----------
+  const last = nights[nights.length - 1];
+  const pct = v => (isNum(v) ? Math.round(v * 100) : null);
+  const now = E.latest || {};
+  const kpis = [
+    {
+      l: `昨夜均温 ${last.date.slice(5)}`,
+      v: isNum(last.tempAvg) ? last.tempAvg.toFixed(1) : '—', u: '°C',
+      s: `波动 ${nf(last.tempMin, 1)}–${nf(last.tempMax, 1)}°C · 推荐 ${tBand[0]}–${tBand[1]}°C`,
+      ok: last.tempOk,
+    },
+    {
+      l: '昨夜湿度',
+      v: isNum(last.humAvg) ? last.humAvg.toFixed(0) : '—', u: '%',
+      s: `波动 ${nf(last.humMin, 0)}–${nf(last.humMax, 0)}% · 推荐 ${hBand[0]}–${hBand[1]}%`,
+      ok: last.humOk,
+    },
+    {
+      l: '温度达标时长',
+      v: pct(last.timeInTempBand) === null ? '—' : pct(last.timeInTempBand), u: '%',
+      s: `整夜落在 ${tBand[0]}–${tBand[1]}°C 的采样占比（${last.samples} 点）`,
+      ok: (last.timeInTempBand || 0) >= 0.7,
+    },
+    {
+      l: '此刻读数',
+      v: isNum(now.temp) ? now.temp.toFixed(1) : '—', u: '°C',
+      s: `${isNum(now.humidity) ? now.humidity.toFixed(0) + '% RH · ' : ''}${now.ts ? now.ts.slice(5, 16).replace('T', ' ') : '暂无'}`,
+      ok: null,
+    },
+  ];
+  $('#env-kpi').innerHTML = kpis.map(k => {
+    const col = k.ok === null ? '' : (k.ok ? ` style="color:${C.z[2]}"` : ` style="color:${C.pace}"`);
+    return `<div class="card kpi"><div class="label">${k.l}</div>` +
+      `<div class="value">${k.v}<span class="unit">${k.u}</span></div>` +
+      `<div class="delta flat"${col}>${k.s}</div></div>`;
+  }).join('');
+
+  // ---------- 图 1：近 14 晚 · 夜间均温（左轴）/ 睡眠评分（右轴） ----------
+  const recent = nights.slice(-14);
+  const x = recent.map(n => n.date.slice(5).replace('-', '/'));
+  lineChart($('#env-temp'), {
+    height: 240, x, dot: true, dotOpacity: 0.55,
+    series: [
+      { name: '夜间均温 °C', data: recent.map(n => n.tempAvg), color: C.accent, width: 2.1 },
+      { name: '睡眠评分', data: recent.map(n => n.sleepScore), color: '#7b8cff', width: 1.7, dash: '5 3', axis: 'y2' },
+    ],
+    yFmt: v => v.toFixed(0) + '°',
+    tip: i => {
+      const n = recent[i];
+      return `<b>${n.date}</b><br>均温 ${nf(n.tempAvg, 1)}°C（${nf(n.tempMin, 1)}–${nf(n.tempMax, 1)}）<br>` +
+        `湿度 ${nf(n.humAvg, 0)}% · 达标 ${pct(n.timeInTempBand)}%<br>` +
+        `睡眠 ${nf(n.sleepH, 2)}h / ${n.sleepScore ?? '—'} 分 · 夜醒 ${nf(n.awakeH, 2)}h`;
+    },
+  });
+  legend($('#env-temp-lg'), [
+    { name: '夜间均温（左轴）', color: C.accent },
+    { name: '睡眠评分（右轴）', color: '#7b8cff' },
+  ]);
+
+  // ---------- 图 2：散点 · 全部有效夜晚的 温度 × 睡眠评分 ----------
+  const pts = nights.filter(n => isNum(n.tempAvg) && isNum(n.sleepScore));
+  $('#env-scatter').innerHTML = '';
+  if (pts.length >= 3) {
+    scatter($('#env-scatter'), {
+      height: 240,
+      xLabel: '夜间均温 °C',
+      xFmt: v => v.toFixed(1),
+      points: pts.map(n => ({
+        x: n.tempAvg, y: n.sleepScore, r: 4.2,
+        color: (n.timeInTempBand || 0) >= 0.7 ? C.z[2] : C.accent,
+        label: `${n.date} · ${nf(n.tempAvg, 1)}°C / ${n.sleepScore} 分`,
+      })),
+    });
+    legend($('#env-scatter-lg'), [
+      { name: '整夜温度达标（≥70% 采样在推荐区间）', color: C.z[2] },
+      { name: '未达标', color: C.accent },
+    ]);
+  } else {
+    $('#env-scatter').innerHTML =
+      `<div style="height:240px;display:flex;align-items:center;justify-content:center;color:#647084;font-size:13px">
+        散点图需要至少 3 个同时具备温度与睡眠评分的夜晚（当前 ${pts.length} 个）
+      </div>`;
+    $('#env-scatter-lg').innerHTML = '';
+  }
+
+  // ---------- 相关性结论 ----------
+  const order = ['temp_score', 'temp_awake', 'temp_deep', 'hum_score', 'hum_awake'];
+  const items = order.map(k => (E.corr || {})[k]).filter(Boolean);
+  const fmtP = p => (!isNum(p) ? '—' : (p < 0.0001 ? '< 0.0001' : p.toFixed(4)));
+  $('#env-corr').innerHTML = `<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px">` +
+    items.map(c => {
+      const ready = isNum(c.r);
+      const strong = ready && Math.abs(c.r) >= 0.2;
+      const col = !ready ? C.dim : (Math.abs(c.r) >= 0.35 ? (c.r < 0 ? C.hr : C.z[2]) : C.pace);
+      return `<div style="border:1px solid #242c39;border-radius:10px;padding:10px 12px">
+        <div style="font-size:12px;color:#97a3b6">${c.name}</div>
+        <div style="display:flex;align-items:baseline;gap:8px;margin:4px 0 2px">
+          <b style="font-size:19px;color:${col};font-variant-numeric:tabular-nums">${ready ? (c.r > 0 ? '+' : '') + c.r.toFixed(3) : '待积累'}</b>
+          <span style="font-size:11.5px;color:#647084">r</span>
+        </div>
+        <div style="font-size:11.5px;color:#8b93a5;line-height:1.6">
+          ${ready
+            ? `p ${fmtP(c.p)} · <b style="color:${strong ? col : C.dim}">${c.label}</b> · n=${c.n} 夜`
+            : `样本不足，还差 ${c.need} 晚（当前 ${c.n} 夜）`}
+        </div>
+      </div>`;
+    }).join('') + `</div>`;
+
+  $('#env-note').innerHTML =
+    `参考区间：睡眠期室温 ${tBand[0]}–${tBand[1]}°C、相对湿度 ${hBand[0]}–${hBand[1]}% | ` +
+    `夜窗定义：${E.window || ''} | 每晚不足 ${(E.thresholds || {}).minSamplesPerNight || 4} 个采样点不计入 | ` +
+    `数据源：${E.source || '米家温湿度计'} | 聚合于 ${E.generatedAt ? new Date(E.generatedAt).toLocaleString('zh-CN') : '—'}`;
+}
+
+/* ---------------------------- 训练页：训练效果 + 负荷比 + 场地 ---------------------------- */
+function renderTrainingExtras() {
+  const acts = STATE.core.activities || [];
+  const withTe = acts.filter(a => a.te != null);
+  $('#te-sub').textContent = `${withTe.length} / ${acts.length} 次活动有记录 · 均值 ${withTe.length ? (withTe.reduce((s, a) => s + a.te, 0) / withTe.length).toFixed(2) : '—'}`;
+
+  // 分布
+  const counts = new Array(6).fill(0);
+  withTe.forEach(a => counts[teIdx(a.te)]++);
+  const maxC = Math.max(...counts, 1);
+  $('#te-dist').innerHTML = TE_LABELS.map((name, i) =>
+    `<div class="bar-row"><span class="n">${name}</span>
+      <span class="b"><i style="width:${(counts[i] / maxC * 100).toFixed(1)}%;background:${TE_COLORS[i]}"></i></span>
+      <span class="v">${counts[i]} 次</span></div>`).join('');
+  $('#te-dist-lg').innerHTML = TE_LABELS.map((n, i) =>
+    `<span><i style="background:${TE_COLORS[i]}"></i>${n} ${(counts[i] / Math.max(1, withTe.length) * 100).toFixed(0)}%</span>`).join('');
+
+  // 月度均值
+  const byMonth = {};
+  withTe.forEach(a => { const m = (a.date || '').slice(0, 7); if (m) (byMonth[m] = byMonth[m] || []).push(a.te); });
+  const months = Object.keys(byMonth).sort().slice(-12);
+  lineChart($('#te-month'), {
+    height: 230, x: months.map(monthLabel), xTicks: 8,
+    yDomain: [0, 5],
+    series: [{
+      name: '月度平均训练效果', color: C.accent, data: months.map(m => Math.round(byMonth[m].reduce((s, v) => s + v, 0) / byMonth[m].length * 100) / 100), width: 2, dot: true, fill: true,
+    }],
+    yFmt: v => v.toFixed(0),
+    tip: i => `<div class="t">${months[i]}</div><div class="r"><span>平均 TE</span><b>${(byMonth[months[i]].reduce((s, v) => s + v, 0) / byMonth[months[i]].length).toFixed(2)}</b></div>` +
+      `<div class="r"><span>活动次数</span><b>${byMonth[months[i]].length}</b></div>`,
+  });
+  legend($('#te-month-lg'), [{ name: '月度平均训练效果（虚线以上才算练到）', color: C.accent }]);
+
+  // 分项（近 12 个月）
+  const ago = new Date(STATE.core.range.end.slice(0, 10) + 'T00:00:00');
+  ago.setFullYear(ago.getFullYear() - 1);
+  const agoIso = ago.toISOString().slice(0, 10);
+  const bySport = {};
+  withTe.forEach(a => { if (a.date >= agoIso) (bySport[a.sportCn || a.sport] = bySport[a.sportCn || a.sport] || []).push(a.te); });
+  const sports = Object.entries(bySport).map(([s, v]) => ({ s, n: v.length, avg: v.reduce((x, y) => x + y, 0) / v.length }))
+    .sort((a, b) => b.n - a.n).slice(0, 6);
+  const sMax = Math.max(...sports.map(x => x.avg), 1);
+  $('#te-sport').innerHTML = sports.map(x => {
+    const ti = teIdx(x.avg);
+    return `<div class="bar-row"><span class="n">${x.s}</span>
+      <span class="b"><i style="width:${(x.avg / sMax * 100).toFixed(1)}%;background:${TE_COLORS[ti]}"></i></span>
+      <span class="v">均值 ${x.avg.toFixed(2)}</span></div>`;
+  }).join('') + `<div class="hint" style="margin-top:8px">统计近一年（${agoIso} 起）</div>`;
+
+  // ACWR 全序列
+  const rows = acwrSeries(90);
+  drawAcwr($('#acwr-series'), rows, { height: 250, xTicks: 8 });
+  const cur = rows[rows.length - 1] || {};
+  legend($('#acwr-series-lg'), [
+    { name: `负荷比（当前 ${cur.ratio ?? '—'}）`, color: C.accent },
+    { name: '0.8–1.3 最佳区间', color: 'rgba(81,207,102,0.45)' },
+    { name: '>1.5 重伤风险', color: 'rgba(255,107,107,0.45)' },
+  ]);
+
+  // 场地聚类
+  renderPlaces(acts);
+}
+
+/** 按起点经纬度做 ~5km 聚类，找出常去的场地 */
+function renderPlaces(acts) {
+  const pts = acts.filter(a => isNum(a.startLat) && isNum(a.startLon));
+  if (!pts.length) { $('#tr-places').innerHTML = '<div class="empty">活动缺少起点坐标</div>'; return; }
+  const clusters = [];
+  pts.forEach(a => {
+    let hit = null;
+    for (const c of clusters) {
+      if (haversineM([c.lat, c.lon], [a.startLat, a.startLon]) < 5000) { hit = c; break; }
+    }
+    if (!hit) { hit = { lat: a.startLat, lon: a.startLon, items: [] }; clusters.push(hit); }
+    hit.items.push(a);
+    hit.lat = (hit.lat * (hit.items.length - 1) + a.startLat) / hit.items.length;
+    hit.lon = (hit.lon * (hit.items.length - 1) + a.startLon) / hit.items.length;
+    hit.km = (hit.km || 0) + (a.distKm || 0);
+    hit.last = (!hit.last || a.date > hit.last) ? a.date : hit.last;
+  });
+  clusters.sort((a, b) => (b.items.length - a.items.length) || (b.km - a.km));
+  const top = clusters.slice(0, 8);
+  $('#tr-places').innerHTML = top.map((c, i) => {
+    const names = {};
+    c.items.forEach(a => { if (a.location) names[a.location] = (names[a.location] || 0) + 1; });
+    const name = Object.entries(names).sort((a, b) => b[1] - a[1])[0]?.[0]
+      || `未命名地点 ${c.lat.toFixed(2)}, ${c.lon.toFixed(2)}`;
+    const km = c.items.reduce((s, a) => s + (a.distKm || 0), 0);
+    const sports = {};
+    c.items.forEach(a => { sports[a.sportCn] = (sports[a.sportCn] || 0) + 1; });
+    const mainSport = Object.entries(sports).sort((a, b) => b[1] - a[1])[0][0];
+    return `<div class="place-row">
+      <span class="rank">${i + 1}</span>
+      <span class="nm">${name}<span>${mainSport} · 最近 ${c.last} · ${c.lat.toFixed(3)}, ${c.lon.toFixed(3)}</span></span>
+      <span class="met">${c.items.length} 次</span>
+      <span class="met" style="width:86px;text-align:right">${km.toFixed(1)} km</span>
+    </div>`;
+  }).join('') +
+    `<div class="hint" style="margin-top:10px">共 ${clusters.length} 个场地簇（${pts.length} 次活动有起点坐标），按到访次数排序。</div>`;
+}
+
+/** 健康趋势页：HRV / 训练准备度 / 身体电量（来自 Garmin 每日恢复指标） */
+const HRV_METRICS = {
+  hrv: {
+    name: 'HRV', color: C.accent2, unit: 'ms', y2: false,
+    keys: ['hrvNight', 'hrvWeekly'],
+    vals: d => [d.hrvNight, d.hrvWeekly],
+    series: [{ name: '昨夜 HRV', color: C.accent2, key: 'hrvNight' }, { name: '周均 HRV', color: '#7b8cff', key: 'hrvWeekly', dash: '4 3' }],
+    tip: d => `<div class="r"><span>状态</span><b>${d.hrvStatus || '—'}</b></div>`,
+  },
+  readiness: {
+    name: '训练准备度', color: C.accent, unit: '分', y2: false,
+    vals: d => [d.readinessScore],
+    series: [{ name: '训练准备度', color: C.accent, key: 'readinessScore' }],
+    tip: d => `<div class="r"><span>等级</span><b>${d.readinessLevel || '—'}</b></div>` +
+      (d.readinessFeedback ? `<div class="r"><span>腕表建议</span><b>${d.readinessFeedback}</b></div>` : ''),
+  },
+  battery: {
+    name: '身体电量', color: C.weight, unit: '', y2: false,
+    vals: d => [d.bbCharged, d.bbDrained],
+    series: [{ name: '夜间回充', color: C.weight, key: 'bbCharged' }, { name: '白天消耗', color: C.steps, key: 'bbDrained' }],
+    tip: d => `<div class="r"><span>区间</span><b>${d.bbMin ?? '—'} – ${d.bbMax ?? '—'}</b></div>`,
+  },
+};
+/* ============================ 睡眠日历（GitHub 贡献图风格） ============================ */
+/* 10 级色阶：1 最差（近黑）→ 10 最好（墨绿）。中间用红/橙承担「敲警钟」的语义。 */
+const SLEEP_RAMP = [
+  '#2b0a08', // 1 极差
+  '#b3241c', // 2 大红
+  '#d9482b', // 3 红
+  '#ef7d29', // 4 橙红
+  '#f2b134', // 5 橙
+  '#e3cc47', // 6 黄
+  '#a8d24c', // 7 黄绿
+  '#5cc06d', // 8 浅绿
+  '#229a53', // 9 绿
+  '#0a5c33', // 10 深绿（最优）
+];
+const CAL_EMPTY = '#1c212b';
+const CAL_WD = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
+
+const CAL_METRICS = {
+  score: {
+    label: '睡眠评分',
+    get: d => d.sleepScore,
+    fmt: v => (v == null ? '—' : Math.round(v) + ' 分'),
+    // Garmin 口径：90+ 优秀 / 80+ 良好 / 70+ 一般 / 60+ 偏差 / <60 差
+    bucket: v => v >= 90 ? 10 : v >= 85 ? 9 : v >= 80 ? 8 : v >= 75 ? 7 : v >= 70 ? 6
+      : v >= 65 ? 5 : v >= 60 ? 4 : v >= 50 ? 3 : v >= 40 ? 2 : 1,
+    levels: ['<40', '40-49', '50-59', '60-64', '65-69', '70-74', '75-79', '80-84', '85-89', '90+'],
+  },
+  hours: {
+    label: '睡眠时长',
+    get: d => d.sleepH,
+    fmt: v => (v == null ? '—' : v.toFixed(2) + ' h'),
+    bucket: v => v >= 8.5 ? 10 : v >= 8 ? 9 : v >= 7.5 ? 8 : v >= 7 ? 7 : v >= 6.5 ? 6
+      : v >= 6 ? 5 : v >= 5.5 ? 4 : v >= 5 ? 3 : v >= 4 ? 2 : 1,
+    levels: ['<4h', '4-5h', '5-5.5h', '5.5-6h', '6-6.5h', '6.5-7h', '7-7.5h', '7.5-8h', '8-8.5h', '8.5h+'],
+  },
+};
+
+function renderSleepCalendar() {
+  const H = STATE.health;
+  const node = $('#he-cal');
+  if (!H || !H.daily || !H.daily.length) { node.innerHTML = ''; return; }
+
+  const key = STATE.calMetric || 'score';
+  const M = CAL_METRICS[key];
+  const daily = H.daily;
+
+  // 网格：结束于最后一天所在周的周六，向前铺满 53 周
+  const lastDate = daily[daily.length - 1].date;
+  const endD = new Date(lastDate + 'T00:00:00');
+  const gridEnd = new Date(endD);
+  gridEnd.setDate(endD.getDate() + (6 - endD.getDay()));
+  const gridStart = new Date(gridEnd);
+  gridStart.setDate(gridEnd.getDate() - (53 * 7 - 1));
+
+  const byDate = new Map();
+  daily.forEach(d => byDate.set(d.date, d));
+
+  const CELL = 11, GAP = 3, STEP = CELL + GAP, PAD_L = 30, PAD_T = 18;
+  let cells = '', months = '', lastMonth = -1;
+
+  for (let w = 0; w < 53; w++) {
+    for (let dow = 0; dow < 7; dow++) {
+      const dt = new Date(gridStart);
+      dt.setDate(gridStart.getDate() + w * 7 + dow);
+      if (dt > gridEnd) continue;
+      // 未来日期不画格子（本周未到的几天留白，与 GitHub 一致）
+      if (dt > endD) continue;
+      const ds = `${dt.getFullYear()}-${String(dt.getMonth() + 1).padStart(2, '0')}-${String(dt.getDate()).padStart(2, '0')}`;
+      const d = byDate.get(ds);
+      const v = d ? M.get(d) : null;
+      const lv = (v === null || v === undefined || !isFinite(v)) ? 0 : M.bucket(v);
+      const fill = lv === 0 ? CAL_EMPTY : SLEEP_RAMP[lv - 1];
+      const x = PAD_L + w * STEP, y = PAD_T + dow * STEP;
+      cells += `<rect class="cal-cell" x="${x}" y="${y}" width="${CELL}" height="${CELL}" rx="2.5"` +
+        ` fill="${fill}" data-d="${ds}"${d ? '' : ' data-empty="1"'}></rect>`;
+      if (dow === 0 && dt.getMonth() !== lastMonth) {
+        lastMonth = dt.getMonth();
+        months += `<text class="cal-month" x="${x}" y="${PAD_T - 6}">${lastMonth + 1}月</text>`;
+      }
+    }
+  }
+
+  const dows = [1, 3, 5].map(i =>
+    `<text class="cal-dow" x="0" y="${PAD_T + i * STEP + CELL - 1}">${CAL_WD[i].slice(1)}</text>`).join('');
+
+  const W = PAD_L + 53 * STEP, Hh = PAD_T + 7 * STEP;
+  node.innerHTML =
+    `<svg viewBox="0 0 ${W} ${Hh + 2}" width="100%" height="${Hh + 2}" ` +
+    `preserveAspectRatio="xMinYMin meet" role="img" aria-label="过去一年每日睡眠${M.label}热力方格图">` +
+    months + dows + cells + `</svg>`;
+
+  // 悬浮浮层：给出当天完整的睡眠结构
+  $$('#he-cal .cal-cell').forEach(r => {
+    r.addEventListener('mousemove', e => {
+      const ds = r.dataset.d;
+      const d = byDate.get(ds);
+      const dt = new Date(ds + 'T00:00:00');
+      let html;
+      if (!d) {
+        html = `<div class="t">${ds} ${CAL_WD[dt.getDay()]}</div>
+          <div class="r"><span>无睡眠记录</span></div>`;
+      } else {
+        const row = (k, v) => `<div class="r"><span>${k}</span><b>${v}</b></div>`;
+        html = `<div class="t">${ds} ${CAL_WD[dt.getDay()]}</div>` +
+          row(M.label, M.fmt(M.get(d))) +
+          (key === 'hours' ? '' : row('睡眠时长', isNum(d.sleepH) ? d.sleepH.toFixed(2) + ' h' : '—')) +
+          row('深睡', isNum(d.deepH) ? d.deepH.toFixed(2) + ' h' : '—') +
+          row('REM', isNum(d.remH) ? d.remH.toFixed(2) + ' h' : '—') +
+          row('夜间清醒', isNum(d.awakeH) ? d.awakeH.toFixed(2) + ' h' : '—') +
+          row('静息心率', isNum(d.rhr) ? Math.round(d.rhr) + ' bpm' : '—');
+      }
+      showTip(html, e.clientX, e.clientY);
+    });
+    r.addEventListener('mouseleave', hideTip);
+  });
+
+  // 图例
+  $('#he-cal-lg').innerHTML =
+    `<span class="cal-lg-t">差</span>` +
+    SLEEP_RAMP.map((c, i) =>
+      `<span class="cal-lg-c" style="background:${c}" title="${M.levels[i]}"></span>`).join('') +
+    `<span class="cal-lg-t">好</span>` +
+    `<span class="cal-lg-null"><i style="background:${CAL_EMPTY}"></i>无记录</span>`;
+
+  // 汇总
+  // 注意：不能用 toISOString()，那是 UTC，会把本地 00:00 推成前一天
+  const fmtLocal = dt => `${dt.getFullYear()}-${String(dt.getMonth() + 1).padStart(2, '0')}-${String(dt.getDate()).padStart(2, '0')}`;
+  const win = daily.filter(d => d.date >= fmtLocal(gridStart) && d.date <= lastDate);
+  const vals = win.map(M.get).filter(v => v !== null && v !== undefined && isFinite(v));
+  if (vals.length) {
+    const avg = vals.reduce((a, b) => a + b, 0) / vals.length;
+    const good = vals.filter(v => M.bucket(v) >= 8).length;
+    const bad = vals.filter(v => M.bucket(v) <= 3).length;
+    $('#he-cal-sub').textContent =
+      `过去 ${win.length} 天 · ${M.label}均 ${M.fmt(avg)} · 良好 ${good} 天 · 偏差 ${bad} 天`;
+  }
+
+  $('#he-cal-metric').innerHTML = Object.entries(CAL_METRICS)
+    .map(([k, v]) => `<button class="chip${k === key ? ' on' : ''}" data-m="${k}">${v.label}</button>`).join('');
+  $$('#he-cal-metric .chip').forEach(b => {
+    b.onclick = () => { STATE.calMetric = b.dataset.m; renderSleepCalendar(); };
+  });
+}
+
+function renderHealthHrv() {
+  const wl = STATE.insight && STATE.insight.wellness;
+  const daily = (wl && wl.daily) || [];
+  if (!daily.length) { $('#he-hrv-card').style.display = 'none'; return; }
+  $('#he-hrv-card').style.display = '';
+  const key = STATE.hrvMetric || 'hrv';
+  const M = HRV_METRICS[key];
+  $('#he-hrv-sub').textContent = `${daily[0].date} — ${daily[daily.length - 1].date} · 共 ${daily.length} 天`;
+  $('#he-hrv-metric').innerHTML = Object.entries(HRV_METRICS).map(([k, v]) =>
+    `<button class="chip ${k === key ? 'on' : ''}" data-m="${k}">${v.name}</button>`).join('');
+  $$('#he-hrv-metric .chip').forEach(b => b.onclick = () => { STATE.hrvMetric = b.dataset.m; renderHealthHrv(); });
+
+  lineChart($('#he-hrv'), {
+    height: 240, x: daily.map(d => shortDate(d.date)), xTicks: 7,
+    series: M.series.map(s => ({
+      name: s.name, color: s.color, dash: s.dash, width: 2, dot: false,
+      data: daily.map(d => d[s.key] ?? null),
+    })),
+    yFmt: v => v.toFixed(0),
+    tip: i => `<div class="t">${daily[i].date}</div>` +
+      M.series.map(s => `<div class="r"><span>${s.name}</span><b>${daily[i][s.key] ?? '—'}</b></div>`).join('') +
+      (M.tip(daily[i]) || ''),
+  });
+  legend($('#he-hrv-lg'), M.series.map(s => ({ name: s.name, color: s.color })));
+}
 
 /* ============================ 概览 ============================ */
 function renderOverview() {
@@ -640,6 +1836,9 @@ function renderHealth() {
         <div class="r"><span>体脂</span><b>${w[i].fat ?? '—'}%</b></div>`,
     });
   } else $('#he-weight').innerHTML = '<div class="empty">无体重数据</div>';
+
+    renderHealthHrv();
+    renderSleepCalendar();
 }
 
 /* ============================ 训练分析 ============================ */
@@ -649,7 +1848,7 @@ function renderTraining() {
   const totCal = acts.reduce((s, a) => s + (a.cal || 0), 0);
   const withPower = acts.filter(a => a.avgPower).length;
   const kpi = [
-    { l: '累计训练负荷', v: Math.round(totLoad).toLocaleString(), u: '', s: 'Garmin Training Load' },
+    { l: '累计训练负荷', v: Math.round(totLoad).toLocaleString(), u: '', s: '腕表 Training Load' },
     { l: '累计消耗', v: Math.round(totCal).toLocaleString(), u: 'kcal', s: `≈ ${(totCal / 7700).toFixed(1)} kg 脂肪` },
     { l: '有功率数据', v: withPower, u: '次', s: '主要来自跑步' },
     { l: '最高心率记录', v: core.hrMaxObserved, u: 'bpm', s: '全部活动中的观测峰值' },
@@ -695,6 +1894,8 @@ function renderTraining() {
   const draw = () => renderActTable($('#tr-table'), 'tr');
   $('#tr-type').onchange = draw; $('#tr-year').onchange = draw; $('#tr-sort').onchange = draw;
   draw();
+
+  renderTrainingExtras();
 }
 
 /** 训练负荷（柱） + 静息心率（线）组合图 */
@@ -756,6 +1957,7 @@ function filteredActs(prefix) {
     dur_desc: (p, q) => (q.durSec || 0) - (p.durSec || 0),
     hr_desc: (p, q) => (q.avgHR || 0) - (p.avgHR || 0),
     load_desc: (p, q) => (q.load || 0) - (p.load || 0),
+    te_desc: (p, q) => (q.te || 0) - (p.te || 0),
   }[s];
   return a.sort(cmp);
 }
@@ -763,9 +1965,10 @@ function filteredActs(prefix) {
 function renderActTable(node, prefix) {
   const a = filteredActs(prefix);
   const head = `<thead><tr><th>日期</th><th>类型</th><th>名称</th><th>距离</th><th>时长</th><th>配速</th>
-    <th>均心率</th><th>最大心率</th><th>功率</th><th>爬升</th><th>负荷</th><th>VO2</th></tr></thead>`;
+    <th>均心率</th><th>最大心率</th><th>训练效果</th><th>功率</th><th>爬升</th><th>负荷</th><th>VO2</th></tr></thead>`;
   const body = a.map(x => {
     const pace = x.distKm ? (x.durSec / 60) / x.distKm : null;
+    const ti = x.te != null ? teIdx(x.te) : -1;
     return `<tr class="click" data-id="${x.id}">
       <td>${x.date}</td>
       <td>${x.sportCn}</td>
@@ -775,12 +1978,13 @@ function renderActTable(node, prefix) {
       <td>${x.distKm && x.durSec ? fmtPace(pace) : '—'}</td>
       <td>${x.avgHR ?? '—'}</td>
       <td>${x.maxHR ?? '—'}</td>
+      <td style="color:${ti >= 0 ? TE_COLORS[ti] : 'inherit'}">${x.te ?? '—'}</td>
       <td>${x.avgPower ?? '—'}</td>
       <td>${x.ascent ?? '—'} m</td>
       <td>${Math.round(x.load || 0) || '—'}</td>
       <td>${x.vo2 ?? '—'}</td></tr>`;
   }).join('');
-  node.innerHTML = head + `<tbody>${body || '<tr><td colspan="12" class="empty">无匹配活动</td></tr>'}</tbody>`;
+  node.innerHTML = head + `<tbody>${body || '<tr><td colspan="13" class="empty">无匹配活动</td></tr>'}</tbody>`;
   $$('#' + node.id + ' tbody tr').forEach(tr => {
     tr.onclick = () => { if (tr.dataset.id) openActivity(tr.dataset.id); };
   });
@@ -916,11 +2120,14 @@ function renderActivity(a, st) {
     ['移动时长', fmtDur(a.durSec)], ['总用时', fmtDur(a.elapsedSec)],
     ['卡路里', a.cal ? a.cal + ' kcal' : '—'],
     ['训练负荷', a.load ? Math.round(a.load) : '—'],
+    ['训练效果 TE', a.te != null ? `${a.te} · ${TE_LABELS[teIdx(a.te)]}` : '—'],
     ['有氧/无氧效应', (a.aerobic ?? '—') + ' / ' + (a.anaerobic ?? '—')],
     ['VO2 Max', a.vo2 ?? '—'],
     ['平均功率', a.avgPower ? a.avgPower + ' W' : '—'],
     ['标准化功率', a.np ? a.np + ' W' : '—'],
-    ['最大功率', a.maxPower ? a.maxPower + ' W' : '—'],
+    ['功率分布', a.pwStats
+      ? `p50 ${Math.round(a.pwStats.p50)} / p95 ${Math.round(a.pwStats.p95)} W · ${Math.round(a.pwStats.min)}–${Math.round(a.pwStats.max)} W`
+      : '—'],
     ['平均步频', a.avgCad ? a.avgCad + ' spm' : '—'],
     ['垂直振幅', a.vo ? a.vo + ' mm' : '—'],
     ['垂直比', a.vr ? a.vr + '%' : '—'],
@@ -1208,3 +2415,15 @@ addEventListener('resize', () => {
 });
 
 load();
+
+// 刷新按钮
+const rb = $('#refreshBtn');
+if (rb) rb.addEventListener('click', () => refreshData());
+
+// 回到前台 / 每 15 分钟自动补一次：数据陈旧时无感更新（页面可见才拉，隐藏时不打扰）
+setInterval(() => {
+  if (!document.hidden && Date.now() - lastLoadedAt > 15 * 60 * 1000) load(true);
+}, 60000);
+document.addEventListener('visibilitychange', () => {
+  if (!document.hidden && Date.now() - lastLoadedAt > 10 * 60 * 1000) load(true);
+});

@@ -58,7 +58,36 @@ header {
   font-weight: 650;
 }
 .brand .sub { color: var(--fg-mute); font-size: 13px; }
+.brand .tagline {
+  color: var(--accent);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  padding-left: 10px;
+  margin-left: 2px;
+  border-left: 1px solid var(--line);
+}
 .brand .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); display: inline-block; }
+
+/* 刷新按钮 + 数据新鲜度 */
+.refresh-btn {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 4px 10px; font-size: 12.5px; font-weight: 600;
+  color: var(--fg-mute); background: transparent;
+  border: 1px solid var(--line); border-radius: 999px;
+  cursor: pointer; transition: all .15s ease;
+}
+.refresh-btn:hover { color: var(--accent); border-color: var(--accent); }
+.refresh-btn:active { transform: scale(.96); }
+.refresh-btn.busy { opacity: .6; pointer-events: none; }
+.refresh-btn.busy svg { animation: spin .8s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.freshness { font-size: 12px; color: var(--fg-mute); }
+.freshness.stale { color: var(--danger, #e0533d); font-weight: 600; }
+@media (max-width: 640px) {
+  .refresh-btn { font-size: 12px; padding: 3px 8px; }
+  .freshness { flex-basis: 100%; }
+}
 
 nav.tabs {
   display: flex;
@@ -253,9 +282,148 @@ select:focus, input:focus { border-color: #3b4757; }
 #map { width: 100%; height: 320px; border-radius: 10px; background: var(--card-2); }
 .map-fallback { display: flex; align-items: center; justify-content: center; }
 
+/* ---------- 每日简报：AI 区块 ---------- */
+.ai-card {
+  border-color: color-mix(in srgb, var(--accent) 45%, var(--line));
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--accent) 7%, transparent), transparent 60%),
+    var(--card);
+}
+.ai-advice { display: flex; flex-direction: column; gap: 9px; }
+.ai-line {
+  position: relative;
+  padding-left: 18px;
+  font-size: 13.5px;
+  line-height: 1.75;
+  color: #c7d0de;
+}
+.ai-line::before {
+  content: '';
+  position: absolute;
+  left: 3px;
+  top: 9px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+}
+.rule-note {
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px dashed var(--line);
+}
+.rule-note-label {
+  font-size: 11px;
+  color: var(--fg-mute);
+  letter-spacing: 0.4px;
+  margin-bottom: 5px;
+}
+.rule-note-text { font-size: 12.5px; line-height: 1.7; color: #7f8b9e; }
+
+/* ---------- AI 健康日记：历史归档列表 ---------- */
+.dj-month { margin-bottom: 6px; }
+.dj-month-hd {
+  display: flex; align-items: baseline; gap: 10px;
+  margin: 16px 0 8px; padding-bottom: 7px;
+  border-bottom: 1px solid var(--line);
+  font-size: 13px; font-weight: 500; color: var(--fg);
+}
+.dj-month-hd .hint { font-size: 11.5px; font-weight: 400; }
+.dj-item {
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md, 8px);
+  background: var(--card-2, transparent);
+  margin-bottom: 8px;
+  overflow: hidden;
+}
+.dj-item[open] { border-color: color-mix(in srgb, var(--accent) 40%, var(--line)); }
+.dj-item > summary {
+  display: flex; align-items: baseline; gap: 12px;
+  padding: 10px 13px; cursor: pointer;
+  list-style: none; user-select: none;
+}
+.dj-item > summary::-webkit-details-marker { display: none; }
+.dj-item > summary::before {
+  content: ''; flex: none; margin-top: 6px;
+  width: 5px; height: 5px;
+  border-right: 1.5px solid var(--fg-mute);
+  border-bottom: 1.5px solid var(--fg-mute);
+  transform: rotate(-45deg);
+  transition: transform .15s ease;
+}
+.dj-item[open] > summary::before { transform: rotate(45deg); }
+.dj-item > summary:hover { background: color-mix(in srgb, var(--accent) 6%, transparent); }
+.dj-date { flex: none; font-size: 13px; font-weight: 500; color: var(--fg); font-variant-numeric: tabular-nums; }
+.dj-meta { flex: none; font-size: 11.5px; color: var(--fg-mute); }
+.dj-preview {
+  flex: 1 1 auto; min-width: 0; text-align: right;
+  font-size: 11.5px; color: var(--fg-mute);
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.dj-body { padding: 2px 13px 14px; border-top: 1px dashed var(--line); }
+.dj-sec-label {
+  font-size: 11px; color: var(--accent); letter-spacing: .4px;
+  margin: 12px 0 7px;
+}
+.dj-text { font-size: 13px; line-height: 1.8; color: #c7d0de; }
+.dj-text p { margin: 0 0 9px; }
+.dj-text p:last-child { margin-bottom: 0; }
+
+/* ---------- 睡眠日历（GitHub 贡献图风格） ---------- */
+.cal-wrap { width: 100%; overflow-x: auto; padding: 4px 0 2px; }
+.cal-wrap svg { display: block; min-width: 620px; }
+.cal-month { fill: var(--fg-mute); font-size: 10px; }
+.cal-dow { fill: var(--fg-mute); font-size: 10px; }
+.cal-cell { cursor: pointer; transition: stroke .1s ease; }
+.cal-cell:hover { stroke: var(--fg); stroke-width: 1.5; }
+.cal-legend {
+  display: flex; align-items: center; gap: 3px;
+  margin-top: 12px; font-size: 11px; color: var(--fg-mute);
+}
+.cal-lg-t { margin: 0 4px; }
+.cal-lg-c { width: 11px; height: 11px; border-radius: 2.5px; }
+.cal-lg-null { display: flex; align-items: center; gap: 5px; margin-left: 12px; }
+.cal-lg-null i { display: inline-block; width: 11px; height: 11px; border-radius: 2.5px; }
+
 .foot { color: var(--fg-mute); font-size: 12px; margin-top: 30px; text-align: center; }
 
 .loader { padding: 60px; text-align: center; color: var(--fg-mute); }
+
+/* ---------- 今日状态 / 体能档案 / 负荷比 ---------- */
+.rd-body { display: flex; align-items: center; gap: 22px; flex-wrap: wrap; }
+.rd-ring { flex: none; width: 136px; }
+.rd-ring svg { display: block; width: 100%; }
+.rd-comps { flex: 1; min-width: 250px; }
+.rc-row { margin-bottom: 9px; }
+.rc-head { display: flex; justify-content: space-between; font-size: 12.5px; margin-bottom: 3px; }
+.rc-head .k { color: var(--fg-dim); }
+.rc-head .v { font-variant-numeric: tabular-nums; }
+.rc-head .w { color: var(--fg-mute); font-size: 11px; margin-left: 6px; }
+.rc-bar { height: 7px; background: var(--card-2); border-radius: 4px; overflow: hidden; }
+.rc-bar i { display: block; height: 100%; border-radius: 4px; }
+.rc-hint { font-size: 11.5px; color: var(--fg-mute); margin-top: 2px; }
+
+.acwr-top { display: flex; gap: 22px; flex-wrap: wrap; margin-bottom: 12px; }
+.acwr-top .big { font-size: 30px; font-weight: 660; line-height: 1.1; font-variant-numeric: tabular-nums; }
+.acwr-top .col .l { font-size: 11.5px; color: var(--fg-mute); text-transform: uppercase; letter-spacing: 0.6px; }
+.acwr-top .col .s { font-size: 12px; color: var(--fg-dim); margin-top: 2px; }
+.acwr-badge {
+  display: inline-block; padding: 3px 10px; border-radius: 999px;
+  font-size: 12px; font-weight: 600; margin-top: 4px;
+}
+
+.wl-extra { margin-top: 12px; font-size: 12.5px; color: var(--fg-dim); line-height: 1.8; }
+.wl-extra b { color: var(--fg); }
+
+.place-row {
+  display: flex; align-items: center; gap: 12px; padding: 8px 0;
+  border-bottom: 1px solid var(--line-soft); font-size: 13px;
+}
+.place-row:last-child { border-bottom: none; }
+.place-row .rank { width: 22px; color: var(--fg-mute); font-variant-numeric: tabular-nums; flex: none; }
+.place-row .nm { flex: 1; color: var(--fg); }
+.place-row .nm span { color: var(--fg-mute); font-size: 11.5px; margin-left: 8px; }
+.place-row .met { color: var(--fg-dim); font-variant-numeric: tabular-nums; font-size: 12.5px; }
 
 /* ---------- 全局错误横幅 ---------- */
 #errbar:empty { display: none; }
@@ -274,3 +442,90 @@ select:focus, input:focus { border-color: #3b4757; }
   white-space: pre-wrap;
 }
 #errbar b { color: #ff6b6b; display: block; margin-bottom: 4px; }
+
+/* ---------- 睡眠年历（GitHub 贡献图风格） ---------- */
+#sg-card { position: relative; }
+.sg-stats { display: flex; gap: 26px; flex-wrap: wrap; margin: 2px 0 14px; }
+.sg-stat .sg-v { font-size: 22px; font-weight: 660; line-height: 1.2; font-variant-numeric: tabular-nums; }
+.sg-stat .sg-l { font-size: 12px; color: var(--fg-dim); margin-top: 1px; }
+.sg-stat .sg-s { font-size: 11.5px; color: var(--fg-mute); margin-top: 1px; font-variant-numeric: tabular-nums; }
+
+.sg-scroll { overflow-x: auto; padding-bottom: 4px; }
+.sg-scroll::-webkit-scrollbar { height: 8px; }
+.sg-scroll::-webkit-scrollbar-thumb { background: var(--line); border-radius: 8px; }
+.sg-wrap { display: inline-flex; flex-direction: column; gap: 4px; min-width: max-content; }
+
+.sg-months { display: grid; gap: 3px; margin-left: 24px; }
+.sg-m { font-size: 10.5px; color: var(--fg-mute); white-space: nowrap; line-height: 1.2; }
+
+.sg-body { display: flex; gap: 6px; }
+.sg-weekdays { display: grid; grid-template-rows: repeat(7, 13px); gap: 3px; width: 18px; flex: none; }
+.sg-w { font-size: 10.5px; color: var(--fg-mute); line-height: 13px; }
+
+/* 列 = 一周，行 = 周日…周六（与 GitHub 贡献图一致）：
+   DOM 顺序是按日期连续排的，必须 grid-auto-flow: column 才能变成「竖着一周、横着推进」 */
+.sg-grid {
+  display: grid;
+  grid-auto-flow: column;
+  grid-template-rows: repeat(7, 13px);
+  gap: 3px;
+}
+.sg-cell {
+  width: 13px; height: 13px; border-radius: 3px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  display: block; cursor: default;
+}
+.sg-grid .sg-cell[data-date] { cursor: pointer; }
+.sg-grid .sg-cell[data-date]:hover { box-shadow: 0 0 0 1.5px var(--fg-dim); }
+.sg-cell.sg-none { background: #1c222d; }
+.sg-cell.sg-ghost { background: transparent; border-color: transparent; }
+.sg-cell.sg-today { box-shadow: 0 0 0 1.5px var(--accent); }
+/* 设备未检出睡眠的日子：斜纹叠加，区别于「无记录的空格」 */
+.sg-cell.sg-missed {
+  position: relative;
+  border-color: rgba(255, 255, 255, 0.55);
+}
+.sg-cell.sg-missed::after {
+  content: ''; position: absolute; inset: 0; border-radius: 2px;
+  background: repeating-linear-gradient(
+    45deg, rgba(255, 255, 255, 0.55) 0 1.5px, transparent 1.5px 4px);
+}
+
+.sg-legend { display: flex; align-items: center; gap: 4px; flex-wrap: wrap; margin-top: 14px; }
+.sg-lg-t { font-size: 11.5px; color: var(--fg-mute); margin: 0 4px; }
+.sg-lg-note { margin-left: 10px; font-size: 11.5px; color: var(--fg-mute); line-height: 1.6; }
+
+.sg-tip {
+  position: absolute; z-index: 60; min-width: 200px; max-width: 290px;
+  background: #10151f; border: 1px solid var(--line); border-radius: 10px;
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.55); padding: 10px 12px;
+  font-size: 12.5px; line-height: 1.7; pointer-events: none;
+}
+.sg-tip-date { font-weight: 600; color: var(--fg); }
+.sg-tip-score { display: flex; align-items: center; gap: 6px; color: var(--fg-dim); }
+.sg-chip { width: 11px; height: 11px; border-radius: 3px; flex: none; border: 1px solid rgba(255, 255, 255, 0.12); }
+.sg-tip-score b { color: var(--fg); font-size: 14px; font-variant-numeric: tabular-nums; }
+.sg-tip-note { margin-left: auto; font-size: 11.5px; color: var(--fg-mute); }
+.sg-tip-kv { color: var(--fg-dim); font-variant-numeric: tabular-nums; }
+.sg-tip-kv b { color: var(--fg); font-weight: 600; }
+.sg-tip-parts {
+  color: var(--fg-mute); font-size: 11.5px; font-variant-numeric: tabular-nums;
+  margin-top: 2px; padding-top: 4px; border-top: 1px solid var(--line-soft);
+}
+.sg-tip-parts b { color: var(--fg-dim); font-weight: 600; }
+.sg-tip-warn {
+  margin-top: 5px; padding: 3px 7px; border-radius: 6px; font-size: 11.5px;
+  background: rgba(229, 49, 49, 0.14); color: #ffa8b6; display: inline-block;
+}
+/* 人工补录说明：居中 Sundell，区别于设备实测数据 */
+.sg-tip-missed {
+  margin-top: 6px; padding: 6px 8px; border-radius: 6px; font-size: 11.5px;
+  line-height: 1.7; color: var(--fg-dim);
+  background: rgba(255, 255, 255, 0.06); border: 1px dashed var(--line);
+}
+.sg-tip-missed b { color: var(--fg); font-weight: 600; }
+
+@media (max-width: 760px) {
+  .sg-stats { gap: 16px 20px; }
+  .sg-stat { min-width: 84px; }
+}
