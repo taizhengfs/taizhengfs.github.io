@@ -1,13 +1,13 @@
 {
-  "asOf": "2026-11-02",
-  "today": "2026-11-02",
+  "asOf": "2026-11-03",
+  "today": "2026-11-03",
   "stale": false,
-  "mode": "short",
-  "text": "早上好。昨晚睡了九小时五分钟，睡眠指数九十六分，非常好。今天训练准备度九十五分，可以正常练。",
-  "chars": 46,
-  "estSeconds": 10,
-  "sqi": 95.6,
-  "level": 10,
-  "levelLabel": "极佳",
+  "mode": "full",
+  "text": "早上好。昨晚没有睡眠数据。今天训练准备度七十三分，可以正常练。",
+  "chars": 31,
+  "estSeconds": 7,
+  "sqi": 0,
+  "level": 1,
+  "levelLabel": "极差",
   "estimatedSleep": false
 }
