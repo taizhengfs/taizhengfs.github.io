@@ -607,7 +607,11 @@ function mergeDay(a, b){
   if(phase === 'sift'){
     // 已进入学习阶段的当天不再有筛选池，别把 pool 又填出来
     pool = sifted.slice(0, perDay);
-    for(const c of uniq((a.pool || []).concat(b.pool || []))){
+    // 关键：以 win（较新的一端）的卡池优先补齐，另一端只作兜底。
+    // 否则「换一批 / 本来就认识换一个」之后，saveCloud 拿云端旧数据当底
+    // 合并时旧池排在前面，会把刚换上的新字顶回去，界面闪一下又变原样。
+    const newer = win.pool || [], older = (win === b ? a : b).pool || [];
+    for(const c of uniq(newer.concat(older))){
       if(pool.length >= perDay) break;
       if(!pool.includes(c)) pool.push(c);
     }
