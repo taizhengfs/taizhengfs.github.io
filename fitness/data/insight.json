@@ -1,25 +1,25 @@
 {
- "generatedAt": "2026-11-06T07:00:38",
+ "generatedAt": "2026-11-06T09:00:43",
  "asOf": "2026-11-06",
  "today": {
   "date": "2026-11-06",
-  "rhr": 53,
-  "rhr7": 49.1,
-  "rhr30": 49.6,
-  "steps": 14,
-  "steps7": 4658.0,
-  "steps30": 5522.0,
-  "sleepH": null,
-  "sleepScore": null,
-  "deepH": null,
-  "lightH": null,
-  "remH": null,
+  "rhr": 50,
+  "rhr7": 48.7,
+  "rhr30": 49.5,
+  "steps": 51,
+  "steps7": 4664.0,
+  "steps30": 5523.0,
+  "sleepH": 5.38,
+  "sleepScore": 69,
+  "deepH": 1.65,
+  "lightH": 2.68,
+  "remH": 1.05,
   "awakeH": null,
-  "sleep7": 7.3,
-  "sleep30": 6.9,
-  "score7": 79.1,
+  "sleep7": 7.1,
+  "sleep30": 6.8,
+  "score7": 79.6,
   "weight": null,
-  "deepPct": null
+  "deepPct": 30.7
  },
  "yesterday": {
   "date": "2026-11-05",
@@ -47,10 +47,10 @@
    "2026-11-06"
   ],
   "cur": {
-   "sleepAvg": 7.45,
-   "scoreAvg": 81.3,
-   "rhrAvg": 49.1,
-   "stepsAvg": 4658.0,
+   "sleepAvg": 7.15,
+   "scoreAvg": 79.6,
+   "rhrAvg": 48.7,
+   "stepsAvg": 4664.0,
    "activeDays": 5
   },
   "prev": {
@@ -61,10 +61,10 @@
    "activeDays": 6
   },
   "delta": {
-   "sleepAvg": 0.7,
-   "rhrAvg": -1.0,
-   "stepsAvg": -1098.0,
-   "scoreAvg": 10.0
+   "sleepAvg": 0.4,
+   "rhrAvg": -1.4,
+   "stepsAvg": -1092.0,
+   "scoreAvg": 8.3
   },
   "workouts": [
    {
@@ -200,23 +200,33 @@
   },
   {
    "date": "2026-11-06",
-   "sleepH": null,
-   "sleepScore": null,
-   "rhr": 53,
-   "steps": 14
+   "sleepH": 5.38,
+   "sleepScore": 69,
+   "rhr": 50,
+   "steps": 51
   }
  ],
  "restDays": 1,
  "findings": [
   {
+   "level": "good",
+   "title": "静息心率平稳",
+   "text": "今日 50 bpm，与月均 49.5 bpm 基本持平。"
+  },
+  {
    "level": "warn",
-   "title": "静息心率偏高",
-   "text": "今日静息心率 53 bpm，比近 30 天均值高 3 拍。常见于恢复不足、压力大、睡眠债或饮酒，也可能是感冒前兆，建议今晚早睡并观察明天。"
+   "title": "睡眠不足",
+   "text": "昨晚只睡了 5.38 小时，低于近 30 天均值 6.8 小时。长期低于 6.5 小时会明显推高静息心率、降低训练效果。"
+  },
+  {
+   "level": "good",
+   "title": "深睡充足",
+   "text": "深睡占比 30.7%，身体修复质量好。"
   },
   {
    "level": "warn",
    "title": "活动量偏低",
-   "text": "今日 14 步，仅为月均 5,522 步的 0%。"
+   "text": "今日 51 步，仅为月均 5,523 步的 1%。"
   },
   {
    "level": "info",
@@ -224,14 +234,19 @@
    "text": "间隔合理，恢复中。"
   },
   {
-   "level": "good",
-   "title": "本周睡眠改善",
-   "text": "近 7 天平均睡眠比上周多 0.7 小时。"
-  },
-  {
    "level": "bad",
    "title": "训练负荷过高",
    "text": "急性 / 慢性负荷比 1.64，超过 1.5 的受伤风险线。建议本周削减训练量或改为低强度，给身体吸收的时间。"
+  },
+  {
+   "level": "good",
+   "title": "HRV 处于基线内",
+   "text": "昨夜 HRV 60 ms，在本人的平衡区间内，周均 65 ms，恢复状态稳定。"
+  },
+  {
+   "level": "warn",
+   "title": "训练准备度 65 分 · 状态一般",
+   "text": "腕表综合睡眠、HRV、压力与近期负荷给出的判断，可直接决定今天该练还是该歇。"
   }
  ],
  "training": {
@@ -1029,27 +1044,54 @@
   ]
  },
  "readiness": {
-  "score": 61,
-  "level": "warn",
-  "label": "一般，悠着点",
+  "score": 71,
+  "level": "good",
+  "label": "状态良好",
   "comps": [
+   {
+    "key": "sleep",
+    "label": "睡眠",
+    "score": 69.0,
+    "weight": 0.3,
+    "value": "69 分",
+    "hint": "睡了 5.38 小时",
+    "effective": 29.0
+   },
+   {
+    "key": "duration",
+    "label": "睡眠时长",
+    "score": 54.0,
+    "weight": 0.1,
+    "value": "5.38 h",
+    "hint": "目标 7.5 小时",
+    "effective": 10.0
+   },
    {
     "key": "rhr",
     "label": "静息心率",
-    "score": 80.0,
+    "score": 97.0,
     "weight": 0.2,
-    "value": "53 bpm",
-    "hint": "月均 49.6，偏离 +3",
-    "effective": 50.0
+    "value": "50 bpm",
+    "hint": "月均 49.5，偏离 +0",
+    "effective": 19.0
+   },
+   {
+    "key": "hrv",
+    "label": "HRV 心率变异",
+    "score": 75.0,
+    "weight": 0.25,
+    "value": "60 ms",
+    "hint": "基线区间 60–71 ms",
+    "effective": 24.0
    },
    {
     "key": "battery",
     "label": "身体电量",
-    "score": 30.0,
+    "score": 75.0,
     "weight": 0.05,
-    "value": "8",
-    "hint": "昨夜回充 8，白天消耗 —",
-    "effective": 12.0
+    "value": "64",
+    "hint": "昨夜回充 64，白天消耗 3",
+    "effective": 5.0
    },
    {
     "key": "load",
@@ -1058,12 +1100,10 @@
     "weight": 0.15,
     "value": "ACWR 1.64",
     "hint": "负荷过高",
-    "effective": 37.0
+    "effective": 14.0
    }
   ],
-  "missing": [
-   "hrv"
-  ]
+  "missing": []
  },
  "wellness": {
   "available": true,
@@ -1713,32 +1753,45 @@
    },
    {
     "date": "2026-11-06",
-    "hrvNight": null,
-    "hrvWeekly": null,
-    "hrvStatus": null,
-    "hrvLow": null,
-    "hrvUpper": null,
-    "readinessScore": null,
-    "readinessLevel": null,
-    "readinessFeedback": null,
-    "acuteLoad": null,
-    "bbCharged": 8,
-    "bbDrained": 0,
+    "hrvNight": 60,
+    "hrvWeekly": 65,
+    "hrvStatus": "BALANCED",
+    "hrvLow": 60,
+    "hrvUpper": 71,
+    "readinessScore": 65,
+    "readinessLevel": "MODERATE",
+    "readinessFeedback": "GOOD_SLEEP_HISTORY",
+    "acuteLoad": 100,
+    "bbCharged": 64,
+    "bbDrained": 3,
     "bbMin": 13,
-    "bbMax": 21,
-    "respSleep": null,
+    "bbMax": 75,
+    "respSleep": 16.0,
     "spo2SleepAvg": null,
-    "respAwake": null,
-    "respLow": null,
-    "respHigh": null,
+    "respAwake": 15.0,
+    "respLow": 9.0,
+    "respHigh": 21.0,
     "spo2Lowest": null
    }
   ],
   "latest": {
+   "vo2max": 55.0,
+   "vo2maxDate": "2026-11-05",
+   "loadAerobicLow": 160.7,
+   "loadAnaerobic": 13.4,
+   "loadTargetLow": 216,
+   "loadTargetHigh": 479,
+   "loadFeedback": "AEROBIC_LOW_SHORTAGE",
+   "deviceName": "Warden's 7X",
    "fitnessAge": 26.9,
    "realAge": 33,
    "fitnessAgeAchievable": 27.0,
    "bmiValue": 19.5,
+   "enduranceScore": 5906,
+   "enduranceClass": 3,
+   "enduranceNext": 5800,
+   "hillScore": 29,
+   "hillClass": 2,
    "race": {
     "date": "2026-11-06",
     "5k": 1357,
@@ -1748,6 +1801,6 @@
    }
   }
  },
- "narrative": "静息心率 53 bpm、走了 14 步。近 7 天共 3 次训练，累计 26.02 公里 / 124 分钟，最近一次是 2026-11-05 的跑步（3.01 公里）。需要留意的是：训练负荷过高——急性 / 慢性负荷比 1.64，超过 1.5 的受伤风险线。建议本周削减训练量或改为低强度，给身体吸收的时间；静息心率偏高——今日静息心率 53 bpm，比近 30 天均值高 3 拍。常见于恢复不足、压力大、睡眠债或饮酒，也可能是感冒前兆，建议今晚早睡并观察明天。做得好的地方：本周睡眠改善。",
+ "narrative": "昨晚睡了 5.38 小时、睡眠评分 69 分、其中深睡 1.65 小时、静息心率 50 bpm、走了 51 步。近 7 天共 3 次训练，累计 26.02 公里 / 124 分钟，最近一次是 2026-11-05 的跑步（3.01 公里）。需要留意的是：训练负荷过高——急性 / 慢性负荷比 1.64，超过 1.5 的受伤风险线。建议本周削减训练量或改为低强度，给身体吸收的时间；睡眠不足——昨晚只睡了 5.38 小时，低于近 30 天均值 6.8 小时。长期低于 6.5 小时会明显推高静息心率、降低训练效果。做得好的地方：静息心率平稳、深睡充足、HRV 处于基线内。",
  "narrativeSource": "rule"
 }
