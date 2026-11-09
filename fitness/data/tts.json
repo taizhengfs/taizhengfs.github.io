@@ -1,13 +1,13 @@
 {
-  "asOf": "2026-11-07",
-  "today": "2026-11-08",
-  "stale": true,
+  "asOf": "2026-11-09",
+  "today": "2026-11-09",
+  "stale": false,
   "mode": "full",
-  "text": "早上好。昨晚的睡眠数据还没同步到手机，稍后可以在健康日记里查看。",
-  "chars": 32,
-  "estSeconds": 7,
-  "sqi": null,
-  "level": null,
-  "levelLabel": null,
+  "text": "早上好。昨晚睡了七小时五十九分钟，睡眠指数九十二分，非常好。其中深睡一小时二十分钟、快速眼动一小时三十八分钟。静息心率四十九。身体电量回充了六十九。今天训练准备度九十九分，可以正常练。",
+  "chars": 92,
+  "estSeconds": 20,
+  "sqi": 92.2,
+  "level": 10,
+  "levelLabel": "极佳",
   "estimatedSleep": false
 }
