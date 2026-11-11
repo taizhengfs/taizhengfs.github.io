@@ -1,9 +1,9 @@
 {
- "generatedAt": "2026-11-11T22:00:36",
+ "generatedAt": "2026-11-12T07:00:46",
  "range": {
   "start": "2026-06-16",
-  "end": "2026-11-11",
-  "days": 149
+  "end": "2026-11-12",
+  "days": 150
  },
  "daily": [
   {
@@ -3998,10 +3998,10 @@
   },
   {
    "acuteLoad": 34,
-   "bbCharged": 78,
-   "bbDrained": 84,
+   "bbCharged": 94,
+   "bbDrained": 86,
    "bbMax": 91,
-   "bbMin": 9,
+   "bbMin": 7,
    "date": "2026-11-11",
    "hrvHigh": 126,
    "hrvLow": 60,
@@ -4022,32 +4022,26 @@
    "respHigh": 24.0,
    "respLow": 8.0,
    "respSleep": 15.0
+  },
+  {
+   "bbCharged": 50,
+   "bbDrained": 2,
+   "bbMax": 73,
+   "bbMin": 23,
+   "date": "2026-11-12"
   }
  ],
  "latest": {
-  "vo2max": 55.0,
-  "vo2maxDate": "2026-11-05",
-  "loadAerobicLow": 160.7,
-  "loadAnaerobic": 13.4,
-  "loadTargetLow": 216,
-  "loadTargetHigh": 479,
-  "loadFeedback": "AEROBIC_LOW_SHORTAGE",
-  "deviceName": "Warden's 7X",
   "fitnessAge": 26.9,
   "realAge": 33,
   "fitnessAgeAchievable": 27.0,
   "bmiValue": 19.5,
-  "enduranceScore": 5897,
-  "enduranceClass": 3,
-  "enduranceNext": 5800,
-  "hillScore": 29,
-  "hillClass": 2,
   "race": {
-   "date": "2026-11-11",
+   "date": "2026-11-12",
    "5k": 1359,
-   "10k": 2939,
-   "half": 6651,
-   "full": 15182
+   "10k": 2940,
+   "half": 6655,
+   "full": 15188
   }
  }
 }
