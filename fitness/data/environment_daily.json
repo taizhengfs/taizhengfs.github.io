@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-12T08:17:51",
+  "generatedAt": "2026-11-12T09:00:05",
   "source": "本地 BLE 直采 LYWSD03MMC（书房「温度计」，mac a4:c1:38:78:21:bd）",
   "room": "study",
   "roomLabel": "书房",
@@ -19,7 +19,7 @@
     "minNightsForCorr": 10
   },
   "coverage": {
-    "rawSamples": 4040,
+    "rawSamples": 4054,
     "rawSpan": [
       "2026-10-13",
       "2026-11-12"
@@ -31,22 +31,22 @@
     ]
   },
   "latest": {
-    "ts": "2026-11-12T08:16:54",
-    "temp": 15.3,
+    "ts": "2026-11-12T08:56:55",
+    "temp": 15.4,
     "humidity": 80.0,
-    "batteryV": 2.904
+    "batteryV": 2.905
   },
   "today": {
     "date": "2026-11-12",
     "room": "study",
     "roomLabel": "书房",
-    "tempAvg": 15.2,
+    "tempAvg": 15.3,
     "tempMin": 15.1,
-    "tempMax": 15.3,
-    "humAvg": 77.9,
+    "tempMax": 15.4,
+    "humAvg": 78.0,
     "humMin": 74.0,
     "humMax": 80.0,
-    "samples": 89,
+    "samples": 95,
     "timeInTempBand": 0.0,
     "timeInHumBand": 0.0,
     "tempOk": false,
@@ -361,13 +361,13 @@
       "date": "2026-11-12",
       "room": "study",
       "roomLabel": "书房",
-      "tempAvg": 15.2,
+      "tempAvg": 15.3,
       "tempMin": 15.1,
-      "tempMax": 15.3,
-      "humAvg": 77.9,
+      "tempMax": 15.4,
+      "humAvg": 78.0,
       "humMin": 74.0,
       "humMax": 80.0,
-      "samples": 89,
+      "samples": 95,
       "timeInTempBand": 0.0,
       "timeInHumBand": 0.0,
       "tempOk": false,
@@ -383,8 +383,8 @@
       "key": "temp_score",
       "name": "夜间温度 vs 睡眠评分",
       "n": 10,
-      "r": 0.263,
-      "p": 0.476,
+      "r": 0.254,
+      "p": 0.4921,
       "label": "弱不显著相关",
       "need": 0
     },
@@ -401,8 +401,8 @@
       "key": "temp_deep",
       "name": "夜间温度 vs 深睡占比",
       "n": 10,
-      "r": 0.309,
-      "p": 0.3981,
+      "r": 0.316,
+      "p": 0.387,
       "label": "弱不显著相关",
       "need": 0
     },
@@ -410,8 +410,8 @@
       "key": "hum_score",
       "name": "夜间湿度 vs 睡眠评分",
       "n": 10,
-      "r": -0.072,
-      "p": 0.8492,
+      "r": -0.074,
+      "p": 0.8445,
       "label": "未见相关",
       "need": 0
     },
@@ -425,5 +425,5 @@
       "need": 1
     }
   },
-  "signature": "206d9b428ee07af357029fab5eccd46b"
+  "signature": "9be439594a8184fabb4cebd65c880e3f"
 }
