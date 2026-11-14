@@ -1,9 +1,9 @@
 {
- "generatedAt": "2026-11-14T07:00:40",
+ "generatedAt": "2026-11-15T07:00:43",
  "range": {
   "start": "2026-06-16",
-  "end": "2026-11-14",
-  "days": 152
+  "end": "2026-11-15",
+  "days": 153
  },
  "daily": [
   {
@@ -4078,20 +4078,47 @@
    "respSleep": 16.0
   },
   {
-   "acuteLoad": 17,
-   "bbCharged": 5,
-   "bbDrained": 0,
-   "bbMax": 21,
-   "bbMin": 16,
+   "acuteLoad": 9,
+   "bbCharged": 71,
+   "bbDrained": 69,
+   "bbMax": 81,
+   "bbMin": 12,
    "date": "2026-11-14",
+   "hrvHigh": 77,
+   "hrvLow": 60,
+   "hrvNight": 55,
+   "hrvStatus": "BALANCED",
+   "hrvUpper": 72,
+   "hrvWeekly": 63,
+   "rAcwrFactor": 100,
+   "rHrvFactor": 100,
+   "rSleepFactor": 67,
+   "rSleepHistFactor": 58,
+   "rStressFactor": 33,
+   "readinessFeedback": "WELL_RECOVERED",
+   "readinessLevel": "HIGH",
+   "readinessScore": 82,
+   "recoveryH": 1,
+   "respAwake": 15.0,
+   "respHigh": 26.0,
+   "respLow": 7.0,
+   "respSleep": 16.0
+  },
+  {
+   "acuteLoad": 9,
+   "bbCharged": 65,
+   "bbDrained": 0,
+   "bbMax": 84,
+   "bbMin": 19,
+   "date": "2026-11-15",
    "rAcwrFactor": 100,
    "rHrvFactor": 100,
    "rSleepFactor": 0,
-   "rSleepHistFactor": 58,
-   "rStressFactor": 31,
-   "readinessFeedback": "WELL_RECOVERED",
-   "readinessLevel": "HIGH",
-   "readinessScore": 86,
+   "rSleepHistFactor": 68,
+   "rStressFactor": 33,
+   "readinessFeedback": "UNKNOWN",
+   "readinessLevel": "MODERATE",
+   "readinessScore": 70,
    "recoveryH": 0
   }
  ],
@@ -4101,11 +4128,11 @@
   "fitnessAgeAchievable": 27.0,
   "bmiValue": 19.5,
   "race": {
-   "date": "2026-11-14",
-   "5k": 1360,
-   "10k": 2943,
-   "half": 6664,
-   "full": 15203
+   "date": "2026-11-15",
+   "5k": 1361,
+   "10k": 2945,
+   "half": 6670,
+   "full": 15212
   }
  }
 }
