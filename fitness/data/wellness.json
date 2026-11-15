@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-11-15T14:30:38",
+ "generatedAt": "2026-11-15T17:00:37",
  "range": {
   "start": "2026-06-16",
   "end": "2026-11-15",
@@ -4105,9 +4105,9 @@
    "respSleep": 16.0
   },
   {
-   "acuteLoad": 0,
+   "acuteLoad": 98,
    "bbCharged": 75,
-   "bbDrained": 27,
+   "bbDrained": 53,
    "bbMax": 94,
    "bbMin": 19,
    "date": "2026-11-15",
@@ -4122,10 +4122,10 @@
    "rSleepFactor": 88,
    "rSleepHistFactor": 68,
    "rStressFactor": 35,
-   "readinessFeedback": "EXCELLENT_RECOVERY",
-   "readinessLevel": "HIGH",
-   "readinessScore": 91,
-   "recoveryH": 1,
+   "readinessFeedback": "RECOVERY_IN_PROGRESS",
+   "readinessLevel": "MODERATE",
+   "readinessScore": 72,
+   "recoveryH": 1455,
    "respAwake": 14.0,
    "respHigh": 22.0,
    "respLow": 7.0,
@@ -4135,8 +4135,8 @@
  "latest": {
   "vo2max": 55.0,
   "vo2maxDate": "2026-11-05",
-  "loadAerobicLow": 91.2,
-  "loadAnaerobic": 13.4,
+  "loadAerobicLow": 153.9,
+  "loadAnaerobic": 27.4,
   "loadTargetLow": 216,
   "loadTargetHigh": 479,
   "loadFeedback": "AEROBIC_LOW_SHORTAGE",
@@ -4148,7 +4148,7 @@
   "enduranceScore": 5887,
   "enduranceClass": 3,
   "enduranceNext": 5800,
-  "hillScore": 29,
+  "hillScore": 31,
   "hillClass": 2,
   "race": {
    "date": "2026-11-15",

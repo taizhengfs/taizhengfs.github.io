@@ -1,14 +1,14 @@
 {
- "generatedAt": "2026-11-15T14:30:38",
+ "generatedAt": "2026-11-15T17:00:37",
  "asOf": "2026-11-15",
  "today": {
   "date": "2026-11-15",
   "rhr": 51,
   "rhr7": 49.6,
   "rhr30": 49.9,
-  "steps": 1310,
-  "steps7": 3597.0,
-  "steps30": 5317.0,
+  "steps": 15997,
+  "steps7": 5695.0,
+  "steps30": 5806.0,
   "sleepH": 7.98,
   "sleepScore": 89,
   "deepH": 1.27,
@@ -50,8 +50,8 @@
    "sleepAvg": 7.0,
    "scoreAvg": 78.7,
    "rhrAvg": 49.6,
-   "stepsAvg": 3597.0,
-   "activeDays": 5
+   "stepsAvg": 5695.0,
+   "activeDays": 6
   },
   "prev": {
    "sleepAvg": 7.12,
@@ -63,14 +63,26 @@
   "delta": {
    "sleepAvg": -0.12,
    "rhrAvg": 0.5,
-   "stepsAvg": -1709.0,
+   "stepsAvg": 389.0,
    "scoreAvg": 0.0
   },
-  "workouts": [],
-  "workoutCount": 0,
-  "totalKm": 0,
-  "totalMin": 0,
-  "totalCal": 0
+  "workouts": [
+   {
+    "id": "662467930",
+    "date": "2026-11-15",
+    "sportCn": "徒步",
+    "name": "杭州市 徒步",
+    "distKm": 14.01,
+    "durMin": 241.0,
+    "cal": 1246.0,
+    "avgHR": 119.0,
+    "load": 76.7
+   }
+  ],
+  "workoutCount": 1,
+  "totalKm": 14.01,
+  "totalMin": 241.0,
+  "totalCal": 1246.0
  },
  "series": [
   {
@@ -169,10 +181,10 @@
    "sleepH": 7.98,
    "sleepScore": 89,
    "rhr": 51,
-   "steps": 1310
+   "steps": 15997
   }
  ],
- "restDays": 10,
+ "restDays": 0,
  "findings": [
   {
    "level": "good",
@@ -190,24 +202,19 @@
    "text": "睡眠评分 89 分，属于高质量睡眠。"
   },
   {
-   "level": "warn",
-   "title": "活动量偏低",
-   "text": "今日 1,310 步，仅为月均 5,317 步的 25%。"
+   "level": "good",
+   "title": "活动量充足",
+   "text": "今日 15,997 步，明显高于月均。"
   },
   {
-   "level": "bad",
-   "title": "已 10 天没运动",
-   "text": "连续多日未训练，运动习惯出现中断风险，建议先从 20~30 分钟的轻松跑或快走重启。"
+   "level": "good",
+   "title": "今天有运动",
+   "text": "今天已完成训练，注意做好拉伸与补水。"
   },
   {
-   "level": "warn",
-   "title": "本周尚无训练记录",
-   "text": "近 7 天没有运动记录，建议安排 2~3 次训练。"
-  },
-  {
-   "level": "warn",
-   "title": "训练量偏少",
-   "text": "负荷比 0.00，低于 0.8——近一个月练得太少，已积累的有氧基础正在流失。每周加 1–2 次低强度有氧即可回升。"
+   "level": "good",
+   "title": "负荷处最佳区间",
+   "text": "负荷比 1.19，落在 0.8–1.3 之间，是既能进步又不易受伤的节奏。"
   },
   {
    "level": "good",
@@ -216,14 +223,14 @@
   },
   {
    "level": "good",
-   "title": "训练准备度 91 分 · 状态很好",
+   "title": "训练准备度 72 分 · 状态一般",
    "text": "腕表综合睡眠、HRV、压力与近期负荷给出的判断，可直接决定今天该练还是该歇。"
   }
  ],
  "training": {
   "coverage": {
-   "total": 574,
-   "withTe": 574
+   "total": 575,
+   "withTe": 575
   },
   "avg": 2.22,
   "dist": [
@@ -253,7 +260,7 @@
     "color": "#51cf66",
     "lo": 3.0,
     "hi": 4.0,
-    "count": 122
+    "count": 123
    },
    {
     "label": "显著提升",
@@ -328,15 +335,15 @@
    },
    {
     "key": "2026-11",
-    "n": 2,
-    "avg": 2.3
+    "n": 3,
+    "avg": 2.53
    }
   ],
   "bySport": [
    {
     "sport": "徒步",
-    "n": 26,
-    "avg": 2.25
+    "n": 27,
+    "avg": 2.28
    },
    {
     "sport": "跑步",
@@ -360,9 +367,9 @@
    }
   ],
   "window28": {
-   "count": 4,
-   "aerobic": 9.1,
-   "anaerobic": 2.0
+   "count": 5,
+   "aerobic": 12.1,
+   "anaerobic": 3.4
   }
  },
  "load": {
@@ -370,13 +377,13 @@
    "2026-08-18",
    "2026-11-15"
   ],
-  "acute": 0.0,
-  "chronic": 6.4,
-  "ratio": 0.0,
-  "load7": 0,
-  "load28": 180.5,
-  "label": "负荷偏低，体能可能在流失",
-  "level": "warn",
+  "acute": 11.0,
+  "chronic": 9.2,
+  "ratio": 1.19,
+  "load7": 76.7,
+  "load28": 257.2,
+  "label": "最佳区间",
+  "level": "good",
   "sweet": [
    0.8,
    1.3
@@ -1007,15 +1014,15 @@
    },
    {
     "date": "2026-11-15",
-    "load": 0,
-    "acute": 0.0,
-    "chronic": 6.4,
-    "ratio": 0.0
+    "load": 76.7,
+    "acute": 11.0,
+    "chronic": 9.2,
+    "ratio": 1.19
    }
   ]
  },
  "readiness": {
-  "score": 85,
+  "score": 89,
   "level": "excellent",
   "label": "状态极佳",
   "comps": [
@@ -1061,16 +1068,16 @@
     "score": 88.0,
     "weight": 0.05,
     "value": "75",
-    "hint": "昨夜回充 75，白天消耗 27",
+    "hint": "昨夜回充 75，白天消耗 53",
     "effective": 5.0
    },
    {
     "key": "load",
     "label": "负荷平衡",
-    "score": 72.0,
+    "score": 100.0,
     "weight": 0.15,
-    "value": "ACWR 0.00",
-    "hint": "负荷偏低，体能可能在流失",
+    "value": "ACWR 1.19",
+    "hint": "最佳区间",
     "effective": 14.0
    }
   ],
@@ -1729,12 +1736,12 @@
     "hrvStatus": "BALANCED",
     "hrvLow": 60,
     "hrvUpper": 72,
-    "readinessScore": 91,
-    "readinessLevel": "HIGH",
-    "readinessFeedback": "EXCELLENT_RECOVERY",
-    "acuteLoad": 0,
+    "readinessScore": 72,
+    "readinessLevel": "MODERATE",
+    "readinessFeedback": "RECOVERY_IN_PROGRESS",
+    "acuteLoad": 98,
     "bbCharged": 75,
-    "bbDrained": 27,
+    "bbDrained": 53,
     "bbMin": 19,
     "bbMax": 94,
     "respSleep": 16.0,
@@ -1748,8 +1755,8 @@
   "latest": {
    "vo2max": 55.0,
    "vo2maxDate": "2026-11-05",
-   "loadAerobicLow": 91.2,
-   "loadAnaerobic": 13.4,
+   "loadAerobicLow": 153.9,
+   "loadAnaerobic": 27.4,
    "loadTargetLow": 216,
    "loadTargetHigh": 479,
    "loadFeedback": "AEROBIC_LOW_SHORTAGE",
@@ -1761,7 +1768,7 @@
    "enduranceScore": 5887,
    "enduranceClass": 3,
    "enduranceNext": 5800,
-   "hillScore": 29,
+   "hillScore": 31,
    "hillClass": 2,
    "race": {
     "date": "2026-11-15",
@@ -1772,7 +1779,7 @@
    }
   }
  },
- "narrative": "昨晚睡了 7.98 小时、睡眠评分 89 分、其中深睡 1.27 小时、静息心率 51 bpm、走了 1,310 步。最近一次运动还是在 10 天前。需要留意的是：已 10 天没运动——连续多日未训练，运动习惯出现中断风险，建议先从 20~30 分钟的轻松跑或快走重启；活动量偏低——今日 1,310 步，仅为月均 5,317 步的 25%。做得好的地方：静息心率平稳、睡眠充足、睡眠质量优秀。",
+ "narrative": "昨晚睡了 7.98 小时、睡眠评分 89 分、其中深睡 1.27 小时、静息心率 51 bpm、走了 15,997 步。近 7 天共 1 次训练，累计 14.01 公里 / 241 分钟，最近一次是 2026-11-15 的徒步（14.01 公里）。做得好的地方：静息心率平稳、睡眠充足、睡眠质量优秀。",
  "narrativeSource": "rule",
  "aiNarrative": "方盛，昨晚的睡眠和 HRV 又没同步上来，今天的账只能记一半——不过前夜的补上了：7.52 小时、78 分，比 11-13 多睡半小时、分数反降 3 分，夜醒从 6 分钟回到 39 分钟，REM 1.77 掉到 1.42。昨天押的夜醒 ≤0.15、REM ≥1.5 两条都没中：时长补得动，连续性补不回来，本周第三次同一个模式。HRV 55 第三天趴在下限 60 下面、RHR 51 卡住不动——十天没练、负荷为零，HRV 还往下走，那就不是练多了，是睡眠没把交感压下来。负荷底子又被抽一层：11-05 那笔跑滚出 28 天窗口，慢性负荷 9.2→6.4、load28 256.6→180.5，空窗第 10 天。房间倒破了个纪录：昨夜 18.8°C、139 个点 100% 落在 18–22°C，五晚首次整夜达标；可睡眠分从 81 掉到 78。温度治好、分数没回来，说明它是长期拖底，不是单夜开关。湿度 85.6% 六连败还创新高，除湿先查水箱。相关性 n=11–12、p 全过 0.4，仍不归因。",
  "aiAdvice": "今天出门快走 30 分钟、心率 110–125、负荷 ≤15，走完必须让 Garmin 记上一笔——空窗第 10 天，先把「连续 7 天有记录」做成\n今晚 21:15 上床、手机放客厅、睡前 60 分钟断屏，目标 ≥7.5 小时且夜醒压回 0.15 小时以内（昨晚 0.65，时长你会补，连续性才是短板）\n湿度是唯一还在恶化的项：睡前 2 小时把除湿机搬到书房、先查水箱满没满、切连续除湿模式，目标整夜 40–60% RH\n温度别再动：昨夜 18.8°C、100% 在带内，维持现有开窗+制热设置，18–20°C 就够，别往 22 以上堆\n明天强度判据不变：HRV ≥60 且 RHR ≤50 才上 4×3 分钟阈值间歇 150–162 bpm；本周 load7 从 0 重建，单次 ≤35、两课封顶",
