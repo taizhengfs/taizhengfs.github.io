@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-11-17T08:08:21",
+ "generatedAt": "2026-11-17T14:30:36",
  "range": {
   "start": "2026-06-16",
   "end": "2026-11-17",
@@ -4161,7 +4161,7 @@
   {
    "acuteLoad": 78,
    "bbCharged": 62,
-   "bbDrained": 0,
+   "bbDrained": 35,
    "bbMax": 74,
    "bbMin": 12,
    "date": "2026-11-17",
@@ -4180,8 +4180,8 @@
    "readinessLevel": "MODERATE",
    "readinessScore": 66,
    "recoveryH": 1,
-   "respAwake": 18.0,
-   "respHigh": 21.0,
+   "respAwake": 14.0,
+   "respHigh": 22.0,
    "respLow": 7.0,
    "respSleep": 16.0
   }
