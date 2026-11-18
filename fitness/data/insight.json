@@ -1,14 +1,14 @@
 {
- "generatedAt": "2026-11-18T07:00:42",
+ "generatedAt": "2026-11-18T08:20:25",
  "asOf": "2026-11-18",
  "today": {
   "date": "2026-11-18",
-  "rhr": 51,
-  "rhr7": 51.0,
-  "rhr30": 49.9,
-  "steps": null,
-  "steps7": 5935.0,
-  "steps30": 5382.0,
+  "rhr": 48,
+  "rhr7": 50.6,
+  "rhr30": 49.8,
+  "steps": 45,
+  "steps7": 5237.0,
+  "steps30": 5237.0,
   "sleepH": null,
   "sleepScore": null,
   "deepH": null,
@@ -49,8 +49,8 @@
   "cur": {
    "sleepAvg": 7.08,
    "scoreAvg": 75.3,
-   "rhrAvg": 51.0,
-   "stepsAvg": 6102.0,
+   "rhrAvg": 50.6,
+   "stepsAvg": 5237.0,
    "activeDays": 5
   },
   "prev": {
@@ -62,8 +62,8 @@
   },
   "delta": {
    "sleepAvg": 0.23,
-   "rhrAvg": 1.9,
-   "stepsAvg": 794.0,
+   "rhrAvg": 1.5,
+   "stepsAvg": -71.0,
    "scoreAvg": -3.1
   },
   "workouts": [
@@ -180,8 +180,8 @@
    "date": "2026-11-18",
    "sleepH": null,
    "sleepScore": null,
-   "rhr": 51,
-   "steps": null
+   "rhr": 48,
+   "steps": 45
   }
  ],
  "restDays": 3,
@@ -189,7 +189,12 @@
   {
    "level": "good",
    "title": "静息心率平稳",
-   "text": "今日 51 bpm，与月均 49.9 bpm 基本持平。"
+   "text": "今日 48 bpm，与月均 49.8 bpm 基本持平。"
+  },
+  {
+   "level": "warn",
+   "title": "活动量偏低",
+   "text": "今日 45 步，仅为月均 5,237 步的 1%。"
   },
   {
    "level": "warn",
@@ -997,26 +1002,26 @@
   ]
  },
  "readiness": {
-  "score": 88,
+  "score": 98,
   "level": "excellent",
   "label": "状态极佳",
   "comps": [
    {
     "key": "rhr",
     "label": "静息心率",
-    "score": 93.0,
+    "score": 97.0,
     "weight": 0.2,
-    "value": "51 bpm",
-    "hint": "月均 49.9，偏离 +1",
+    "value": "48 bpm",
+    "hint": "月均 49.8，偏离 -2",
     "effective": 50.0
    },
    {
     "key": "battery",
     "label": "身体电量",
-    "score": 30.0,
+    "score": 94.0,
     "weight": 0.05,
-    "value": "18",
-    "hint": "昨夜回充 18，白天消耗 —",
+    "value": "80",
+    "hint": "昨夜回充 80，白天消耗 1",
     "effective": 12.0
    },
    {
@@ -1690,10 +1695,10 @@
     "readinessLevel": null,
     "readinessFeedback": null,
     "acuteLoad": null,
-    "bbCharged": 18,
-    "bbDrained": 0,
+    "bbCharged": 80,
+    "bbDrained": 1,
     "bbMin": 8,
-    "bbMax": 25,
+    "bbMax": 87,
     "respSleep": null,
     "spo2SleepAvg": null,
     "respAwake": null,
@@ -1716,6 +1721,6 @@
    }
   }
  },
- "narrative": "静息心率 51 bpm。近 7 天共 1 次训练，累计 14.01 公里 / 241 分钟，最近一次是 2026-11-15 的徒步（14.01 公里）。需要留意的是：已 3 天没运动——接近一周未训练，心肺刺激开始衰减，建议安排一次中低强度有氧。做得好的地方：静息心率平稳、负荷处最佳区间。",
+ "narrative": "静息心率 48 bpm、走了 45 步。近 7 天共 1 次训练，累计 14.01 公里 / 241 分钟，最近一次是 2026-11-15 的徒步（14.01 公里）。需要留意的是：活动量偏低——今日 45 步，仅为月均 5,237 步的 1%；已 3 天没运动——接近一周未训练，心肺刺激开始衰减，建议安排一次中低强度有氧。做得好的地方：静息心率平稳、负荷处最佳区间。",
  "narrativeSource": "rule"
 }

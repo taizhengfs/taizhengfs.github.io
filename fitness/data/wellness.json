@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-11-18T07:00:42",
+ "generatedAt": "2026-11-18T08:20:25",
  "range": {
   "start": "2026-06-16",
   "end": "2026-11-18",
@@ -4186,9 +4186,9 @@
    "respSleep": 16.0
   },
   {
-   "bbCharged": 18,
-   "bbDrained": 0,
-   "bbMax": 25,
+   "bbCharged": 80,
+   "bbDrained": 1,
+   "bbMax": 87,
    "bbMin": 8,
    "date": "2026-11-18"
   }
