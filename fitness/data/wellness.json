@@ -1,9 +1,9 @@
 {
- "generatedAt": "2026-11-18T22:00:41",
+ "generatedAt": "2026-11-19T07:00:44",
  "range": {
   "start": "2026-06-16",
-  "end": "2026-11-18",
-  "days": 156
+  "end": "2026-11-19",
+  "days": 157
  },
  "daily": [
   {
@@ -4187,8 +4187,8 @@
   },
   {
    "acuteLoad": 68,
-   "bbCharged": 82,
-   "bbDrained": 61,
+   "bbCharged": 90,
+   "bbDrained": 79,
    "bbMax": 89,
    "bbMin": 8,
    "date": "2026-11-18",
@@ -4212,6 +4212,33 @@
    "respLow": 8.0,
    "respSleep": 15.0,
    "spo2Lowest": 90
+  },
+  {
+   "acuteLoad": 59,
+   "bbCharged": 81,
+   "bbDrained": 0,
+   "bbMax": 100,
+   "bbMin": 19,
+   "date": "2026-11-19",
+   "hrvHigh": 99,
+   "hrvLow": 60,
+   "hrvNight": 71,
+   "hrvStatus": "BALANCED",
+   "hrvUpper": 72,
+   "hrvWeekly": 61,
+   "rAcwrFactor": 100,
+   "rHrvFactor": 87,
+   "rSleepFactor": 68,
+   "rSleepHistFactor": 58,
+   "rStressFactor": 40,
+   "readinessFeedback": "WELL_RECOVERED",
+   "readinessLevel": "HIGH",
+   "readinessScore": 79,
+   "recoveryH": 1,
+   "respAwake": 13.0,
+   "respHigh": 22.0,
+   "respLow": 8.0,
+   "respSleep": 15.0
   }
  ],
  "latest": {
@@ -4227,17 +4254,17 @@
   "realAge": 33,
   "fitnessAgeAchievable": 27.0,
   "bmiValue": 19.5,
-  "enduranceScore": 5878,
+  "enduranceScore": 5874,
   "enduranceClass": 3,
   "enduranceNext": 5800,
   "hillScore": 31,
   "hillClass": 2,
   "race": {
-   "date": "2026-11-18",
-   "5k": 1363,
-   "10k": 2951,
-   "half": 6687,
-   "full": 15241
+   "date": "2026-11-19",
+   "5k": 1364,
+   "10k": 2953,
+   "half": 6693,
+   "full": 15253
   }
  }
 }
