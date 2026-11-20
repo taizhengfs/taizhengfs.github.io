@@ -1,14 +1,14 @@
 {
- "generatedAt": "2026-11-20T07:00:45",
+ "generatedAt": "2026-11-20T08:15:35",
  "asOf": "2026-11-20",
  "today": {
   "date": "2026-11-20",
   "rhr": 49,
   "rhr7": 49.9,
   "rhr30": 49.6,
-  "steps": 40,
-  "steps7": 5513.0,
-  "steps30": 5229.0,
+  "steps": 56,
+  "steps7": 5516.0,
+  "steps30": 5230.0,
   "sleepH": 4.82,
   "sleepScore": 57,
   "deepH": 1.7,
@@ -50,7 +50,7 @@
    "sleepAvg": 6.94,
    "scoreAvg": 75.3,
    "rhrAvg": 49.9,
-   "stepsAvg": 5513.0,
+   "stepsAvg": 5516.0,
    "activeDays": 5
   },
   "prev": {
@@ -63,7 +63,7 @@
   "delta": {
    "sleepAvg": 0.06,
    "rhrAvg": 0.3,
-   "stepsAvg": 1097.0,
+   "stepsAvg": 1100.0,
    "scoreAvg": -1.8
   },
   "workouts": [
@@ -181,7 +181,7 @@
    "sleepH": 4.82,
    "sleepScore": 57,
    "rhr": 49,
-   "steps": 40
+   "steps": 56
   }
  ],
  "restDays": 5,
@@ -214,7 +214,7 @@
   {
    "level": "warn",
    "title": "活动量偏低",
-   "text": "今日 40 步，仅为月均 5,229 步的 1%。"
+   "text": "今日 56 步，仅为月均 5,230 步的 1%。"
   },
   {
    "level": "warn",
@@ -1075,10 +1075,10 @@
    {
     "key": "battery",
     "label": "身体电量",
-    "score": 75.0,
+    "score": 79.0,
     "weight": 0.05,
-    "value": "64",
-    "hint": "昨夜回充 64，白天消耗 1",
+    "value": "67",
+    "hint": "昨夜回充 67，白天消耗 1",
     "effective": 5.0
    },
    {
@@ -1750,13 +1750,13 @@
     "readinessLevel": "MODERATE",
     "readinessFeedback": "FOCUS_ON_ENERGY_LEVELS",
     "acuteLoad": 49,
-    "bbCharged": 64,
+    "bbCharged": 67,
     "bbDrained": 1,
     "bbMin": 6,
-    "bbMax": 69,
+    "bbMax": 72,
     "respSleep": 15.0,
     "spo2SleepAvg": null,
-    "respAwake": null,
+    "respAwake": 15.0,
     "respLow": 7.0,
     "respHigh": 19.0,
     "spo2Lowest": null
@@ -1789,6 +1789,6 @@
    }
   }
  },
- "narrative": "昨晚睡了 4.82 小时、睡眠评分 57 分、其中深睡 1.7 小时、静息心率 49 bpm、走了 40 步。近 7 天共 1 次训练，累计 14.01 公里 / 241 分钟，最近一次是 2026-11-15 的徒步（14.01 公里）。需要留意的是：睡眠质量偏差——睡眠评分仅 57 分，低于 60 分说明睡眠结构或连续性有明显问题；睡眠不足——昨晚只睡了 4.82 小时，低于近 30 天均值 6.9 小时。长期低于 6.5 小时会明显推高静息心率、降低训练效果。做得好的地方：静息心率平稳、深睡充足、负荷处最佳区间。",
+ "narrative": "昨晚睡了 4.82 小时、睡眠评分 57 分、其中深睡 1.7 小时、静息心率 49 bpm、走了 56 步。近 7 天共 1 次训练，累计 14.01 公里 / 241 分钟，最近一次是 2026-11-15 的徒步（14.01 公里）。需要留意的是：睡眠质量偏差——睡眠评分仅 57 分，低于 60 分说明睡眠结构或连续性有明显问题；睡眠不足——昨晚只睡了 4.82 小时，低于近 30 天均值 6.9 小时。长期低于 6.5 小时会明显推高静息心率、降低训练效果。做得好的地方：静息心率平稳、深睡充足、负荷处最佳区间。",
  "narrativeSource": "rule"
 }
