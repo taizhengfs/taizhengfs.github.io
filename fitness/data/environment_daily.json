@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-20T08:15:28",
+  "generatedAt": "2026-11-20T09:00:05",
   "source": "本地 BLE 直采 LYWSD03MMC（书房「温度计」，mac a4:c1:38:78:21:bd）",
   "room": "study",
   "roomLabel": "书房",
@@ -19,7 +19,7 @@
     "minNightsForCorr": 10
   },
   "coverage": {
-    "rawSamples": 6970,
+    "rawSamples": 6983,
     "rawSpan": [
       "2026-10-13",
       "2026-11-20"
@@ -31,22 +31,22 @@
     ]
   },
   "latest": {
-    "ts": "2026-11-20T08:13:23",
-    "temp": 15.2,
-    "humidity": 55.0,
-    "batteryV": 2.903
+    "ts": "2026-11-20T08:56:55",
+    "temp": 15.0,
+    "humidity": 54.0,
+    "batteryV": 2.909
   },
   "today": {
     "date": "2026-11-20",
     "room": "study",
     "roomLabel": "书房",
     "tempAvg": 15.5,
-    "tempMin": 15.1,
+    "tempMin": 15.0,
     "tempMax": 15.9,
     "humAvg": 52.8,
     "humMin": 51.0,
     "humMax": 58.0,
-    "samples": 93,
+    "samples": 97,
     "timeInTempBand": 0.0,
     "timeInHumBand": 1.0,
     "tempOk": false,
@@ -522,12 +522,12 @@
       "room": "study",
       "roomLabel": "书房",
       "tempAvg": 15.5,
-      "tempMin": 15.1,
+      "tempMin": 15.0,
       "tempMax": 15.9,
       "humAvg": 52.8,
       "humMin": 51.0,
       "humMax": 58.0,
-      "samples": 93,
+      "samples": 97,
       "timeInTempBand": 0.0,
       "timeInHumBand": 1.0,
       "tempOk": false,
@@ -585,5 +585,5 @@
       "need": 0
     }
   },
-  "signature": "530310a1119f015cfe9734b4a9afed0a"
+  "signature": "a146e6138165c8e3234c6000d1f3f27b"
 }
