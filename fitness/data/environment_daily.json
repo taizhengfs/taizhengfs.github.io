@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-24T07:00:05",
+  "generatedAt": "2026-11-24T08:04:05",
   "source": "本地 BLE 直采 LYWSD03MMC（书房「温度计」，mac a4:c1:38:78:21:bd）",
   "room": "study",
   "roomLabel": "书房",
@@ -19,42 +19,42 @@
     "minNightsForCorr": 10
   },
   "coverage": {
-    "rawSamples": 8319,
+    "rawSamples": 8338,
     "rawSpan": [
       "2026-10-13",
       "2026-11-24"
     ],
-    "nightsMatched": 27,
+    "nightsMatched": 28,
     "nightsSpan": [
       "2026-10-14",
-      "2026-11-23"
+      "2026-11-24"
     ]
   },
   "latest": {
-    "ts": "2026-11-24T06:57:10",
+    "ts": "2026-11-24T07:57:58",
     "temp": 15.7,
-    "humidity": 73.0,
-    "batteryV": 2.905
+    "humidity": 68.0,
+    "batteryV": 2.904
   },
   "today": {
-    "date": "2026-11-23",
+    "date": "2026-11-24",
     "room": "study",
     "roomLabel": "书房",
-    "tempAvg": 15.2,
-    "tempMin": 15.1,
-    "tempMax": 15.4,
-    "humAvg": 65.4,
-    "humMin": 61.0,
-    "humMax": 69.0,
-    "samples": 64,
+    "tempAvg": 15.8,
+    "tempMin": 15.7,
+    "tempMax": 15.9,
+    "humAvg": 76.2,
+    "humMin": 68.0,
+    "humMax": 80.0,
+    "samples": 62,
     "timeInTempBand": 0.0,
     "timeInHumBand": 0.0,
     "tempOk": false,
     "humOk": false,
-    "sleepScore": 73,
-    "sleepH": 6.55,
-    "deepPct": 17.1,
-    "awakeH": 0.6
+    "sleepScore": 37,
+    "sleepH": 3.38,
+    "deepPct": 28.7,
+    "awakeH": 0.07
   },
   "nights": [
     {
@@ -596,54 +596,74 @@
       "sleepH": 6.55,
       "deepPct": 17.1,
       "awakeH": 0.6
+    },
+    {
+      "date": "2026-11-24",
+      "room": "study",
+      "roomLabel": "书房",
+      "tempAvg": 15.8,
+      "tempMin": 15.7,
+      "tempMax": 15.9,
+      "humAvg": 76.2,
+      "humMin": 68.0,
+      "humMax": 80.0,
+      "samples": 62,
+      "timeInTempBand": 0.0,
+      "timeInHumBand": 0.0,
+      "tempOk": false,
+      "humOk": false,
+      "sleepScore": 37,
+      "sleepH": 3.38,
+      "deepPct": 28.7,
+      "awakeH": 0.07
     }
   ],
   "corr": {
     "temp_score": {
       "key": "temp_score",
       "name": "夜间温度 vs 睡眠评分",
-      "n": 21,
-      "r": 0.234,
-      "p": 0.3112,
+      "n": 22,
+      "r": 0.283,
+      "p": 0.2045,
       "label": "弱不显著相关",
       "need": 0
     },
     "temp_awake": {
       "key": "temp_awake",
       "name": "夜间温度 vs 夜醒时长",
-      "n": 20,
-      "r": -0.146,
-      "p": 0.5442,
+      "n": 21,
+      "r": -0.108,
+      "p": 0.6449,
       "label": "未见相关",
       "need": 0
     },
     "temp_deep": {
       "key": "temp_deep",
       "name": "夜间温度 vs 深睡占比",
-      "n": 21,
-      "r": -0.024,
-      "p": 0.9181,
+      "n": 22,
+      "r": -0.056,
+      "p": 0.8061,
       "label": "未见相关",
       "need": 0
     },
     "hum_score": {
       "key": "hum_score",
       "name": "夜间湿度 vs 睡眠评分",
-      "n": 21,
-      "r": 0.246,
-      "p": 0.287,
-      "label": "弱不显著相关",
+      "n": 22,
+      "r": 0.153,
+      "p": 0.5025,
+      "label": "未见相关",
       "need": 0
     },
     "hum_awake": {
       "key": "hum_awake",
       "name": "夜间湿度 vs 夜醒时长",
-      "n": 20,
-      "r": -0.123,
-      "p": 0.6104,
+      "n": 21,
+      "r": -0.129,
+      "p": 0.5815,
       "label": "未见相关",
       "need": 0
     }
   },
-  "signature": "0712012dfff5ed1720f9c66c572b8111"
+  "signature": "5b25fd187e588f213408284a0568a691"
 }
