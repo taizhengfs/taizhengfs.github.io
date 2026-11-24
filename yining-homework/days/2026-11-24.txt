@@ -20,7 +20,7 @@
 00:52–01:00　8　② 语文弹药包　拼音进阶 · 复韵母 / 鼻韵母 / 拼读　＋　今日古诗　□
 01:00–01:05　5　🔋 补给站　闭眼 1 分钟 + 拉伸，或者趴一会儿　□
 01:05–01:18　13　③ 英语关　高频词 · Dolch Pre-primer　□
-01:18–01:34　16　📖 亲子阅读　《中国神话故事》——读 1 个故事，讲给家长听　□
+01:18–01:34　16　📖 亲子阅读　《中国神话故事》——读 1 个故事，讲给家长听（下方另附注音故事，可自己读）　□
 01:34–01:41　7　🍎 补给站　吃点心 + 自由活动（家长不谈学习）　□
 01:41–01:53　12　👑 Boss 关 · 奥数思维题（只做 2 题，做不出就看答案学方法）　1. 【周期问题】一串珠子按「红蓝黄」顺序重复排列，第 24 颗是什么颜色？<br>2. 【植树问题】一条路长 36 米，每隔 4 米种一棵树，两端都种。一共要种多少棵？<br>3. 【归一问题】2 支铅笔 10 元，买 7 支要多少元？　□
 01:53–02:00　7　🏁 结算　盖印章 → 说一句「今天我比昨天厉害的地方」→ 老师签字　□
@@ -99,7 +99,49 @@ t-i-ui　d-i-ie　j-i-er　f-i-ao　k-i-ui　f-i-ui　k-i-iu　j-i-ie
 
 一声平平左到右，二声就像上山坡，三声下坡又上坡，四声就像下山坡
 
-📖 亲子阅读 20 分钟：《中国神话故事》——读 1 个故事，讲给家长听
+📖 亲子阅读 20 分钟：《中国神话故事》——读 1 个故事，讲给家长听（下方另附注音故事，可自己读）
+
+📖 今日注音故事 ·《愚公移山》
+
+中国神话 ｜ 每段一组：先拼音、后汉字，孩子可以自己拼着读。网页/打印版排版更清楚，也可以直接打印出来读。
+
+hěn jiǔ yǐ qián yǒu wèi lǎo yé yé jiào yú gōng kuài jiǔ shí suì le
+很久以前，有位老爷爷叫愚公，快九十岁了。
+
+tā jiā mén kǒu yǒu liǎng zuò dà shān chū mén yào rào hěn yuǎn hěn yuǎn de lù
+他家门口有两座大山，出门要绕很远很远的路。
+
+yǒu yī tiān tā bǎ quán jiā rén jiào dào yì qǐ wǒ men bǎ shān wā píng hǎo bù hǎo
+有一天，他把全家人叫到一起：「我们把山挖平，好不好？」
+
+dà jiā dōu shuō hǎo zhǐ yǒu lǎo bàn wèn wā xià lái de tǔ hé shí tou fàng nǎ ér
+大家都说好，只有老伴问：「挖下来的土和石头放哪儿？」
+
+yú gōng shuō tiāo dào bó hǎi biān shàng dào diào zǒng fàng dé xià
+愚公说：「挑到渤海边上倒掉，总放得下。」
+
+dì èr tiān yī jiā rén jiù dài shàng chú tou hé luó kuāng dīng dīng dāng dāng gàn le qǐ lái
+第二天，一家人就带上锄头和箩筐，叮叮当当干了起来。
+
+lín jū jiā de xiǎo hái yě pǎo lái bāng máng yī tàng yòu yī tàng zǒu dé mǎn tóu shì hàn
+邻居家的小孩也跑来帮忙，一趟又一趟，走得满头是汗。
+
+yǒu gè lǎo tóu xiào tā nǐ zhè me lǎo le lián shān shàng yī kē shù dōu bān bù dòng
+有个老头笑他：「你这么老了，连山上一棵树都搬不动。」
+
+yú gōng shuō wǒ wā bù wán hái yǒu ér zi ér zi wā bù wán hái yǒu sūn zi
+愚公说：「我挖不完，还有儿子；儿子挖不完，还有孙子。
+
+zǐ zǐ sūn sūn méi yǒu qióng jìn kě shān bú huì zài zhǎng gāo zěn me huì wā bù píng ne
+「子子孙孙没有穷尽，可山不会再长高，怎么会挖不平呢？」
+
+shān shén tīng jiàn le pà tā men zhēn de wā xià qù jiù bǎ liǎng zuò shān bān zǒu le
+山神听见了，怕他们真的挖下去，就把两座山搬走了。
+
+cóng cǐ yú gōng jiā mén kǒu shì yī tiáo píng píng zhěng zhěng de dà lù
+从此，愚公家门口是一条平平整整的大路。
+
+💬 读完想一想：愚公说的哪句话，让笑他的人答不上来了？
 
 🏮 今日古诗：《泊船瓜洲》· 王安石　（读 3 遍，能背就背）
 

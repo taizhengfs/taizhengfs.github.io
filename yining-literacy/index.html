@@ -484,8 +484,10 @@ function blankDay(){
            at:new Date().toISOString() };
 }
 function blankDB(){
+  // issued：跨天记下「曾经发到今日卡片上的字」。
+  // 没有它，pickNew 每天都从字库头部取同一批未掌握的字 → 天天都是那 5 个。
   return { version:3, child:'以宁', perDay:5, teachers:DEF_TEACHERS.slice(),
-           days:{}, learned:{}, quiz:{}, createdAt:new Date().toISOString(), rev:0 };
+           days:{}, learned:{}, issued:[], quiz:{}, createdAt:new Date().toISOString(), rev:0 };
 }
 /* quiz 由裸计数 {right,total} 改为 「日期 → 设备 → [对,总]」。
    同一台设备同一天取最大值（重复上传不会翻倍），不同设备相加（各答各的）。 */
@@ -545,6 +547,15 @@ function normalize(d){
     o.days[dk]   = base;
   }
   o.learned = (d.learned && typeof d.learned==='object') ? cloneJSON(d.learned) : {};
+  // issued 按「发出顺序」保存，去重；旧版本没有这个字段，从已有 days 的 history 补一份，
+  // 这样升级后不会把过去发过的字又当成新字重发一遍。
+  o.issued = (Array.isArray(d.issued) ? d.issued.slice() : [])
+    .filter((x,i,s) => x && s.indexOf(x) === i);
+  if(!o.issued.length){
+    for(const dk of Object.keys(o.days).sort()){
+      for(const c of (o.days[dk].history || [])) if(!o.issued.includes(c)) o.issued.push(c);
+    }
+  }
   // v3 起每天分「筛选 / 学习」两阶段，与 v2 的单卡片模型不兼容，
   // 且旧数据口径（本来就认识 vs 当天学会）无法还原。
   // 旧记录整体作废，翻开干净的一页 —— 这样连旧缓存也会被自动丢弃。
@@ -564,6 +575,7 @@ function normalize(d){
   if(MAP && Object.keys(MAP).length){
     const inPool = c => MAP[c];
     for(const k of Object.keys(o.learned)) if(!MAP[k]) delete o.learned[k];
+    if(Array.isArray(o.issued)) o.issued = o.issued.filter(inPool);
     for(const dk of Object.keys(o.days)){
       const dd = o.days[dk];
       ['pool','sifted','picked','history'].forEach(f => {
@@ -622,6 +634,7 @@ function mergeDay(a, b){
            phase, pool, sifted: sift,
            picked: phase === 'learn' ? (win.picked || []).slice() : [],
            history,
+           gen: Math.max(win.gen || 0, a.gen || 0, b.gen || 0),
            at };
 }
 /* 把 incoming 并进 base，返回 {db, changed} */
@@ -650,6 +663,11 @@ function mergeDB(base, incoming){
     if(JSON.stringify(m) !== JSON.stringify(pa)) changed++;
     out.quiz[day] = m;
   }
+  // 发字记录取并集：任何一台设备发过的字都算发过，换设备也不会重发同一批。
+  // 顺序以 base 为准、再把另一台补在后面，保证「轮完一轮」的次序稳定。
+  const issued = (out.issued || []).concat(i.issued || [])
+    .filter((x,k,s) => x && s.indexOf(x) === k);
+  if(issued.length !== (out.issued || []).length){ out.issued = issued; changed++; }
   // 标量取「更晚更新」的一方
   if(i.updatedAt && String(i.updatedAt) > String(b.updatedAt || '')){
     if(i.child && i.child !== b.child){ out.child = i.child; changed++; }
@@ -805,19 +823,52 @@ function todaySiftedOut(){
   if(!d) return [];
   return d.history.filter(c => !d.picked.includes(c) && !d.sifted.includes(c));
 }
+/* 挑今天要问的字。
+   旧版只从字库头部取「未学过的前 n 个」，history 又只记当天 —— 只要没点按钮，
+   learned 不变，每天新建一天就又是同一批字。现在：
+   ① DB.issued 跨天记下发过的字 → 优先给从没发过的新字，每天自动换一批；
+   ② 需巩固(fuzzy) / 之前选过但没学会的字 → 优先回炉，每天最多 2 个；
+   ③ 整库轮完后按最早发出的顺序再来一轮，不会「没字可发」；
+   ④ 当天露过面的字不重复，已掌握的永不再发。 */
 function pickNew(n){
-  const out = [];
-  for(const it of POOL){
-    if(out.length >= n) break;
-    if(DB.learned[it.c]) continue;
-    const t = DB.days[todayKey()];
-    if(t){
-      const seen = (t.history || []).concat(t.pool || [], t.sifted || [], t.picked || []);
-      if(seen.includes(it.c)) continue;   // 今天露过面的字不再重复抽
+  const t = DB.days[todayKey()];
+  const seen = new Set(t ? (t.history || []).concat(t.pool || [], t.sifted || [], t.picked || []) : []);
+  const issued = DB.issued || [];
+  const issuedSet = new Set(issued);
+  const isKnown = c => !!(DB.learned[c] && DB.learned[c].status === 'known');
+
+  // 回炉字：需巩固 + 往日选中要学却还没掌握的
+  const due = [], dueSet = new Set();
+  for(const c of Object.keys(DB.learned)){
+    if(DB.learned[c].status === 'fuzzy' && !seen.has(c) && !dueSet.has(c)){
+      due.push(c); dueSet.add(c);
     }
-    out.push(it.c);
   }
-  return out;
+  for(const k of Object.keys(DB.days || {})){
+    if(k === todayKey()) continue;
+    for(const c of (DB.days[k].picked || [])){
+      if(!isKnown(c) && !seen.has(c) && !dueSet.has(c)){ due.push(c); dueSet.add(c); }
+    }
+  }
+
+  const fresh = [], again = [];
+  for(const it of POOL){
+    const c = it.c;
+    if(isKnown(c) || seen.has(c) || dueSet.has(c)) continue;
+    if(issuedSet.has(c)) again.push(c); else fresh.push(c);
+  }
+  const pos = new Map(issued.map((c, i) => [c, i]));
+  const rank = c => (pos.has(c) ? pos.get(c) : 1e9);
+  again.sort((a, b) => rank(a) - rank(b));
+
+  const quota = Math.min(2, n);   // 回炉最多占 2 个，保证每天都有新字
+  return due.slice(0, quota).concat(fresh, again, due.slice(quota)).slice(0, n);
+}
+/* 把发到卡片上的字记进跨天台账（去重，顺序即发字先后） */
+function markIssued(c){
+  if(!c) return;
+  if(!Array.isArray(DB.issued)) DB.issued = [];
+  if(!DB.issued.includes(c)) DB.issued.push(c);
 }
 function ensureToday(){
   const k = todayKey();
@@ -828,6 +879,8 @@ function ensureToday(){
     d.teacher = DB.teachers[0] || '';
     d.pool = pool.slice();
     d.history = pool.slice();
+    pool.forEach(markIssued);
+    d.gen = 4;
     DB.days[k] = d;
     scheduleSave();
     return d;
@@ -837,6 +890,17 @@ function ensureToday(){
      筛选阶段 —— 卡片上只能是「还没认识的字」，认识的自动换出补新；
      学习阶段 —— picked 是今天定好的字，即使后来学会了也绝不更换。 */
   if(d.phase !== 'learn'){
+    // v4 一次性自愈：旧逻辑（gen 缺失）留下的卡池天天都是同一批。
+    // 今天还没点过任何按钮时重抽一次换成新字；写 gen=4 后不再重复重抽。
+    if(d.gen !== 4 && !d.sifted.length){
+      const fresh = pickNew(DB.perDay);       // 已排除今天露过面的旧字
+      d.pool = fresh.slice();
+      fresh.forEach(c => { if(!d.history.includes(c)) d.history.push(c); markIssued(c); });
+      d.gen = 4;
+      d.at = new Date().toISOString();
+      scheduleSave();
+      return d;
+    }
     let touched = false;
     // 尚未进入学习阶段，但已经攒够不认识的字 → 锁定
     if(d.sifted.length >= DB.perDay){
@@ -855,6 +919,7 @@ function ensureToday(){
         fresh.forEach(c => {
           d.pool.push(c);
           if(!d.history.includes(c)) d.history.push(c);
+          markIssued(c);
         });
         touched = true;
       }
@@ -880,7 +945,7 @@ function siftKnown(c){
   speak(c);
   if(i < 0){ scheduleSave(); renderAll(); return; }
   const fresh = pickNew(1)[0];
-  if(fresh){ d.pool[i] = fresh; if(!d.history.includes(fresh)) d.history.push(fresh); }
+  if(fresh){ d.pool[i] = fresh; if(!d.history.includes(fresh)) d.history.push(fresh); markIssued(fresh); }
   else d.pool.splice(i, 1);
   d.at = new Date().toISOString();
   swapTile(i, fresh, '认', x => '本来就认识，换「' + x + '」问问', '本来就认识');
@@ -961,7 +1026,7 @@ function rerollSift(){
   // 已选中的保留，其余换新
   const keep = d.sifted.slice();
   d.pool = keep.concat(pickNew(DB.perDay - keep.length));
-  d.pool.forEach(c => { if(!d.history.includes(c)) d.history.push(c); });
+  d.pool.forEach(c => { if(!d.history.includes(c)) d.history.push(c); markIssued(c); });
   d.at = new Date().toISOString();
   scheduleSave(); renderAll();
   toast('换了一批新字');

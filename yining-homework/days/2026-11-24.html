@@ -59,6 +59,17 @@
   .sign .line.long { width:320px; }
   .warnbox { background:#fff4e5; border:1px solid #e8c48a; border-radius:6px;
               padding:8px 10px; font-size:12px; margin-top:8px; }
+  /* 今日注音故事：拼音行 + 汉字行，双行对照，窄屏换行也不会挤压 */
+  .story { background:#fffdf6; border:1px solid #ebdcb8; border-radius:9px;
+            padding:12px 14px; margin:10px 0 8px; }
+  .story h3 { font-size:16px; margin:0 0 3px; color:#8a5a25; }
+  .story .cat { font-size:12px; color:#8b8069; line-height:1.6; }
+  .story .ln { margin:10px 0; }
+  .story .py { font-size:12px; line-height:1.65; color:#b06a2c;
+                letter-spacing:.2px; overflow-wrap:anywhere; }
+  .story .hz { font-size:17px; line-height:1.85; overflow-wrap:anywhere; }
+  .story .ask { font-size:12.5px; color:#5a6478; border-top:1px dashed #e6d7b5;
+                 padding-top:7px; margin-top:9px; }
   .pagebreak { page-break-before: always; }
   .foot { font-size: 11px; color: #98a1b3; text-align: center; margin-top: 14px; }
   /* ── 手机：全部单列化，表格摊成卡片 ── */
@@ -90,12 +101,16 @@
         border-top: 1px dashed #e6ebf3 !important; margin-top: 4px; padding-top: 5px !important; }
     .sign { line-height: 2; }
     .sign .line.long { width: 100%; }
+    .story { padding:10px 11px; }
+    .story .py { font-size:11.5px; }
+    .story .hz { font-size:16px; }
   }
   @media print {
     body { background: #fff; padding: 0; }
     .sheet { box-shadow: none; max-width: none; }
     .qgrid { grid-template-columns: repeat(5, 1fr); }
     .qgrid.ans { grid-template-columns: repeat(8, 1fr); }
+    .story .ln { break-inside: avoid; }
   }
 </style></head><body>
 
@@ -121,7 +136,7 @@
 <tr><td class="t">00:52–01:00</td><td class="m">8′</td><td class="nm">② 语文弹药包</td><td>拼音进阶 · 复韵母 / 鼻韵母 / 拼读　＋　今日古诗</td><td class="box">□</td></tr>
 <tr><td class="t">01:00–01:05</td><td class="m">5′</td><td class="nm">🔋 补给站</td><td>闭眼 1 分钟 + 拉伸，或者趴一会儿</td><td class="box">□</td></tr>
 <tr><td class="t">01:05–01:18</td><td class="m">13′</td><td class="nm">③ 英语关</td><td>高频词 · Dolch Pre-primer</td><td class="box">□</td></tr>
-<tr><td class="t">01:18–01:34</td><td class="m">16′</td><td class="nm">📖 亲子阅读</td><td>《中国神话故事》——读 1 个故事，讲给家长听</td><td class="box">□</td></tr>
+<tr><td class="t">01:18–01:34</td><td class="m">16′</td><td class="nm">📖 亲子阅读</td><td>《中国神话故事》——读 1 个故事，讲给家长听（下方另附注音故事，可自己读）</td><td class="box">□</td></tr>
 <tr><td class="t">01:34–01:41</td><td class="m">7′</td><td class="nm">🍎 补给站</td><td>吃点心 + 自由活动（家长不谈学习）</td><td class="box">□</td></tr>
 <tr><td class="t">01:41–01:53</td><td class="m">12′</td><td class="nm">👑 Boss 关 · 奥数思维题（只做 2 题，做不出就看答案学方法）</td><td>1. 【周期问题】一串珠子按「红蓝黄」顺序重复排列，第 24 颗是什么颜色？<br>2. 【植树问题】一条路长 36 米，每隔 4 米种一棵树，两端都种。一共要种多少棵？<br>3. 【归一问题】2 支铅笔 10 元，买 7 支要多少元？</td><td class="box">□</td></tr>
 <tr><td class="t">01:53–02:00</td><td class="m">7′</td><td class="nm">🏁 结算</td><td>盖印章 → 说一句「今天我比昨天厉害的地方」→ 老师签字</td><td class="box">□</td></tr></table>
@@ -161,7 +176,26 @@
 <div class="blk"><div class="sub">② 两拼音节拼读（声母+韵母）</div><div class="body">p-in　ch-ie　q-ie　q-ei　zh-ei　f-an　f-ao　ch-in　zh-ao　p-an　y-er　y-ie</div></div>
 <div class="blk"><div class="sub">③ 三拼音节（声母+介母+韵母）</div><div class="body">t-i-ui　d-i-ie　j-i-er　f-i-ao　k-i-ui　f-i-ui　k-i-iu　j-i-ie</div></div>
 <div class="blk"><div class="sub">④ 标调歌复习</div><div class="body">一声平平左到右，二声就像上山坡，三声下坡又上坡，四声就像下山坡</div></div>
-  <div class="note">📖 <b>亲子阅读 20 分钟</b>：《中国神话故事》——读 1 个故事，讲给家长听</div>
+  <div class="note">📖 <b>亲子阅读 20 分钟</b>：《中国神话故事》——读 1 个故事，讲给家长听（下方另附注音故事，可自己读）</div>
+  
+  <div class="story">
+    <h3>📖 今日注音故事 ·《愚公移山》</h3>
+    <div class="cat">中国神话 ｜ 每个字上面都有拼音，可以自己读；读完讲给家长听</div>
+    <div class="ln"><div class="py">hěn jiǔ yǐ qián yǒu wèi lǎo yé yé jiào yú gōng kuài jiǔ shí suì le</div><div class="hz">很久以前，有位老爷爷叫愚公，快九十岁了。</div></div>
+<div class="ln"><div class="py">tā jiā mén kǒu yǒu liǎng zuò dà shān chū mén yào rào hěn yuǎn hěn yuǎn de lù</div><div class="hz">他家门口有两座大山，出门要绕很远很远的路。</div></div>
+<div class="ln"><div class="py">yǒu yī tiān tā bǎ quán jiā rén jiào dào yì qǐ wǒ men bǎ shān wā píng hǎo bù hǎo</div><div class="hz">有一天，他把全家人叫到一起：「我们把山挖平，好不好？」</div></div>
+<div class="ln"><div class="py">dà jiā dōu shuō hǎo zhǐ yǒu lǎo bàn wèn wā xià lái de tǔ hé shí tou fàng nǎ ér</div><div class="hz">大家都说好，只有老伴问：「挖下来的土和石头放哪儿？」</div></div>
+<div class="ln"><div class="py">yú gōng shuō tiāo dào bó hǎi biān shàng dào diào zǒng fàng dé xià</div><div class="hz">愚公说：「挑到渤海边上倒掉，总放得下。」</div></div>
+<div class="ln"><div class="py">dì èr tiān yī jiā rén jiù dài shàng chú tou hé luó kuāng dīng dīng dāng dāng gàn le qǐ lái</div><div class="hz">第二天，一家人就带上锄头和箩筐，叮叮当当干了起来。</div></div>
+<div class="ln"><div class="py">lín jū jiā de xiǎo hái yě pǎo lái bāng máng yī tàng yòu yī tàng zǒu dé mǎn tóu shì hàn</div><div class="hz">邻居家的小孩也跑来帮忙，一趟又一趟，走得满头是汗。</div></div>
+<div class="ln"><div class="py">yǒu gè lǎo tóu xiào tā nǐ zhè me lǎo le lián shān shàng yī kē shù dōu bān bù dòng</div><div class="hz">有个老头笑他：「你这么老了，连山上一棵树都搬不动。」</div></div>
+<div class="ln"><div class="py">yú gōng shuō wǒ wā bù wán hái yǒu ér zi ér zi wā bù wán hái yǒu sūn zi</div><div class="hz">愚公说：「我挖不完，还有儿子；儿子挖不完，还有孙子。</div></div>
+<div class="ln"><div class="py">zǐ zǐ sūn sūn méi yǒu qióng jìn kě shān bú huì zài zhǎng gāo zěn me huì wā bù píng ne</div><div class="hz">「子子孙孙没有穷尽，可山不会再长高，怎么会挖不平呢？」</div></div>
+<div class="ln"><div class="py">shān shén tīng jiàn le pà tā men zhēn de wā xià qù jiù bǎ liǎng zuò shān bān zǒu le</div><div class="hz">山神听见了，怕他们真的挖下去，就把两座山搬走了。</div></div>
+<div class="ln"><div class="py">cóng cǐ yú gōng jiā mén kǒu shì yī tiáo píng píng zhěng zhěng de dà lù</div><div class="hz">从此，愚公家门口是一条平平整整的大路。</div></div>
+    <div class="ask">💬 读完想一想：愚公说的哪句话，让笑他的人答不上来了？</div>
+  </div>
+
   <div class="note">🏮 <b>今日古诗</b>：《泊船瓜洲》· 王安石　
     <span style="color:#5a6478">京口瓜洲一水间，钟山只隔数重山。春风又绿江南岸，明月何时照我还。</span></div>
 
