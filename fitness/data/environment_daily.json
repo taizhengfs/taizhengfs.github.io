@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-25T08:01:31",
+  "generatedAt": "2026-11-25T09:00:04",
   "source": "本地 BLE 直采 LYWSD03MMC（书房「温度计」，mac a4:c1:38:78:21:bd）",
   "room": "study",
   "roomLabel": "书房",
@@ -19,7 +19,7 @@
     "minNightsForCorr": 10
   },
   "coverage": {
-    "rawSamples": 8710,
+    "rawSamples": 8730,
     "rawSpan": [
       "2026-10-13",
       "2026-11-25"
@@ -31,10 +31,10 @@
     ]
   },
   "latest": {
-    "ts": "2026-11-25T08:01:24",
-    "temp": 14.6,
-    "humidity": 67.0,
-    "batteryV": 2.892
+    "ts": "2026-11-25T08:56:04",
+    "temp": 14.5,
+    "humidity": 64.0,
+    "batteryV": 2.89
   },
   "today": {
     "date": "2026-11-25",
@@ -43,12 +43,12 @@
     "tempAvg": 14.9,
     "tempMin": 14.4,
     "tempMax": 15.4,
-    "humAvg": 60.3,
+    "humAvg": 60.7,
     "humMin": 59.0,
     "humMax": 69.0,
-    "samples": 78,
+    "samples": 86,
     "timeInTempBand": 0.0,
-    "timeInHumBand": 0.718,
+    "timeInHumBand": 0.651,
     "tempOk": false,
     "humOk": false,
     "sleepScore": 75,
@@ -624,12 +624,12 @@
       "tempAvg": 14.9,
       "tempMin": 14.4,
       "tempMax": 15.4,
-      "humAvg": 60.3,
+      "humAvg": 60.7,
       "humMin": 59.0,
       "humMax": 69.0,
-      "samples": 78,
+      "samples": 86,
       "timeInTempBand": 0.0,
-      "timeInHumBand": 0.718,
+      "timeInHumBand": 0.651,
       "tempOk": false,
       "humOk": false,
       "sleepScore": 75,
@@ -670,8 +670,8 @@
       "key": "hum_score",
       "name": "夜间湿度 vs 睡眠评分",
       "n": 23,
-      "r": 0.159,
-      "p": 0.4721,
+      "r": 0.16,
+      "p": 0.471,
       "label": "未见相关",
       "need": 0
     },
@@ -685,5 +685,5 @@
       "need": 0
     }
   },
-  "signature": "f562e7d246d11860403c418d087c9183"
+  "signature": "1749bc06374ba36a8aafc5c1728b75f9"
 }
