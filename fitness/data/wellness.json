@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-11-26T16:07:31",
+ "generatedAt": "2026-11-26T22:00:39",
  "range": {
   "start": "2026-06-16",
   "end": "2026-11-26",
@@ -4424,7 +4424,7 @@
    "readinessLevel": "LOW",
    "readinessScore": 38,
    "recoveryH": 30,
-   "respAwake": 15.0,
+   "respAwake": 14.0,
    "respHigh": 23.0,
    "respLow": 6.0,
    "respSleep": 16.0
