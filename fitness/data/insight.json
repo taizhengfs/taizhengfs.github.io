@@ -1,14 +1,34 @@
 {
- "generatedAt": "2026-11-26T22:00:39",
- "asOf": "2026-11-26",
+ "generatedAt": "2026-11-27T07:00:45",
+ "asOf": "2026-11-27",
  "today": {
+  "date": "2026-11-27",
+  "rhr": 52,
+  "rhr7": 51.3,
+  "rhr30": 49.8,
+  "steps": null,
+  "steps7": 7130.0,
+  "steps30": 5761.0,
+  "sleepH": null,
+  "sleepScore": null,
+  "deepH": null,
+  "lightH": null,
+  "remH": null,
+  "awakeH": null,
+  "sleep7": 5.9,
+  "sleep30": 6.8,
+  "score7": 65.3,
+  "weight": null,
+  "deepPct": null
+ },
+ "yesterday": {
   "date": "2026-11-26",
   "rhr": 51,
   "rhr7": 50.9,
   "rhr30": 49.7,
-  "steps": 4694,
-  "steps7": 7108.0,
-  "steps30": 5756.0,
+  "steps": 4846,
+  "steps7": 7130.0,
+  "steps30": 5761.0,
   "sleepH": 4.68,
   "sleepScore": 58,
   "deepH": 1.38,
@@ -21,50 +41,30 @@
   "weight": null,
   "deepPct": 29.5
  },
- "yesterday": {
-  "date": "2026-11-25",
-  "rhr": 50,
-  "rhr7": 50.3,
-  "rhr30": 49.7,
-  "steps": 6645,
-  "steps7": 7187.0,
-  "steps30": 5705.0,
-  "sleepH": 6.13,
-  "sleepScore": 75,
-  "deepH": 1.9,
-  "lightH": 3.12,
-  "remH": 1.12,
-  "awakeH": null,
-  "sleep7": 6.1,
-  "sleep30": 6.8,
-  "score7": 68.3,
-  "weight": null,
-  "deepPct": 31.0
- },
  "week": {
   "range": [
-   "2026-11-20",
-   "2026-11-26"
+   "2026-11-21",
+   "2026-11-27"
   ],
   "cur": {
-   "sleepAvg": 5.85,
-   "scoreAvg": 65.3,
-   "rhrAvg": 50.9,
-   "stepsAvg": 7108.0,
-   "activeDays": 7
+   "sleepAvg": 6.02,
+   "scoreAvg": 66.7,
+   "rhrAvg": 51.3,
+   "stepsAvg": 7616.0,
+   "activeDays": 6
   },
   "prev": {
-   "sleepAvg": 7.26,
-   "scoreAvg": 78.7,
-   "rhrAvg": 50.0,
-   "stepsAvg": 5980.0,
+   "sleepAvg": 6.94,
+   "scoreAvg": 75.3,
+   "rhrAvg": 49.9,
+   "stepsAvg": 6110.0,
    "activeDays": 6
   },
   "delta": {
-   "sleepAvg": -1.41,
-   "rhrAvg": 0.9,
-   "stepsAvg": 1128.0,
-   "scoreAvg": -13.4
+   "sleepAvg": -0.92,
+   "rhrAvg": 1.4,
+   "stepsAvg": 1506.0,
+   "scoreAvg": -8.6
   },
   "workouts": [
    {
@@ -85,13 +85,6 @@
   "totalCal": 450.0
  },
  "series": [
-  {
-   "date": "2026-11-13",
-   "sleepH": 7.05,
-   "sleepScore": 81,
-   "rhr": 50,
-   "steps": 3308
-  },
   {
    "date": "2026-11-14",
    "sleepH": 7.52,
@@ -181,40 +174,32 @@
    "sleepH": 4.68,
    "sleepScore": 58,
    "rhr": 51,
-   "steps": 4694
+   "steps": 4846
+  },
+  {
+   "date": "2026-11-27",
+   "sleepH": null,
+   "sleepScore": null,
+   "rhr": 52,
+   "steps": null
   }
  ],
- "restDays": 4,
+ "restDays": 5,
  "findings": [
   {
    "level": "good",
    "title": "静息心率平稳",
-   "text": "今日 51 bpm，与月均 49.7 bpm 基本持平。"
+   "text": "今日 52 bpm，与月均 49.8 bpm 基本持平。"
   },
   {
    "level": "warn",
-   "title": "睡眠不足",
-   "text": "昨晚只睡了 4.68 小时，低于近 30 天均值 6.8 小时。长期低于 6.5 小时会明显推高静息心率、降低训练效果。"
-  },
-  {
-   "level": "bad",
-   "title": "睡眠质量偏差",
-   "text": "睡眠评分仅 58 分，低于 60 分说明睡眠结构或连续性有明显问题。"
-  },
-  {
-   "level": "good",
-   "title": "深睡充足",
-   "text": "深睡占比 29.5%，身体修复质量好。"
-  },
-  {
-   "level": "warn",
-   "title": "已 4 天没运动",
+   "title": "已 5 天没运动",
    "text": "接近一周未训练，心肺刺激开始衰减，建议安排一次中低强度有氧。"
   },
   {
    "level": "warn",
    "title": "本周睡眠下滑",
-   "text": "近 7 天平均睡眠 5.85 小时，比上周少了 1.4 小时。"
+   "text": "近 7 天平均睡眠 6.02 小时，比上周少了 0.9 小时。"
   },
   {
    "level": "good",
@@ -223,12 +208,7 @@
   },
   {
    "level": "warn",
-   "title": "HRV 跌出基线下限",
-   "text": "昨夜 HRV 56 ms，低于个人基线下限 59 ms（腕表整体趋势仍报平衡，但数值已经出界），周均 60 ms。连续往下走就该压量了。"
-  },
-  {
-   "level": "bad",
-   "title": "训练准备度 38 分 · 状态偏低",
+   "title": "训练准备度 56 分 · 状态一般",
    "text": "腕表综合睡眠、HRV、压力与近期负荷给出的判断，可直接决定今天该练还是该歇。"
   }
  ],
@@ -357,8 +337,8 @@
    },
    {
     "sport": "跑步",
-    "n": 8,
-    "avg": 4.09
+    "n": 7,
+    "avg": 4.21
    },
    {
     "sport": "越野跑",
@@ -379,8 +359,8 @@
  },
  "load": {
   "range": [
-   "2026-08-29",
-   "2026-11-26"
+   "2026-08-30",
+   "2026-11-27"
   ],
   "acute": 10.1,
   "chronic": 9.1,
@@ -394,13 +374,6 @@
    1.3
   ],
   "series": [
-   {
-    "date": "2026-08-29",
-    "load": 0,
-    "acute": 0.0,
-    "chronic": 1.8,
-    "ratio": 0.0
-   },
    {
     "date": "2026-08-30",
     "load": 0,
@@ -1023,58 +996,38 @@
     "acute": 10.1,
     "chronic": 9.1,
     "ratio": 1.12
+   },
+   {
+    "date": "2026-11-27",
+    "load": 0,
+    "acute": 10.1,
+    "chronic": 9.1,
+    "ratio": 1.12
    }
   ]
  },
  "readiness": {
-  "score": 72,
-  "level": "good",
-  "label": "状态良好",
+  "score": 85,
+  "level": "excellent",
+  "label": "状态极佳",
   "comps": [
-   {
-    "key": "sleep",
-    "label": "睡眠",
-    "score": 58.0,
-    "weight": 0.3,
-    "value": "58 分",
-    "hint": "睡了 4.68 小时",
-    "effective": 29.0
-   },
-   {
-    "key": "duration",
-    "label": "睡眠时长",
-    "score": 47.0,
-    "weight": 0.1,
-    "value": "4.68 h",
-    "hint": "目标 7.5 小时",
-    "effective": 10.0
-   },
    {
     "key": "rhr",
     "label": "静息心率",
-    "score": 92.0,
+    "score": 87.0,
     "weight": 0.2,
-    "value": "51 bpm",
-    "hint": "月均 49.7，偏离 +1",
-    "effective": 19.0
-   },
-   {
-    "key": "hrv",
-    "label": "HRV 心率变异",
-    "score": 69.0,
-    "weight": 0.25,
-    "value": "56 ms",
-    "hint": "基线区间 59–72 ms",
-    "effective": 24.0
+    "value": "52 bpm",
+    "hint": "月均 49.8，偏离 +2",
+    "effective": 50.0
    },
    {
     "key": "battery",
     "label": "身体电量",
-    "score": 58.0,
+    "score": 30.0,
     "weight": 0.05,
-    "value": "49",
-    "hint": "昨夜回充 49，白天消耗 49",
-    "effective": 5.0
+    "value": "20",
+    "hint": "昨夜回充 20，白天消耗 1",
+    "effective": 12.0
    },
    {
     "key": "load",
@@ -1083,41 +1036,21 @@
     "weight": 0.15,
     "value": "ACWR 1.12",
     "hint": "最佳区间",
-    "effective": 14.0
+    "effective": 37.0
    }
   ],
-  "missing": []
+  "missing": [
+   "hrv"
+  ]
  },
  "wellness": {
   "available": true,
   "range": {
    "start": "2026-06-16",
-   "end": "2026-11-26",
-   "days": 164
+   "end": "2026-11-27",
+   "days": 165
   },
   "daily": [
-   {
-    "date": "2026-10-28",
-    "hrvNight": 65,
-    "hrvWeekly": 60,
-    "hrvStatus": "BALANCED",
-    "hrvLow": 59,
-    "hrvUpper": 72,
-    "readinessScore": 64,
-    "readinessLevel": "MODERATE",
-    "readinessFeedback": "GOOD_SLEEP_HISTORY",
-    "acuteLoad": 66,
-    "bbCharged": 79,
-    "bbDrained": 79,
-    "bbMin": 5,
-    "bbMax": 82,
-    "respSleep": 16.0,
-    "spo2SleepAvg": null,
-    "respAwake": 14.0,
-    "respLow": 7.0,
-    "respHigh": 22.0,
-    "spo2Lowest": null
-   },
    {
     "date": "2026-10-29",
     "hrvNight": 66,
@@ -1745,50 +1678,54 @@
     "readinessLevel": "LOW",
     "readinessFeedback": "FIND_TIME_TO_RELAX",
     "acuteLoad": 54,
-    "bbCharged": 49,
+    "bbCharged": 52,
     "bbDrained": 49,
     "bbMin": 5,
     "bbMax": 52,
     "respSleep": 16.0,
     "spo2SleepAvg": null,
-    "respAwake": 14.0,
+    "respAwake": 15.0,
     "respLow": 6.0,
     "respHigh": 23.0,
+    "spo2Lowest": null
+   },
+   {
+    "date": "2026-11-27",
+    "hrvNight": null,
+    "hrvWeekly": null,
+    "hrvStatus": null,
+    "hrvLow": null,
+    "hrvUpper": null,
+    "readinessScore": 56,
+    "readinessLevel": "MODERATE",
+    "readinessFeedback": "LISTEN_TO_YOUR_BODY",
+    "acuteLoad": 54,
+    "bbCharged": 20,
+    "bbDrained": 1,
+    "bbMin": 8,
+    "bbMax": 26,
+    "respSleep": null,
+    "spo2SleepAvg": null,
+    "respAwake": null,
+    "respLow": null,
+    "respHigh": null,
     "spo2Lowest": null
    }
   ],
   "latest": {
-   "vo2max": 55.0,
-   "vo2maxDate": "2026-11-05",
-   "loadAerobicLow": 154.2,
-   "loadAnaerobic": 24.5,
-   "loadTargetLow": 216,
-   "loadTargetHigh": 479,
-   "loadFeedback": "AEROBIC_LOW_SHORTAGE",
-   "deviceName": "Warden's 7X",
    "fitnessAge": 25.1,
    "realAge": 33,
    "fitnessAgeAchievable": 27.0,
    "bmiValue": 19.5,
-   "enduranceScore": 5842,
-   "enduranceClass": 3,
-   "enduranceNext": 5800,
-   "hillScore": 32,
-   "hillClass": 2,
    "race": {
-    "date": "2026-11-26",
-    "5k": 1376,
-    "10k": 2977,
-    "half": 6751,
-    "full": 15358
+    "date": "2026-11-27",
+    "5k": 1379,
+    "10k": 2982,
+    "half": 6761,
+    "full": 15377
    }
   }
  },
- "narrative": "昨晚睡了 4.68 小时、睡眠评分 58 分、其中深睡 1.38 小时、静息心率 51 bpm、走了 4,694 步。近 7 天共 1 次训练，累计 3.97 公里 / 69 分钟，最近一次是 2026-11-22 的徒步（3.97 公里）。需要留意的是：睡眠质量偏差——睡眠评分仅 58 分，低于 60 分说明睡眠结构或连续性有明显问题；训练准备度 38 分 · 状态偏低——腕表综合睡眠、HRV、压力与近期负荷给出的判断，可直接决定今天该练还是该歇。做得好的地方：静息心率平稳、深睡充足、负荷处最佳区间。",
- "narrativeSource": "rule",
- "aiNarrative": "方盛，昨晚 4.68 小时、58 分，刚从 3.38 的坑爬出来又掉回去一半，这周睡眠均值 5.85 比上周少 1.4 小时，债越滚越多。结构还是短睡代偿：深睡 1.38 小时占 29.5%，REM 只有 0.92 偏薄。恢复端双降：HRV 60→56 再次跌破基线 59，RHR 50→51，腕表准备度 38 分亮红灯，间歇门第五天关着。昨天押的五笔账只兑现一笔：湿度终于通关——58.8%、整夜 100% 落在 40–60 带里，这条线打完了；但温度说了四天没修反而创新低 14.1°C，整夜 0% 达标，Zone2 也没落地，chronic 9.1 四天没动。corr n=24，温度 vs 评分 r=0.335、p=0.11 仍不显著，而且又是正相关——低温每晚都被反向打脸，问题在作息和执行，别赖房间。今天电量回充只有 49，别练，把觉补回来是唯一的正事。",
- "aiAdvice": "今天零训练：负荷 ≤5，最多午间 20 分钟慢走 100–110 bpm 晒太阳——腕表准备度 38、电量 49，今天唯一任务是恢复。\n今晚 21:00 上床，目标 7.5–8 小时把 4.68 小时的坑补回；早醒后闭眼躺着别摸手机，连着两晚短睡要防变成习惯。\n温度第 5 天没修：睡前 1 小时把制热/空调开到整夜 20–22°C（现在 14.1，差 6 度），今晚必须真落地。\n除湿档位照昨晚执行：守住 55–60%，这条已验证有效，别过冲把湿度压太低。\n间歇解禁线不变：明早 HRV ≥61 且 RHR ≤50 才开；chronic 9.1 四天没动，周末前必须落一课 Zone2 骑行 40 分钟 115–125 bpm、负荷 ≤25。",
- "aiModel": "WorkBuddy AI",
- "aiAt": "2026-11-26T08:03:26",
- "aiSource": "diary"
+ "narrative": "静息心率 52 bpm。近 7 天共 1 次训练，累计 3.97 公里 / 69 分钟，最近一次是 2026-11-22 的徒步（3.97 公里）。需要留意的是：已 5 天没运动——接近一周未训练，心肺刺激开始衰减，建议安排一次中低强度有氧；本周睡眠下滑——近 7 天平均睡眠 6.02 小时，比上周少了 0.9 小时。做得好的地方：静息心率平稳、负荷处最佳区间。",
+ "narrativeSource": "rule"
 }
