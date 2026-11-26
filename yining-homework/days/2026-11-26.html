@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>以宁 · 2026-11-26 晚托作战单</title>
+<style>
+  @page { size: A4; margin: 12mm; }
+  * { box-sizing: border-box; }
+  body { font-family: "PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+         margin: 0; padding: 16px; background: #eef1f6; color: #1b2030; }
+  .sheet { max-width: 820px; margin: 0 auto 20px; background: #fff; padding: 18px 20px;
+            border-radius: 10px; box-shadow: 0 2px 10px rgba(20,30,60,.10); }
+  h1 { font-size: 21px; margin: 0 0 6px; }
+  h2 { font-size: 16px; margin: 18px 0 8px; padding-left: 9px; border-left: 4px solid #2f6bd8; }
+  .meta { font-size: 12.5px; color: #5a6478; line-height: 1.7; }
+  .coord { background:#f2f6ff; border:1px solid #d6e2fb; border-radius:6px; padding:8px 10px;
+            font-size:12.5px; margin:8px 0 0; }
+  ol.goals { margin: 6px 0 0 18px; padding: 0; font-size: 13.5px; line-height: 1.9; }
+  table { border-collapse: collapse; width: 100%; font-size: 12.5px; }
+  table.tl td { border: 1px solid #dbe1ea; padding: 6px 7px; vertical-align: top; }
+  table.tl td.t { white-space: nowrap; color: #6a7387; }
+  table.tl td.m { text-align: right; color: #6a7387; width: 38px; }
+  table.tl td.nm { white-space: nowrap; font-weight: 600; }
+  table.tl td.box { text-align: center; width: 28px; font-size: 15px; }
+  table.q td { border: 1px solid #e3e8f0; padding: 5px 6px; font-size: 13px; height: 30px; }
+  table.q td.q { font-family: "SF Mono",Menlo,monospace; }
+  /* 题目网格：桌面 5 列，手机自动折 2 列（见 @media） */
+  .qgrid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 2px 6px; margin: 6px 0; }
+  .qgrid.ans { grid-template-columns: repeat(8, 1fr); }
+  .qgrid > .q { font-family: "SF Mono",Menlo,monospace; font-size: 13px; padding: 4px 5px;
+                border: 1px solid #e3e8f0; border-radius: 4px; white-space: nowrap;
+                overflow: hidden; text-overflow: ellipsis; }
+  .qgrid.ans > .q { font-family: inherit; }
+  .blk { margin: 7px 0; }
+  .blk .sub { font-weight: 600; font-size: 13px; }
+  .blk .body { background: #f7f9fc; border: 1px solid #e6ebf3; border-radius: 5px;
+                padding: 7px 9px; font-size: 13px; line-height: 1.8; margin-top: 3px; }
+  .note { background: #fff8e6; border: 1px solid #f0dca8; border-radius: 6px;
+           padding: 8px 10px; font-size: 12.5px; margin: 8px 0; }
+  .promo { background: #eafaf0; border: 1px solid #b6e6c8; border-radius: 6px;
+            padding: 8px 10px; font-size: 13px; margin: 6px 0; }
+  .settle { background: #f4f0ff; border: 1px solid #d9cff5; border-radius: 6px;
+             padding: 10px 12px; font-size: 13px; line-height: 1.9; }
+  .ans { font-size: 12.5px; color: #40506b; margin-top: 6px; }
+  /* 每日五字 · 跳转认字簿的大按钮 + 过关四步 */
+  .steps { background:#f2f6ff; border:1px solid #d6e2fb; border-radius:6px;
+            padding:9px 11px; font-size:12.5px; line-height:1.85; margin:8px 0; }
+  .goto { display: block; margin: 10px 0 6px; padding: 13px 14px; border-radius: 12px;
+           background: #2f6bd8; color: #fff; text-decoration: none; text-align: center;
+           font-size: 16px; font-weight: 600; letter-spacing: .02em;
+           box-shadow: 0 4px 12px rgba(47,107,216,.28); }
+  .goto .arw { font-weight: 400; }
+  .gourl { font-size: 11px; color: #98a1b3; text-align: center; margin: 0 0 8px;
+            overflow-wrap: anywhere; }
+  .sign { background:#f7f9fc; border:1px solid #e6ebf3; border-radius:6px; padding:10px 12px;
+           font-size:12.5px; line-height:2.2; margin-top:6px; }
+  .sign .line { display:inline-block; border-bottom:1px solid #9aa5ba; width:110px;
+                 vertical-align:middle; margin:0 4px; }
+  .sign .line.short { width:70px; }
+  .sign .line.long { width:320px; }
+  .warnbox { background:#fff4e5; border:1px solid #e8c48a; border-radius:6px;
+              padding:8px 10px; font-size:12px; margin-top:8px; }
+  /* 今日注音故事：拼音行 + 汉字行，双行对照，窄屏换行也不会挤压 */
+  .story { background:#fffdf6; border:1px solid #ebdcb8; border-radius:9px;
+            padding:12px 14px; margin:10px 0 8px; }
+  .story h3 { font-size:16px; margin:0 0 3px; color:#8a5a25; }
+  .story .cat { font-size:12px; color:#8b8069; line-height:1.6; }
+  .story .ln { margin:10px 0; }
+  .story .py { font-size:12px; line-height:1.65; color:#b06a2c;
+                letter-spacing:.2px; overflow-wrap:anywhere; }
+  .story .hz { font-size:17px; line-height:1.85; overflow-wrap:anywhere; }
+  .story .ask { font-size:12.5px; color:#5a6478; border-top:1px dashed #e6d7b5;
+                 padding-top:7px; margin-top:9px; }
+  .pagebreak { page-break-before: always; }
+  .foot { font-size: 11px; color: #98a1b3; text-align: center; margin-top: 14px; }
+  /* ── 手机：全部单列化，表格摊成卡片 ── */
+  @media (max-width: 720px) {
+    body { padding: 8px; overflow-x: hidden; }
+    .sheet { padding: 12px 12px 8px; border-radius: 8px; overflow-wrap: anywhere; }
+    h1 { font-size: 18px; }
+    h2 { font-size: 15px; margin: 15px 0 7px; }
+    .meta, .coord { font-size: 12px; }
+    ol.goals { font-size: 13px; margin-left: 16px; }
+    .qgrid { grid-template-columns: repeat(2, 1fr); gap: 4px; }
+    .qgrid > .q { font-size: 12.5px; padding: 5px; }
+    .qgrid.ans { grid-template-columns: repeat(4, 1fr); }
+    .goto { font-size: 15px; padding: 12px; }
+    /* 120 分钟时间盒：一行变成一张小卡片
+       第一行：关卡名（可换行）+ 打勾；第二行：时段 · 分钟；第三行：任务描述 */
+    table.tl, table.tl tbody { display: block; width: 100%; }
+    table.tl tr { display: grid; gap: 1px 7px;
+        grid-template-columns: auto 1fr auto auto;
+        grid-template-areas: "nm nm nm box" "t t t m" "task task task task";
+        border: 1px solid #dbe1ea; border-radius: 8px; margin-bottom: 6px; padding: 7px 9px; }
+    table.tl td { border: 0 !important; padding: 1px 0 !important; width: auto !important; }
+    table.tl td.nm  { grid-area: nm; font-size: 13px; white-space: normal !important;
+                       overflow-wrap: anywhere; }
+    table.tl td.t   { grid-area: t; font-size: 11px; color: #98a1b3; margin-top: 2px; }
+    table.tl td.m   { grid-area: m; font-size: 11px; text-align: right; color: #98a1b3; }
+    table.tl td.box { grid-area: box; font-size: 20px; text-align: right; line-height: 1; }
+    table.tl td:nth-child(4) { grid-area: task; font-size: 12.5px; color: #3d4761;
+        border-top: 1px dashed #e6ebf3 !important; margin-top: 4px; padding-top: 5px !important; }
+    .sign { line-height: 2; }
+    .sign .line.long { width: 100%; }
+    .story { padding:10px 11px; }
+    .story .py { font-size:11.5px; }
+    .story .hz { font-size:16px; }
+  }
+  @media print {
+    body { background: #fff; padding: 0; }
+    .sheet { box-shadow: none; max-width: none; }
+    .qgrid { grid-template-columns: repeat(5, 1fr); }
+    .qgrid.ans { grid-template-columns: repeat(8, 1fr); }
+    .story .ln { break-inside: avoid; }
+  }
+</style></head><body>
+
+<div class="sheet">
+  <h1>🗓️ 2026-11-26（周四）· 以宁晚托作战单</h1>
+  <div class="meta">
+    <b>一年级上册 · 秋季学期（上学期） · 在校日 #58</b>
+    　🏫 在校日
+  </div>
+  <div class="coord">📍 校内坐标：语文 <b>第四单元·汉语拼音</b>（10 ai ei ui、11 ao ou iu、12 ie üe er…）
+    　|　数学 <b>四 · 11~20的认识</b></div>
+
+  <h2>🎯 今日三个目标（完成就赢）</h2>
+  <ol class="goals"><li>数学：100以内进退位加减 今日 30 题，正确率目标 ≥ 95%（达标线：口算+竖式，正确率≥95%）</li><li>语文：复韵母·鼻韵母·四声·拼读（达标线：任意音节 3秒拼出）＋ 学校作业清零</li><li>英语：高频词 Dolch Pre-primer 40 ＋ 亲子阅读 20 分钟不断档</li></ol>
+  
+
+  <h2>⏱️ 晚托 120 分钟作战表</h2>
+  <table class="tl"><tr><td class="t">00:00–00:02</td><td class="m">2′</td><td class="nm">⚡ 战前动员</td><td>看一遍今日 3 个目标；自己挑一支「今天要用的武器」（笔/橡皮）</td><td class="box">□</td></tr>
+<tr><td class="t">00:02–00:26</td><td class="m">24′</td><td class="nm">① 数学关</td><td>1) 学校数学作业（优先）　2) 数学弹药包 · 计时</td><td class="box">□</td></tr>
+<tr><td class="t">00:26–00:31</td><td class="m">5′</td><td class="nm">🔋 补给站</td><td>站起来动一动：开合跳 30 个 + 喝水，不许碰屏幕</td><td class="box">□</td></tr>
+<tr><td class="t">00:31–00:41</td><td class="m">10′</td><td class="nm">② 语文·学校作业</td><td>老师在群里布置的语文作业，先吃掉</td><td class="box">□</td></tr>
+<tr><td class="t">00:41–00:52</td><td class="m">11′</td><td class="nm">② 每日五字 ✍️</td><td>打开认字簿 → 今天的 5 个字（认读 + 笔顺 + 写字本上写 3 遍，老师督促）</td><td class="box">□</td></tr>
+<tr><td class="t">00:52–01:00</td><td class="m">8′</td><td class="nm">② 语文弹药包</td><td>拼音进阶 · 复韵母 / 鼻韵母 / 拼读　＋　今日古诗</td><td class="box">□</td></tr>
+<tr><td class="t">01:00–01:05</td><td class="m">5′</td><td class="nm">🔋 补给站</td><td>闭眼 1 分钟 + 拉伸，或者趴一会儿</td><td class="box">□</td></tr>
+<tr><td class="t">01:05–01:18</td><td class="m">13′</td><td class="nm">③ 英语关</td><td>高频词 · Dolch Pre-primer</td><td class="box">□</td></tr>
+<tr><td class="t">01:18–01:34</td><td class="m">16′</td><td class="nm">📖 亲子阅读</td><td>《十万个为什么》——任意 5 问，家长和孩子各问对方 2 个（下方另附注音故事，可自己读）</td><td class="box">□</td></tr>
+<tr><td class="t">01:34–01:41</td><td class="m">7′</td><td class="nm">🍎 补给站</td><td>吃点心 + 自由活动（家长不谈学习）</td><td class="box">□</td></tr>
+<tr><td class="t">01:41–01:53</td><td class="m">12′</td><td class="nm">👑 Boss 关 · 科学/通识（未来中考科学 160 分的种子）</td><td>【实验】手电筒 + 积木，观察影子什么时候长什么时候短。</td><td class="box">□</td></tr>
+<tr><td class="t">01:53–02:00</td><td class="m">7′</td><td class="nm">🏁 结算</td><td>盖印章 → 说一句「今天我比昨天厉害的地方」→ 老师签字</td><td class="box">□</td></tr></table>
+  <div class="note">⚠️ 学校作业（老师群里发的）优先级最高，<b>先吃掉它</b>，再做本单的自选弹药。</div>
+
+  
+  <h2>✍️ 每日五字 · 打开认字簿（请督促并签字）</h2>
+  <a class="goto" href="https://taizhendong.com/yining-literacy/" target="_blank" rel="noopener">
+    打开认字簿 · 学今天的 5 个字 <span class="arw">→</span>
+  </a>
+  <div class="gourl">taizhendong.com/yining-literacy　（手机上点不开就直接复制这个地址）</div>
+  <div class="meta">今天学哪 5 个字、哪些字要复习，<b>一律以认字簿为准</b>（App 自动定位到今天）。
+    这里不再抄一份字表 —— 只认一个地方，两边就不会对不上。</div>
+  <div class="steps">
+    <b>过关四步（每字都要走完，走完一项打一个勾）</b><br>
+    ① <b>会读</b>：老师教读 2 遍 → 孩子自读 2 遍　
+    ② <b>懂笔顺</b>：手指书空，边写边念笔画名（横竖撇捺点提折钩）<br>
+    ③ <b>会写</b>：<b>写在孩子自己的写字本上，每字 3 遍</b>，注意占格与间架　
+    ④ <b>会组词</b>：口头组 2 个词（认字簿里点开字就有拼音和组词）
+  </div>
+  <div class="note">📌 没过关的字在认字簿里点「不太熟」，第二天自动进复习。
+    写错的字<b>不要擦掉重写一整页</b> —— 在写字本旁边改 1 遍，<b>不罚抄</b>。</div>
+  <div class="sign">
+    老师签字：<span class="line"></span>　日期：<span class="line short"></span>　
+    今日五字全部过关：☐ 是　☐ 否
+  </div>
+
+  <h2>① 数学弹药包 · 100以内进退位加减</h2>
+  <div class="meta">达标线：口算+竖式，正确率≥95%　|　限时 ____ 分钟，正确率目标 ≥95%</div>
+  <div class="qgrid "><div class="q">87 − 29 = ____</div><div class="q">47 + 15 = ____</div><div class="q">56 + 26 = ____</div><div class="q">49 + 34 = ____</div><div class="q">32 + 29 = ____</div><div class="q">41 − 17 = ____</div><div class="q">57 − 48 = ____</div><div class="q">46 + 48 = ____</div><div class="q">33 − 15 = ____</div><div class="q">23 − 18 = ____</div><div class="q">49 + 21 = ____</div><div class="q">28 − 19 = ____</div><div class="q">21 + 69 = ____</div><div class="q">27 + 64 = ____</div><div class="q">49 + 19 = ____</div><div class="q">68 + 18 = ____</div><div class="q">70 − 54 = ____</div><div class="q">77 − 29 = ____</div><div class="q">62 + 19 = ____</div><div class="q">52 − 24 = ____</div><div class="q">71 − 66 = ____</div><div class="q">20 − 14 = ____</div><div class="q">45 − 36 = ____</div><div class="q">72 − 49 = ____</div></div>
+  <div class="note">♻️ <b>温故（100以内加减（不进退位））</b> —— 防止「学过就忘」</div><div class="qgrid "><div class="q">53 + 22 = ____</div><div class="q">27 − 13 = ____</div><div class="q">98 − 36 = ____</div><div class="q">66 + 32 = ____</div><div class="q">66 + 10 = ____</div><div class="q">33 + 60 = ____</div></div>
+  <div class="note">🏗️ <b>每日地基 · 20以内进位加 / 退位减（凑十·破十）</b> —— 整个小学数学的底层能力，每天必练，做到 3 秒内脱口而出。做题时<b>说出方法</b>：「9+6，把 6 分成 1 和 5，9+1=10，10+5=15」。</div><div class="qgrid "><div class="q">17 − 5 = ____</div><div class="q">6 + 9 = ____</div><div class="q">11 − 5 = ____</div><div class="q">5 + 7 = ____</div><div class="q">18 − 5 = ____</div><div class="q">7 + 6 = ____</div><div class="q">13 − 3 = ____</div><div class="q">17 − 3 = ____</div><div class="q">8 + 4 = ____</div><div class="q">12 − 7 = ____</div></div>
+
+  <h2>② 语文弹药包 · 拼音进阶 · 复韵母 / 鼻韵母 / 拼读</h2>
+  <div class="meta">达标线：任意音节 3秒拼出</div>
+  <div class="blk"><div class="sub">① 复韵母 / 鼻韵母认读</div><div class="body">un　ei　ün　an　eng　ui　ao　ang　üe</div></div>
+<div class="blk"><div class="sub">② 两拼音节拼读（声母+韵母）</div><div class="body">h-üe　d-üe　m-eng　r-ui　x-ui　d-ei　m-ang　h-eng　n-ing　x-iu　r-ing　n-ai</div></div>
+<div class="blk"><div class="sub">③ 三拼音节（声母+介母+韵母）</div><div class="body">j-i-ou　x-i-er　q-i-er　p-i-ie　k-i-ai　d-i-er　k-i-ai　d-i-ie</div></div>
+<div class="blk"><div class="sub">④ 标调歌复习</div><div class="body">一声平平左到右，二声就像上山坡，三声下坡又上坡，四声就像下山坡</div></div>
+  <div class="note">📖 <b>亲子阅读 20 分钟</b>：《十万个为什么》——任意 5 问，家长和孩子各问对方 2 个（下方另附注音故事，可自己读）</div>
+  
+  <div class="story">
+    <h3>📖 今日注音故事 ·《亡羊补牢》</h3>
+    <div class="cat">成语故事 ｜ 每个字上面都有拼音，可以自己读；读完讲给家长听</div>
+    <div class="ln"><div class="py">cóng qián yǒu gè mù yáng rén yǎng le yī qún bái bái pàng pàng de yáng</div><div class="hz">从前有个牧羊人，养了一群白白胖胖的羊。</div></div>
+<div class="ln"><div class="py">zǎo shàng tā shù le shù shǎo le yī zhī lín jū shuō yáng juàn pò le gè dòng kuài bǔ shàng ba</div><div class="hz">早上他数了数，少了一只。邻居说：「羊圈破了个洞，快补上吧。」</div></div>
+<div class="ln"><div class="py">tā bǎi bǎi shǒu yáng yǐ jīng diū le bǔ quān yǒu shén me yòng</div><div class="hz">他摆摆手：「羊已经丢了，补圈有什么用？」</div></div>
+<div class="ln"><div class="py">dì èr tiān zǎo shàng tā yòu shǎo le yī zhī yáng</div><div class="hz">第二天早上，他又少了一只羊。</div></div>
+<div class="ln"><div class="py">yuán lái yè lǐ láng yòu cóng nà ge dòng zuān jìn lái diāo zǒu le yī zhī</div><div class="hz">原来夜里狼又从那个洞钻进来，叼走了一只。</div></div>
+<div class="ln"><div class="py">zhè huí tā zháo jí le gǎn máng zhǎo lái mù tiáo hé shí tou bǎ dòng jié jiē shí shí dǔ shàng</div><div class="hz">这回他着急了，赶忙找来木条和石头，把洞结结实实堵上。</div></div>
+<div class="ln"><div class="py">tā yòu wéi zhe yáng juàn zǒu le yī quān bǎ bié chù sōng de dì fāng yě jiā gù hǎo</div><div class="hz">他又围着羊圈走了一圈，把别处松的地方也加固好。</div></div>
+<div class="ln"><div class="py">cóng nà yǐ hòu láng zài lái guò hǎo jǐ cì kě zài yě zuān bù jìn qù le</div><div class="hz">从那以后，狼再来过好几次，可再也钻不进去了。</div></div>
+<div class="ln"><div class="py">yáng yī zhī yě méi yǒu zài diū mù yáng rén měi tiān dōu néng ān xīn shuì jiào</div><div class="hz">羊一只也没有再丢，牧羊人每天都能安心睡觉。</div></div>
+<div class="ln"><div class="py">lín jū xiào zhe shuō diū le yáng zài bǔ quān yě bù suàn wǎn ya</div><div class="hz">邻居笑着说：「丢了羊再补圈，也不算晚呀。」</div></div>
+<div class="ln"><div class="py">wáng yáng bǔ láo jiù shì gào sù wǒ men chū le cuò mǎ shàng gǎi hái lái de jí</div><div class="hz">「亡羊补牢」就是告诉我们：出了错马上改，还来得及。</div></div>
+    <div class="ask">💬 读完想一想：丢了第一只羊时他没补圈，后来为什么又补了？</div>
+  </div>
+
+  <div class="note">🏮 <b>今日古诗</b>：《泊船瓜洲》· 王安石　
+    <span style="color:#5a6478">京口瓜洲一水间，钟山只隔数重山。春风又绿江南岸，明月何时照我还。</span></div>
+
+  <h2>③ 英语弹药包 · 高频词 · Dolch Pre-primer</h2>
+  <div class="meta">达标线：见词 1 秒读</div>
+  <div class="blk"><div class="sub">① 闪卡 1 秒读</div><div class="body">we　and　help　one　said　to　see　play　yellow　big</div></div>
+<div class="blk"><div class="sub">② 造句（选 3 个词各说一句）</div><div class="body">（口头完成）</div></div>
+
+  <h2>👑 Boss 关 · 科学/通识（未来中考科学 160 分的种子）</h2>
+  <div class="blk"><div class="body">【实验】手电筒 + 积木，观察影子什么时候长什么时候短。</div></div>
+
+  <h2>🏁 结算</h2>
+  <div class="settle">
+    连续作战：<b>1 天</b>　|　累计积分：<b>0 分</b><br>
+    今日奖励：【特权卡】明天晚托的点心由你选<br>
+    打卡：数学 ☐　语文 ☐　英语 ☐　阅读 ☐　Boss ☐<br>
+    <b>家长话术：</b>遇到不会的题，不要讲答案，问：「这题在考什么？你试过几种办法？」
+  </div>
+  <div class="foot">以宁 · 每日晚托作战单　|　由 scripts/daily_homework.py 自动生成</div>
+</div>
+
+<div class="sheet pagebreak">
+  <h2>🔑 答案页（家长专用，打印后单独一页）</h2>
+  <h2>数学 · 今日主练</h2>
+  <div class="qgrid ans"><div class="q">58</div><div class="q">62</div><div class="q">82</div><div class="q">83</div><div class="q">61</div><div class="q">24</div><div class="q">9</div><div class="q">94</div><div class="q">18</div><div class="q">5</div><div class="q">70</div><div class="q">9</div><div class="q">90</div><div class="q">91</div><div class="q">68</div><div class="q">86</div><div class="q">16</div><div class="q">48</div><div class="q">81</div><div class="q">28</div><div class="q">5</div><div class="q">6</div><div class="q">9</div><div class="q">23</div></div>
+  <h2>数学 · 温故</h2><div class="qgrid ans"><div class="q">75</div><div class="q">14</div><div class="q">62</div><div class="q">98</div><div class="q">76</div><div class="q">93</div></div><h2>数学 · 每日地基</h2><div class="qgrid ans"><div class="q">12</div><div class="q">15</div><div class="q">6</div><div class="q">12</div><div class="q">13</div><div class="q">13</div><div class="q">10</div><div class="q">14</div><div class="q">12</div><div class="q">5</div></div>
+  
+  <div class="note">
+    记录正确率（脚本会自动据此调难度）：<br>
+    <code>python3 scripts/daily_homework.py --feedback math=0.95 chinese=0.90 english=1.0</code>
+  </div>
+  <div class="foot">连续 3 次某科 ≥95% → 自动晋级下一档</div>
+</div>
+
+</body></html>
