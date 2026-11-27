@@ -5,7 +5,7 @@
 📍 校内坐标：语文 第四单元·汉语拼音（10 ai ei ui、11 ao ou iu、12 ie üe er…）　|　数学 四 · 11~20的认识
 
 🎯 今日三个目标（完成就赢）
-1. 数学：100以内进退位加减 今日 30 题，正确率目标 ≥ 95%（达标线：口算+竖式，正确率≥95%）
+1. 数学：100以内进退位加减 今日 24 题，正确率目标 ≥ 95%（达标线：口算+竖式，正确率≥95%）
 2. 语文：复韵母·鼻韵母·四声·拼读（达标线：任意音节 3秒拼出）＋ 学校作业清零
 3. 英语：高频词 Dolch Pre-primer 40 ＋ 亲子阅读 20 分钟不断档
 
@@ -85,15 +85,15 @@
 
 ① 复韵母 / 鼻韵母认读
 
-ing　ai　un　ong　in　an　üe　eng　ui
+üe　iu　ün　ang　ie　ao　ou　en　in
 
 ② 两拼音节拼读（声母+韵母）
 
-t-ün　g-iu　x-an　r-an　ch-ei　r-ong　g-üe　t-ong　h-ui　h-en　ch-ui　x-üe
+l-ie　ch-ao　q-in　n-an　z-un　d-iu　h-ao　s-un　l-üe　m-ai　zh-eng　l-ai　m-ei　p-en
 
 ③ 三拼音节（声母+介母+韵母）
 
-j-i-ai　n-i-ou　p-i-iu　t-i-er　l-i-ui　m-i-iu　b-i-ei　j-i-ao
+q-i-ao　j-i-a　d-i-ao　k-u-a　j-i-an　g-u-a　d-i-an　c-u-o
 
 ④ 标调歌复习
 
