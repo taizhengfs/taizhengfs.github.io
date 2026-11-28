@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>以宁 · 2026-11-28 晚托作战单</title>
+<style>
+  @page { size: A4; margin: 12mm; }
+  * { box-sizing: border-box; }
+  body { font-family: "PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+         margin: 0; padding: 16px; background: #eef1f6; color: #1b2030; }
+  .sheet { max-width: 820px; margin: 0 auto 20px; background: #fff; padding: 18px 20px;
+            border-radius: 10px; box-shadow: 0 2px 10px rgba(20,30,60,.10); }
+  h1 { font-size: 21px; margin: 0 0 6px; }
+  h2 { font-size: 16px; margin: 18px 0 8px; padding-left: 9px; border-left: 4px solid #2f6bd8; }
+  .meta { font-size: 12.5px; color: #5a6478; line-height: 1.7; }
+  .coord { background:#f2f6ff; border:1px solid #d6e2fb; border-radius:6px; padding:8px 10px;
+            font-size:12.5px; margin:8px 0 0; }
+  ol.goals { margin: 6px 0 0 18px; padding: 0; font-size: 13.5px; line-height: 1.9; }
+  table { border-collapse: collapse; width: 100%; font-size: 12.5px; }
+  table.tl td { border: 1px solid #dbe1ea; padding: 6px 7px; vertical-align: top; }
+  table.tl td.t { white-space: nowrap; color: #6a7387; }
+  table.tl td.m { text-align: right; color: #6a7387; width: 38px; }
+  table.tl td.nm { white-space: nowrap; font-weight: 600; }
+  table.tl td.box { text-align: center; width: 28px; font-size: 15px; }
+  table.q td { border: 1px solid #e3e8f0; padding: 5px 6px; font-size: 13px; height: 30px; }
+  table.q td.q { font-family: "SF Mono",Menlo,monospace; }
+  /* 题目网格：桌面 5 列，手机自动折 2 列（见 @media） */
+  .qgrid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 2px 6px; margin: 6px 0; }
+  .qgrid.ans { grid-template-columns: repeat(8, 1fr); }
+  .qgrid > .q { font-family: "SF Mono",Menlo,monospace; font-size: 13px; padding: 4px 5px;
+                border: 1px solid #e3e8f0; border-radius: 4px; white-space: nowrap;
+                overflow: hidden; text-overflow: ellipsis; }
+  .qgrid.ans > .q { font-family: inherit; }
+  .blk { margin: 7px 0; }
+  .blk .sub { font-weight: 600; font-size: 13px; }
+  .blk .body { background: #f7f9fc; border: 1px solid #e6ebf3; border-radius: 5px;
+                padding: 7px 9px; font-size: 13px; line-height: 1.8; margin-top: 3px; }
+  .note { background: #fff8e6; border: 1px solid #f0dca8; border-radius: 6px;
+           padding: 8px 10px; font-size: 12.5px; margin: 8px 0; }
+  .promo { background: #eafaf0; border: 1px solid #b6e6c8; border-radius: 6px;
+            padding: 8px 10px; font-size: 13px; margin: 6px 0; }
+  .settle { background: #f4f0ff; border: 1px solid #d9cff5; border-radius: 6px;
+             padding: 10px 12px; font-size: 13px; line-height: 1.9; }
+  .ans { font-size: 12.5px; color: #40506b; margin-top: 6px; }
+  /* 每日五字 · 跳转认字簿的大按钮 + 过关四步 */
+  .steps { background:#f2f6ff; border:1px solid #d6e2fb; border-radius:6px;
+            padding:9px 11px; font-size:12.5px; line-height:1.85; margin:8px 0; }
+  .goto { display: block; margin: 10px 0 6px; padding: 13px 14px; border-radius: 12px;
+           background: #2f6bd8; color: #fff; text-decoration: none; text-align: center;
+           font-size: 16px; font-weight: 600; letter-spacing: .02em;
+           box-shadow: 0 4px 12px rgba(47,107,216,.28); }
+  .goto .arw { font-weight: 400; }
+  .gourl { font-size: 11px; color: #98a1b3; text-align: center; margin: 0 0 8px;
+            overflow-wrap: anywhere; }
+  .sign { background:#f7f9fc; border:1px solid #e6ebf3; border-radius:6px; padding:10px 12px;
+           font-size:12.5px; line-height:2.2; margin-top:6px; }
+  .sign .line { display:inline-block; border-bottom:1px solid #9aa5ba; width:110px;
+                 vertical-align:middle; margin:0 4px; }
+  .sign .line.short { width:70px; }
+  .sign .line.long { width:320px; }
+  .warnbox { background:#fff4e5; border:1px solid #e8c48a; border-radius:6px;
+              padding:8px 10px; font-size:12px; margin-top:8px; }
+  /* 今日注音故事：一字一音，拼音在字正上方；flex 字块换行不分离 */
+  .story { background:#fffdf7; border:1px solid #e9dcc0; border-radius:10px;
+            padding:16px 18px; margin:12px 0 10px; }
+  .story h3 { font-size:20px; margin:0 0 5px; color:#7a4d1e; letter-spacing:.5px;
+               font-family:"Kaiti SC","STKaiti","KaiTi","楷体","Songti SC",serif; }
+  .story .cat { font-size:13px; color:#8a8069; line-height:1.7; margin-bottom:11px; }
+  /* 组内紧贴、行间拉开：让「拼音 + 汉字」看上去是一个带音的字，而不是两行文字 */
+  .story .ln { font-size:25px; line-height:2.5; text-indent:3.04em; margin:14px 0; }
+  /* 字块宽度固定，拼音只在块内居中，绝不撑开字距；
+     inline-flex 让「拼音 + 汉字」成为不可拆的整体，换行时一起走 */
+  .story .zi { display:inline-flex; flex-direction:column; align-items:center;
+                justify-content:flex-end; width:1.52em; vertical-align:bottom;
+                text-indent:0; }   /* text-indent 会继承，不清零会把每个字块撑宽 */
+  .story .zi.punc { width:.7em; padding-top:.74em; }  /* 与带拼音的字块等高，标点不下沉 */
+  .story .keep { white-space:nowrap; text-indent:0; }   /* 标点 / 段末字组不断行 */
+  .story .py { font-family:"Avenir Next","Helvetica Neue",Arial,sans-serif;
+                font-size:.64em; font-weight:600; line-height:1.15; color:#a9612b;
+                white-space:nowrap; letter-spacing:-.02em; }
+  /* 长拼音横向压缩，避免压到相邻字的拼音、看起来连成一个词 */
+  .story .py.l4 { transform:scaleX(.92); }
+  .story .py.l5 { transform:scaleX(.84); }
+  .story .py.l6 { transform:scaleX(.76); }
+  .story .hz { font-family:"Kaiti SC","STKaiti","KaiTi","楷体","LXGW WenKai",
+                "Songti SC","STSong","SimSun",serif;
+                font-size:1em; line-height:1.15; color:#2b2a28; }
+  .story .ask { font-size:14px; color:#6b5a41; background:#faf3e4; border-radius:6px;
+                 padding:9px 11px; margin-top:12px; line-height:1.7; }
+  .pagebreak { page-break-before: always; }
+  .foot { font-size: 11px; color: #98a1b3; text-align: center; margin-top: 14px; }
+  /* ── 手机：全部单列化，表格摊成卡片 ── */
+  @media (max-width: 720px) {
+    body { padding: 8px; overflow-x: hidden; }
+    .sheet { padding: 12px 12px 8px; border-radius: 8px; overflow-wrap: anywhere; }
+    h1 { font-size: 18px; }
+    h2 { font-size: 15px; margin: 15px 0 7px; }
+    .meta, .coord { font-size: 12px; }
+    ol.goals { font-size: 13px; margin-left: 16px; }
+    .qgrid { grid-template-columns: repeat(2, 1fr); gap: 4px; }
+    .qgrid > .q { font-size: 12.5px; padding: 5px; }
+    .qgrid.ans { grid-template-columns: repeat(4, 1fr); }
+    .goto { font-size: 15px; padding: 12px; }
+    /* 120 分钟时间盒：一行变成一张小卡片
+       第一行：关卡名（可换行）+ 打勾；第二行：时段 · 分钟；第三行：任务描述 */
+    table.tl, table.tl tbody { display: block; width: 100%; }
+    table.tl tr { display: grid; gap: 1px 7px;
+        grid-template-columns: auto 1fr auto auto;
+        grid-template-areas: "nm nm nm box" "t t t m" "task task task task";
+        border: 1px solid #dbe1ea; border-radius: 8px; margin-bottom: 6px; padding: 7px 9px; }
+    table.tl td { border: 0 !important; padding: 1px 0 !important; width: auto !important; }
+    table.tl td.nm  { grid-area: nm; font-size: 13px; white-space: normal !important;
+                       overflow-wrap: anywhere; }
+    table.tl td.t   { grid-area: t; font-size: 11px; color: #98a1b3; margin-top: 2px; }
+    table.tl td.m   { grid-area: m; font-size: 11px; text-align: right; color: #98a1b3; }
+    table.tl td.box { grid-area: box; font-size: 20px; text-align: right; line-height: 1; }
+    table.tl td:nth-child(4) { grid-area: task; font-size: 12.5px; color: #3d4761;
+        border-top: 1px dashed #e6ebf3 !important; margin-top: 4px; padding-top: 5px !important; }
+    .sign { line-height: 2; }
+    .sign .line.long { width: 100%; }
+    .story { padding:12px 12px; }
+    .story h3 { font-size:17px; }
+    .story .ln { font-size:22px; line-height:2.55; text-indent:3.04em; }
+  }
+  @media print {
+    body { background: #fff; padding: 0; }
+    .sheet { box-shadow: none; max-width: none; }
+    .qgrid { grid-template-columns: repeat(5, 1fr); }
+    .qgrid.ans { grid-template-columns: repeat(8, 1fr); }
+    .story { -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+    .story .ln { break-inside: avoid; }
+    .story .zi { break-inside: avoid; }
+  }
+
+  /* 故事卡头部：标题 + 导出按钮 */
+  .story-head { display:flex; align-items:flex-start; justify-content:space-between;
+                 gap:10px; flex-wrap:wrap; margin-bottom:5px; }
+  .story-head h3 { margin:0; }
+  .exp-btn { flex:0 0 auto; min-height:40px; padding:8px 14px; cursor:pointer;
+              border:1px solid #d8bd8b; border-radius:8px; background:#fff8e9;
+              color:#7a4d1e; font-size:13px; font-weight:600; line-height:1.3;
+              font-family:inherit; box-shadow:0 1px 3px rgba(120,90,40,.10); }
+  .exp-btn:hover { background:#fbe9c6; }
+  .exp-btn:active { transform:translateY(1px); }
+  .exp-btn:disabled { opacity:.6; cursor:wait; }
+  /* 导出预览浮层：移动端长按图片即可存相册 */
+  .img-modal { position:fixed; inset:0; z-index:9999; background:rgba(20,24,36,.72);
+                display:flex; flex-direction:column; align-items:center; padding:14px; }
+  .img-modal[hidden] { display:none; }
+  .img-modal-bar { width:100%; max-width:560px; display:flex; align-items:center;
+                    gap:8px; flex-wrap:wrap; margin-bottom:10px; }
+  .img-modal-tip { flex:1 1 200px; color:#fff5e4; font-size:13px; line-height:1.6; }
+  .img-modal-bar button { min-height:40px; padding:8px 14px; border-radius:8px;
+                           border:0; cursor:pointer; font-size:13px; font-weight:600;
+                           font-family:inherit; }
+  .img-save { background:#f0b95c; color:#4a300c; }
+  .img-close { background:rgba(255,255,255,.85); color:#333; }
+  .img-modal-body { flex:1; width:100%; max-width:560px; overflow:auto;
+                     background:#fff; border-radius:10px; padding:8px; }
+  .img-modal-body img { display:block; width:100%; height:auto; border-radius:6px; }
+  @media (max-width: 720px) {
+    .story-head { flex-direction:column; gap:8px; }
+    .exp-btn { width:100%; min-height:44px; font-size:14px; }
+  }
+  @media print {
+    .exp-btn, .img-modal { display:none !important; }
+  }
+
+</style></head><body>
+
+<div class="sheet">
+  <h1>🗓️ 2026-11-28（周六）· 以宁晚托作战单</h1>
+  <div class="meta">
+    <b>一年级上册 · 秋季学期（上学期） · 在校日 #59</b>
+    　🏖️ 假期 / 周末版
+  </div>
+  <div class="coord">📍 校内坐标：语文 <b>第四单元·汉语拼音</b>（10 ai ei ui、11 ao ou iu、12 ie üe er…）
+    　|　数学 <b>四 · 11~20的认识</b></div>
+
+  <h2>🎯 今日三个目标（完成就赢）</h2>
+  <ol class="goals"><li>数学：100以内进退位加减 今日 24 题，正确率目标 ≥ 95%（达标线：口算+竖式，正确率≥95%）</li><li>语文：复韵母·鼻韵母·四声·拼读（达标线：任意音节 3秒拼出）＋ 学校作业清零</li><li>英语：高频词 Dolch Pre-primer 40 ＋ 亲子阅读 20 分钟不断档</li></ol>
+  
+
+  <h2>⏱️ 晚托 120 分钟作战表</h2>
+  <table class="tl"><tr><td class="t">块 1</td><td class="m">20′</td><td class="nm">① 数学关</td><td>数学弹药包（计时）+ 1 道思维题</td><td class="box">□</td></tr>
+<tr><td class="t">块 2</td><td class="m">12′</td><td class="nm">② 每日五字 ✍️</td><td>打开认字簿 → 今天的 5 个字（认读 + 笔顺 + 写字本上写 3 遍，老师督促）</td><td class="box">□</td></tr>
+<tr><td class="t">块 3</td><td class="m">18′</td><td class="nm">② 语文关</td><td>拼音进阶 · 复韵母 / 鼻韵母 / 拼读 + 今日古诗</td><td class="box">□</td></tr>
+<tr><td class="t">块 4</td><td class="m">18′</td><td class="nm">③ 英语关</td><td>高频词 · Dolch Pre-primer</td><td class="box">□</td></tr>
+<tr><td class="t">块 5</td><td class="m">25′</td><td class="nm">📖 亲子阅读</td><td>《唐诗三百首（儿童版）》——读 2 首，配合当日古诗任务（下方另附注音故事，可自己读）</td><td class="box">□</td></tr>
+<tr><td class="t">块 6</td><td class="m">25′</td><td class="nm">👑 Boss 关 · 奥数思维题（只做 2 题，做不出就看答案学方法）</td><td>1. 【归一问题】4 支铅笔 12 元，买 7 支要多少元？<br>2. 【鸡兔同笼】笼子里鸡和兔一共 18 只，一共有 54 条腿。鸡有几只？（b 为偶数）<br>3. 【倍数问题】苹果有 88 个，梨的个数是苹果的 9 倍。梨和苹果一共多少个？</td><td class="box">□</td></tr>
+<tr><td class="t">傍晚</td><td class="m">20′</td><td class="nm">🏃 体育</td><td>亲子：和家长一起快走 / 慢跑 15 分钟</td><td class="box">□</td></tr>
+<tr><td class="t">睡前</td><td class="m">10′</td><td class="nm">🏁 结算</td><td>盖印章 + 说一句今天最厉害的地方</td><td class="box">□</td></tr></table>
+  <div class="note">⚠️ 学校作业（老师群里发的）优先级最高，<b>先吃掉它</b>，再做本单的自选弹药。</div>
+
+  
+  <h2>✍️ 每日五字 · 打开认字簿（请督促并签字）</h2>
+  <a class="goto" href="https://taizhendong.com/yining-literacy/" target="_blank" rel="noopener">
+    打开认字簿 · 学今天的 5 个字 <span class="arw">→</span>
+  </a>
+  <div class="gourl">taizhendong.com/yining-literacy　（手机上点不开就直接复制这个地址）</div>
+  <div class="meta">今天学哪 5 个字、哪些字要复习，<b>一律以认字簿为准</b>（App 自动定位到今天）。
+    这里不再抄一份字表 —— 只认一个地方，两边就不会对不上。</div>
+  <div class="steps">
+    <b>过关四步（每字都要走完，走完一项打一个勾）</b><br>
+    ① <b>会读</b>：老师教读 2 遍 → 孩子自读 2 遍　
+    ② <b>懂笔顺</b>：手指书空，边写边念笔画名（横竖撇捺点提折钩）<br>
+    ③ <b>会写</b>：<b>写在孩子自己的写字本上，每字 3 遍</b>，注意占格与间架　
+    ④ <b>会组词</b>：口头组 2 个词（认字簿里点开字就有拼音和组词）
+  </div>
+  <div class="note">📌 没过关的字在认字簿里点「不太熟」，第二天自动进复习。
+    写错的字<b>不要擦掉重写一整页</b> —— 在写字本旁边改 1 遍，<b>不罚抄</b>。</div>
+  <div class="sign">
+    老师签字：<span class="line"></span>　日期：<span class="line short"></span>　
+    今日五字全部过关：☐ 是　☐ 否
+  </div>
+
+  <h2>① 数学弹药包 · 100以内进退位加减</h2>
+  <div class="meta">达标线：口算+竖式，正确率≥95%　|　限时 ____ 分钟，正确率目标 ≥95%</div>
+  <div class="qgrid "><div class="q">26 + 69 = ____</div><div class="q">66 − 18 = ____</div><div class="q">48 + 29 = ____</div><div class="q">75 − 59 = ____</div><div class="q">32 + 29 = ____</div><div class="q">78 − 69 = ____</div><div class="q">66 + 24 = ____</div><div class="q">47 + 37 = ____</div><div class="q">52 − 14 = ____</div><div class="q">63 − 58 = ____</div><div class="q">60 − 35 = ____</div><div class="q">69 + 17 = ____</div><div class="q">23 − 17 = ____</div><div class="q">44 + 26 = ____</div><div class="q">32 − 26 = ____</div><div class="q">68 − 49 = ____</div><div class="q">70 − 62 = ____</div><div class="q">50 − 38 = ____</div><div class="q">93 − 19 = ____</div><div class="q">88 − 79 = ____</div><div class="q">51 − 39 = ____</div><div class="q">90 − 44 = ____</div><div class="q">50 − 25 = ____</div><div class="q">33 − 25 = ____</div></div>
+  <div class="note">♻️ <b>温故（100以内加减（不进退位））</b> —— 防止「学过就忘」</div><div class="qgrid "><div class="q">44 − 24 = ____</div><div class="q">37 + 41 = ____</div><div class="q">68 − 51 = ____</div><div class="q">98 − 32 = ____</div><div class="q">49 − 16 = ____</div><div class="q">39 − 17 = ____</div></div>
+  <div class="note">🏗️ <b>每日地基 · 20以内进位加 / 退位减（凑十·破十）</b> —— 整个小学数学的底层能力，每天必练，做到 3 秒内脱口而出。做题时<b>说出方法</b>：「9+6，把 6 分成 1 和 5，9+1=10，10+5=15」。</div><div class="qgrid "><div class="q">7 + 4 = ____</div><div class="q">5 + 7 = ____</div><div class="q">13 − 7 = ____</div><div class="q">8 + 6 = ____</div><div class="q">15 − 8 = ____</div><div class="q">7 + 6 = ____</div><div class="q">16 − 9 = ____</div><div class="q">13 − 3 = ____</div><div class="q">17 − 4 = ____</div><div class="q">15 − 3 = ____</div></div>
+
+  <h2>② 语文弹药包 · 拼音进阶 · 复韵母 / 鼻韵母 / 拼读</h2>
+  <div class="meta">达标线：任意音节 3秒拼出</div>
+  <div class="blk"><div class="sub">① 复韵母 / 鼻韵母认读</div><div class="body">ong　ao　iu　üe　eng　er　ai　un　ou</div></div>
+<div class="blk"><div class="sub">② 两拼音节拼读（声母+韵母）</div><div class="body">k-ang　l-ai　c-ao　z-eng　n-ong　z-ong　r-ong　g-ao　ch-un　m-ou　l-ei　l-un　x-iu　p-ai</div></div>
+<div class="blk"><div class="sub">③ 三拼音节（声母+介母+韵母）</div><div class="body">r-u-o　g-u-o　z-u-o　zh-u-o　s-u-an　d-u-an　sh-u-an　r-u-an</div></div>
+<div class="blk"><div class="sub">④ 标调歌复习</div><div class="body">一声平平左到右，二声就像上山坡，三声下坡又上坡，四声就像下山坡</div></div>
+  <div class="note">📖 <b>亲子阅读 20 分钟</b>：《唐诗三百首（儿童版）》——读 2 首，配合当日古诗任务（下方另附注音故事，可自己读）</div>
+  
+  <div class="story">
+    <div class="story-head">
+      <h3>📖 今日注音故事 ·《刻舟求剑》</h3>
+      <button type="button" class="exp-btn" id="exportStoryBtn">🖼️ 导出为图片</button>
+    </div>
+    <div class="cat">成语故事 ｜ 每个字的正上方就是它的拼音，指着字一个一个读；读完讲给家长听</div>
+    <div class="ln"><span class="keep"><span class="zi"><span class="py l4">cóng</span><span class="hz">从</span></span></span><span class="keep"><span class="zi"><span class="py l4">qián</span><span class="hz">前</span></span></span><span class="keep"><span class="zi"><span class="py l3">yǒu</span><span class="hz">有</span></span></span><span class="keep"><span class="zi"><span class="py l2">gè</span><span class="hz">个</span></span></span><span class="keep"><span class="zi"><span class="py l3">rén</span><span class="hz">人</span></span><span class="zi punc"><span class="hz">，</span></span></span><span class="keep"><span class="zi"><span class="py l3">dài</span><span class="hz">带</span></span></span><span class="keep"><span class="zi"><span class="py l3">zhe</span><span class="hz">着</span></span></span><span class="keep"><span class="zi"><span class="py l2">yī</span><span class="hz">一</span></span></span><span class="keep"><span class="zi"><span class="py l2">bǎ</span><span class="hz">把</span></span></span><span class="keep"><span class="zi"><span class="py l3">bǎo</span><span class="hz">宝</span></span></span><span class="keep"><span class="keep"><span class="zi"><span class="py l4">jiàn</span><span class="hz">剑</span></span></span><span class="keep"><span class="zi"><span class="py l3">zuò</span><span class="hz">坐</span></span></span><span class="keep"><span class="zi"><span class="py l5">chuán</span><span class="hz">船</span></span></span><span class="keep"><span class="zi"><span class="py l3">guò</span><span class="hz">过</span></span></span><span class="keep"><span class="zi"><span class="py l2">hé</span><span class="hz">河</span></span><span class="zi punc"><span class="hz">。</span></span></span></span></div>
+<div class="ln"><span class="keep"><span class="zi"><span class="py l5">chuán</span><span class="hz">船</span></span></span><span class="keep"><span class="zi"><span class="py l3">dào</span><span class="hz">到</span></span></span><span class="keep"><span class="zi"><span class="py l2">hé</span><span class="hz">河</span></span></span><span class="keep"><span class="zi"><span class="py l5">zhōng</span><span class="hz">中</span></span></span><span class="keep"><span class="zi"><span class="py l4">yāng</span><span class="hz">央</span></span><span class="zi punc"><span class="hz">，</span></span></span><span class="keep"><span class="zi"><span class="py l2">tā</span><span class="hz">他</span></span></span><span class="keep"><span class="zi"><span class="py l2">yī</span><span class="hz">一</span></span></span><span class="keep"><span class="zi"><span class="py l2">bù</span><span class="hz">不</span></span></span><span class="keep"><span class="zi"><span class="py l3">liú</span><span class="hz">留</span></span></span><span class="keep"><span class="zi"><span class="py l4">shén</span><span class="hz">神</span></span><span class="zi punc"><span class="hz">，</span></span></span><span class="keep"><span class="zi"><span class="py l3">bǎo</span><span class="hz">宝</span></span></span><span class="keep"><span class="zi"><span class="py l4">jiàn</span><span class="hz">剑</span></span><span class="zi punc"><span class="hz">「</span></span></span><span class="keep"><span class="zi"><span class="py l2">pū</span><span class="hz">扑</span></span></span><span class="keep"><span class="zi"><span class="py l4">tōng</span><span class="hz">通</span></span><span class="zi punc"><span class="hz">」</span></span></span><span class="keep"><span class="keep"><span class="zi"><span class="py l4">diào</span><span class="hz">掉</span></span></span><span class="keep"><span class="zi"><span class="py l3">jìn</span><span class="hz">进</span></span></span><span class="keep"><span class="zi"><span class="py l2">le</span><span class="hz">了</span></span></span><span class="keep"><span class="zi"><span class="py l4">shuǐ</span><span class="hz">水</span></span></span><span class="keep"><span class="zi"><span class="py l2">lǐ</span><span class="hz">里</span></span><span class="zi punc"><span class="hz">。</span></span></span></span></div>
+<div class="ln"><span class="keep"><span class="zi"><span class="py l4">tóng</span><span class="hz">同</span></span></span><span class="keep"><span class="zi"><span class="py l5">chuán</span><span class="hz">船</span></span></span><span class="keep"><span class="zi"><span class="py l2">de</span><span class="hz">的</span></span></span><span class="keep"><span class="zi"><span class="py l3">rén</span><span class="hz">人</span></span></span><span class="keep"><span class="zi"><span class="py l2">jí</span><span class="hz">急</span></span></span><span class="keep"><span class="zi"><span class="py l3">zhe</span><span class="hz">着</span></span></span><span class="keep"><span class="zi"><span class="py l3">hǎn</span><span class="hz">喊</span></span><span class="zi punc"><span class="hz">：</span></span><span class="zi punc"><span class="hz">「</span></span></span><span class="keep"><span class="keep"><span class="zi"><span class="py l4">kuài</span><span class="hz">快</span></span></span><span class="keep"><span class="zi"><span class="py l3">xià</span><span class="hz">下</span></span></span><span class="keep"><span class="zi"><span class="py l4">shuǐ</span><span class="hz">水</span></span></span><span class="keep"><span class="zi"><span class="py l3">lāo</span><span class="hz">捞</span></span></span><span class="keep"><span class="zi"><span class="py l2">ya</span><span class="hz">呀</span></span><span class="zi punc"><span class="hz">！</span></span><span class="zi punc"><span class="hz">」</span></span></span></span></div>
+<div class="ln"><span class="keep"><span class="zi"><span class="py l2">tā</span><span class="hz">他</span></span></span><span class="keep"><span class="zi"><span class="py l2">bù</span><span class="hz">不</span></span></span><span class="keep"><span class="zi"><span class="py l5">huāng</span><span class="hz">慌</span></span></span><span class="keep"><span class="zi"><span class="py l2">bù</span><span class="hz">不</span></span></span><span class="keep"><span class="zi"><span class="py l4">máng</span><span class="hz">忙</span></span><span class="zi punc"><span class="hz">，</span></span></span><span class="keep"><span class="zi"><span class="py l3">tāo</span><span class="hz">掏</span></span></span><span class="keep"><span class="zi"><span class="py l3">chū</span><span class="hz">出</span></span></span><span class="keep"><span class="zi"><span class="py l4">xiǎo</span><span class="hz">小</span></span></span><span class="keep"><span class="zi"><span class="py l3">dāo</span><span class="hz">刀</span></span><span class="zi punc"><span class="hz">，</span></span></span><span class="keep"><span class="zi"><span class="py l3">zài</span><span class="hz">在</span></span></span><span class="keep"><span class="zi"><span class="py l5">chuán</span><span class="hz">船</span></span></span><span class="keep"><span class="zi"><span class="py l4">biān</span><span class="hz">边</span></span></span><span class="keep"><span class="zi"><span class="py l2">kè</span><span class="hz">刻</span></span></span><span class="keep"><span class="keep"><span class="zi"><span class="py l2">le</span><span class="hz">了</span></span></span><span class="keep"><span class="zi"><span class="py l2">yí</span><span class="hz">一</span></span></span><span class="keep"><span class="zi"><span class="py l2">gè</span><span class="hz">个</span></span></span><span class="keep"><span class="zi"><span class="py l2">jì</span><span class="hz">记</span></span></span><span class="keep"><span class="zi"><span class="py l3">hào</span><span class="hz">号</span></span><span class="zi punc"><span class="hz">。</span></span></span></span></div>
+<div class="ln"><span class="keep"><span class="zi punc"><span class="hz">「</span></span></span><span class="keep"><span class="zi"><span class="py l3">bié</span><span class="hz">别</span></span></span><span class="keep"><span class="zi"><span class="py l2">jí</span><span class="hz">急</span></span><span class="zi punc"><span class="hz">，</span></span><span class="zi punc"><span class="hz">」</span></span></span><span class="keep"><span class="zi"><span class="py l2">tā</span><span class="hz">他</span></span></span><span class="keep"><span class="zi"><span class="py l4">shuō</span><span class="hz">说</span></span><span class="zi punc"><span class="hz">，</span></span><span class="zi punc"><span class="hz">「</span></span></span><span class="keep"><span class="zi"><span class="py l2">wǒ</span><span class="hz">我</span></span></span><span class="keep"><span class="zi"><span class="py l2">de</span><span class="hz">的</span></span></span><span class="keep"><span class="zi"><span class="py l4">jiàn</span><span class="hz">剑</span></span></span><span class="keep"><span class="zi"><span class="py l3">jiù</span><span class="hz">就</span></span></span><span class="keep"><span class="zi"><span class="py l3">shì</span><span class="hz">是</span></span></span><span class="keep"><span class="zi"><span class="py l4">cóng</span><span class="hz">从</span></span></span><span class="keep"><span class="zi"><span class="py l3">zhè</span><span class="hz">这</span></span></span><span class="keep"><span class="zi"><span class="py l2">ge</span><span class="hz">个</span></span></span><span class="keep"><span class="zi"><span class="py l2">dì</span><span class="hz">地</span></span></span><span class="keep"><span class="keep"><span class="zi"><span class="py l4">fāng</span><span class="hz">方</span></span></span><span class="keep"><span class="zi"><span class="py l4">diào</span><span class="hz">掉</span></span></span><span class="keep"><span class="zi"><span class="py l3">xià</span><span class="hz">下</span></span></span><span class="keep"><span class="zi"><span class="py l2">qù</span><span class="hz">去</span></span></span><span class="keep"><span class="zi"><span class="py l2">de</span><span class="hz">的</span></span><span class="zi punc"><span class="hz">。</span></span><span class="zi punc"><span class="hz">」</span></span></span></span></div>
+<div class="ln"><span class="keep"><span class="zi"><span class="py l2">dà</span><span class="hz">大</span></span></span><span class="keep"><span class="zi"><span class="py l3">jiā</span><span class="hz">家</span></span></span><span class="keep"><span class="zi"><span class="py l2">nǐ</span><span class="hz">你</span></span></span><span class="keep"><span class="zi"><span class="py l3">kàn</span><span class="hz">看</span></span></span><span class="keep"><span class="zi"><span class="py l2">wǒ</span><span class="hz">我</span></span><span class="zi punc"><span class="hz">、</span></span></span><span class="keep"><span class="zi"><span class="py l2">wǒ</span><span class="hz">我</span></span></span><span class="keep"><span class="zi"><span class="py l3">kàn</span><span class="hz">看</span></span></span><span class="keep"><span class="zi"><span class="py l2">nǐ</span><span class="hz">你</span></span><span class="zi punc"><span class="hz">，</span></span></span><span class="keep"><span class="zi"><span class="py l4">shuí</span><span class="hz">谁</span></span></span><span class="keep"><span class="keep"><span class="zi"><span class="py l2">yě</span><span class="hz">也</span></span></span><span class="keep"><span class="zi"><span class="py l3">méi</span><span class="hz">没</span></span></span><span class="keep"><span class="zi"><span class="py l4">tīng</span><span class="hz">听</span></span></span><span class="keep"><span class="zi"><span class="py l4">míng</span><span class="hz">明</span></span></span><span class="keep"><span class="zi"><span class="py l3">bái</span><span class="hz">白</span></span><span class="zi punc"><span class="hz">。</span></span></span></span></div>
+<div class="ln"><span class="keep"><span class="zi"><span class="py l5">chuán</span><span class="hz">船</span></span></span><span class="keep"><span class="zi"><span class="py l2">jì</span><span class="hz">继</span></span></span><span class="keep"><span class="zi"><span class="py l2">xù</span><span class="hz">续</span></span></span><span class="keep"><span class="zi"><span class="py l4">wǎng</span><span class="hz">往</span></span></span><span class="keep"><span class="zi"><span class="py l4">qián</span><span class="hz">前</span></span></span><span class="keep"><span class="zi"><span class="py l3">zǒu</span><span class="hz">走</span></span><span class="zi punc"><span class="hz">，</span></span></span><span class="keep"><span class="zi"><span class="py l2">yì</span><span class="hz">一</span></span></span><span class="keep"><span class="zi"><span class="py l3">zhí</span><span class="hz">直</span></span></span><span class="keep"><span class="zi"><span class="py l3">kào</span><span class="hz">靠</span></span></span><span class="keep"><span class="zi"><span class="py l2">le</span><span class="hz">了</span></span></span><span class="keep"><span class="zi"><span class="py l2">àn</span><span class="hz">岸</span></span><span class="zi punc"><span class="hz">，</span></span></span><span class="keep"><span class="zi"><span class="py l2">tā</span><span class="hz">他</span></span></span><span class="keep"><span class="zi"><span class="py l3">cái</span><span class="hz">才</span></span></span><span class="keep"><span class="zi"><span class="py l4">shùn</span><span class="hz">顺</span></span></span><span class="keep"><span class="zi"><span class="py l3">zhe</span><span class="hz">着</span></span></span><span class="keep"><span class="zi"><span class="py l2">jì</span><span class="hz">记</span></span></span><span class="keep"><span class="keep"><span class="zi"><span class="py l3">hào</span><span class="hz">号</span></span></span><span class="keep"><span class="zi"><span class="py l3">xià</span><span class="hz">下</span></span></span><span class="keep"><span class="zi"><span class="py l4">shuǐ</span><span class="hz">水</span></span></span><span class="keep"><span class="zi"><span class="py l2">qù</span><span class="hz">去</span></span></span><span class="keep"><span class="zi"><span class="py l4">zhǎo</span><span class="hz">找</span></span><span class="zi punc"><span class="hz">。</span></span></span></span></div>
+<div class="ln"><span class="keep"><span class="zi"><span class="py l2">tā</span><span class="hz">他</span></span></span><span class="keep"><span class="zi"><span class="py l3">zài</span><span class="hz">在</span></span></span><span class="keep"><span class="zi"><span class="py l4">shuǐ</span><span class="hz">水</span></span></span><span class="keep"><span class="zi"><span class="py l2">lǐ</span><span class="hz">里</span></span></span><span class="keep"><span class="zi"><span class="py l2">mō</span><span class="hz">摸</span></span></span><span class="keep"><span class="zi"><span class="py l2">le</span><span class="hz">了</span></span></span><span class="keep"><span class="zi"><span class="py l3">bàn</span><span class="hz">半</span></span></span><span class="keep"><span class="zi"><span class="py l4">tiān</span><span class="hz">天</span></span><span class="zi punc"><span class="hz">，</span></span></span><span class="keep"><span class="zi"><span class="py l4">lián</span><span class="hz">连</span></span></span><span class="keep"><span class="zi"><span class="py l4">jiàn</span><span class="hz">剑</span></span></span><span class="keep"><span class="zi"><span class="py l2">de</span><span class="hz">的</span></span></span><span class="keep"><span class="zi"><span class="py l4">yǐng</span><span class="hz">影</span></span></span><span class="keep"><span class="keep"><span class="zi"><span class="py l2">zi</span><span class="hz">子</span></span></span><span class="keep"><span class="zi"><span class="py l2">yě</span><span class="hz">也</span></span></span><span class="keep"><span class="zi"><span class="py l3">méi</span><span class="hz">没</span></span></span><span class="keep"><span class="zi"><span class="py l2">mō</span><span class="hz">摸</span></span></span><span class="keep"><span class="zi"><span class="py l3">dào</span><span class="hz">到</span></span><span class="zi punc"><span class="hz">。</span></span></span></span></div>
+<div class="ln"><span class="keep"><span class="zi"><span class="py l2">àn</span><span class="hz">岸</span></span></span><span class="keep"><span class="zi"><span class="py l5">shàng</span><span class="hz">上</span></span></span><span class="keep"><span class="zi"><span class="py l2">de</span><span class="hz">的</span></span></span><span class="keep"><span class="zi"><span class="py l3">rén</span><span class="hz">人</span></span></span><span class="keep"><span class="zi"><span class="py l4">xiào</span><span class="hz">笑</span></span></span><span class="keep"><span class="zi"><span class="py l2">le</span><span class="hz">了</span></span><span class="zi punc"><span class="hz">：</span></span><span class="zi punc"><span class="hz">「</span></span></span><span class="keep"><span class="zi"><span class="py l5">chuán</span><span class="hz">船</span></span></span><span class="keep"><span class="zi"><span class="py l3">zǎo</span><span class="hz">早</span></span></span><span class="keep"><span class="zi"><span class="py l3">zǒu</span><span class="hz">走</span></span></span><span class="keep"><span class="zi"><span class="py l4">yuǎn</span><span class="hz">远</span></span></span><span class="keep"><span class="zi"><span class="py l2">le</span><span class="hz">了</span></span><span class="zi punc"><span class="hz">，</span></span></span><span class="keep"><span class="zi"><span class="py l4">jiàn</span><span class="hz">剑</span></span></span><span class="keep"><span class="zi"><span class="py l2">kě</span><span class="hz">可</span></span></span><span class="keep"><span class="zi"><span class="py l2">bù</span><span class="hz">不</span></span></span><span class="keep"><span class="zi"><span class="py l3">huì</span><span class="hz">会</span></span></span><span class="keep"><span class="keep"><span class="zi"><span class="py l3">gēn</span><span class="hz">跟</span></span></span><span class="keep"><span class="zi"><span class="py l3">zhe</span><span class="hz">着</span></span></span><span class="keep"><span class="zi"><span class="py l5">chuán</span><span class="hz">船</span></span></span><span class="keep"><span class="zi"><span class="py l3">zǒu</span><span class="hz">走</span></span></span><span class="keep"><span class="zi"><span class="py l1">a</span><span class="hz">啊</span></span><span class="zi punc"><span class="hz">。</span></span><span class="zi punc"><span class="hz">」</span></span></span></span></div>
+<div class="ln"><span class="keep"><span class="zi"><span class="py l4">jiàn</span><span class="hz">剑</span></span></span><span class="keep"><span class="zi"><span class="py l3">luò</span><span class="hz">落</span></span></span><span class="keep"><span class="zi"><span class="py l3">zài</span><span class="hz">在</span></span></span><span class="keep"><span class="zi"><span class="py l2">hé</span><span class="hz">河</span></span></span><span class="keep"><span class="zi"><span class="py l5">zhōng</span><span class="hz">中</span></span></span><span class="keep"><span class="zi"><span class="py l4">yāng</span><span class="hz">央</span></span><span class="zi punc"><span class="hz">，</span></span></span><span class="keep"><span class="zi"><span class="py l2">jì</span><span class="hz">记</span></span></span><span class="keep"><span class="zi"><span class="py l3">hào</span><span class="hz">号</span></span></span><span class="keep"><span class="zi"><span class="py l3">què</span><span class="hz">却</span></span></span><span class="keep"><span class="zi"><span class="py l2">kè</span><span class="hz">刻</span></span></span><span class="keep"><span class="zi"><span class="py l3">zài</span><span class="hz">在</span></span></span><span class="keep"><span class="zi"><span class="py l5">chuán</span><span class="hz">船</span></span></span><span class="keep"><span class="zi"><span class="py l5">shàng</span><span class="hz">上</span></span><span class="zi punc"><span class="hz">，</span></span></span><span class="keep"><span class="zi"><span class="py l2">nǎ</span><span class="hz">哪</span></span></span><span class="keep"><span class="zi"><span class="py l2">lǐ</span><span class="hz">里</span></span></span><span class="keep"><span class="keep"><span class="zi"><span class="py l3">hái</span><span class="hz">还</span></span></span><span class="keep"><span class="zi"><span class="py l4">zhǎo</span><span class="hz">找</span></span></span><span class="keep"><span class="zi"><span class="py l2">de</span><span class="hz">得</span></span></span><span class="keep"><span class="zi"><span class="py l3">dào</span><span class="hz">到</span></span></span><span class="keep"><span class="zi"><span class="py l2">ne</span><span class="hz">呢</span></span><span class="zi punc"><span class="hz">？</span></span></span></span></div>
+<div class="ln"><span class="keep"><span class="zi punc"><span class="hz">「</span></span></span><span class="keep"><span class="zi"><span class="py l2">kè</span><span class="hz">刻</span></span></span><span class="keep"><span class="zi"><span class="py l4">zhōu</span><span class="hz">舟</span></span></span><span class="keep"><span class="zi"><span class="py l3">qiú</span><span class="hz">求</span></span></span><span class="keep"><span class="zi"><span class="py l4">jiàn</span><span class="hz">剑</span></span><span class="zi punc"><span class="hz">」</span></span></span><span class="keep"><span class="zi"><span class="py l4">shuō</span><span class="hz">说</span></span></span><span class="keep"><span class="zi"><span class="py l2">de</span><span class="hz">的</span></span></span><span class="keep"><span class="zi"><span class="py l3">jiù</span><span class="hz">就</span></span></span><span class="keep"><span class="zi"><span class="py l3">shì</span><span class="hz">是</span></span></span><span class="keep"><span class="zi"><span class="py l3">shì</span><span class="hz">事</span></span></span><span class="keep"><span class="zi"><span class="py l4">qíng</span><span class="hz">情</span></span></span><span class="keep"><span class="zi"><span class="py l4">biàn</span><span class="hz">变</span></span></span><span class="keep"><span class="zi"><span class="py l2">le</span><span class="hz">了</span></span><span class="zi punc"><span class="hz">，</span></span></span><span class="keep"><span class="zi"><span class="py l3">bàn</span><span class="hz">办</span></span></span><span class="keep"><span class="zi"><span class="py l2">fǎ</span><span class="hz">法</span></span></span><span class="keep"><span class="zi"><span class="py l3">hái</span><span class="hz">还</span></span></span><span class="keep"><span class="keep"><span class="zi"><span class="py l2">bù</span><span class="hz">不</span></span></span><span class="keep"><span class="zi"><span class="py l3">kěn</span><span class="hz">肯</span></span></span><span class="keep"><span class="zi"><span class="py l4">biàn</span><span class="hz">变</span></span></span><span class="keep"><span class="zi"><span class="py l2">de</span><span class="hz">的</span></span></span><span class="keep"><span class="zi"><span class="py l3">rén</span><span class="hz">人</span></span><span class="zi punc"><span class="hz">。</span></span></span></span></div>
+    <div class="ask">💬 读完想一想：为什么照着船上的记号找不到剑？</div>
+  </div>
+
+  <div class="note">🏮 <b>今日古诗</b>：《题西林壁》· 苏轼　
+    <span style="color:#5a6478">横看成岭侧成峰，远近高低各不同。不识庐山真面目，只缘身在此山中。</span></div>
+
+  <h2>③ 英语弹药包 · 高频词 · Dolch Pre-primer</h2>
+  <div class="meta">达标线：见词 1 秒读</div>
+  <div class="blk"><div class="sub">① 闪卡 1 秒读</div><div class="body">find　run　big　up　go　two　blue　in　my　funny</div></div>
+<div class="blk"><div class="sub">② 造句（选 3 个词各说一句）</div><div class="body">（口头完成）</div></div>
+
+  <h2>👑 Boss 关 · 奥数思维题（只做 2 题，做不出就看答案学方法）</h2>
+  <div class="blk"><div class="body">1. 【归一问题】4 支铅笔 12 元，买 7 支要多少元？<br>2. 【鸡兔同笼】笼子里鸡和兔一共 18 只，一共有 54 条腿。鸡有几只？（b 为偶数）<br>3. 【倍数问题】苹果有 88 个，梨的个数是苹果的 9 倍。梨和苹果一共多少个？</div></div>
+
+  <h2>🏁 结算</h2>
+  <div class="settle">
+    连续作战：<b>1 天</b>　|　累计积分：<b>0 分</b><br>
+    今日奖励：【集章卡】本周集满 5 个章 → 周末一次「爸爸/妈妈专属陪伴日」<br>
+    打卡：数学 ☐　语文 ☐　英语 ☐　阅读 ☐　Boss ☐<br>
+    <b>家长话术：</b>错得多时第一句是：「错得好，这些就是明天要打的怪。」先接情绪，再改错。
+  </div>
+  <div class="foot">以宁 · 每日晚托作战单　|　由 scripts/daily_homework.py 自动生成</div>
+</div>
+
+<div class="sheet pagebreak">
+  <h2>🔑 答案页（家长专用，打印后单独一页）</h2>
+  <h2>数学 · 今日主练</h2>
+  <div class="qgrid ans"><div class="q">95</div><div class="q">48</div><div class="q">77</div><div class="q">16</div><div class="q">61</div><div class="q">9</div><div class="q">90</div><div class="q">84</div><div class="q">38</div><div class="q">5</div><div class="q">25</div><div class="q">86</div><div class="q">6</div><div class="q">70</div><div class="q">6</div><div class="q">19</div><div class="q">8</div><div class="q">12</div><div class="q">74</div><div class="q">9</div><div class="q">12</div><div class="q">46</div><div class="q">25</div><div class="q">8</div></div>
+  <h2>数学 · 温故</h2><div class="qgrid ans"><div class="q">20</div><div class="q">78</div><div class="q">17</div><div class="q">66</div><div class="q">33</div><div class="q">22</div></div><h2>数学 · 每日地基</h2><div class="qgrid ans"><div class="q">11</div><div class="q">12</div><div class="q">6</div><div class="q">14</div><div class="q">7</div><div class="q">13</div><div class="q">7</div><div class="q">10</div><div class="q">13</div><div class="q">12</div></div>
+  <div class="ans"><b>Boss 答案：</b>21 元（若不能整除请检查数据）　兔 9 只，鸡 9 只　梨 792 个，一共 880 个</div>
+  <div class="note">
+    记录正确率（脚本会自动据此调难度）：<br>
+    <code>python3 scripts/daily_homework.py --feedback math=0.95 chinese=0.90 english=1.0</code>
+  </div>
+  <div class="foot">连续 3 次某科 ≥95% → 自动晋级下一档</div>
+</div>
+
+<div class="img-modal" id="imgModal" hidden>
+  <div class="img-modal-bar">
+    <div class="img-modal-tip">图片已生成 · 手机上长按图片可保存到相册，也可以点「保存 / 分享」直接发微信</div>
+    <button type="button" class="img-save" id="imgSaveBtn">⬇ 保存 / 分享</button>
+    <button type="button" class="img-close" id="imgCloseBtn">关闭</button>
+  </div>
+  <div class="img-modal-body"><img id="imgPreview" alt="注音故事图片"></div>
+</div>
+
+<script type="application/json" id="story-data">{"date": "2026-11-28", "title": "刻舟求剑", "category": "成语故事", "question": "为什么照着船上的记号找不到剑？", "paras": [{"text": "从前有个人，带着一把宝剑坐船过河。", "py": ["cóng", "qián", "yǒu", "gè", "rén", "", "dài", "zhe", "yī", "bǎ", "bǎo", "jiàn", "zuò", "chuán", "guò", "hé", ""]}, {"text": "船到河中央，他一不留神，宝剑「扑通」掉进了水里。", "py": ["chuán", "dào", "hé", "zhōng", "yāng", "", "tā", "yī", "bù", "liú", "shén", "", "bǎo", "jiàn", "", "pū", "tōng", "", "diào", "jìn", "le", "shuǐ", "lǐ", ""]}, {"text": "同船的人急着喊：「快下水捞呀！」", "py": ["tóng", "chuán", "de", "rén", "jí", "zhe", "hǎn", "", "", "kuài", "xià", "shuǐ", "lāo", "ya", "", ""]}, {"text": "他不慌不忙，掏出小刀，在船边刻了一个记号。", "py": ["tā", "bù", "huāng", "bù", "máng", "", "tāo", "chū", "xiǎo", "dāo", "", "zài", "chuán", "biān", "kè", "le", "yí", "gè", "jì", "hào", ""]}, {"text": "「别急，」他说，「我的剑就是从这个地方掉下去的。」", "py": ["", "bié", "jí", "", "", "tā", "shuō", "", "", "wǒ", "de", "jiàn", "jiù", "shì", "cóng", "zhè", "ge", "dì", "fāng", "diào", "xià", "qù", "de", "", ""]}, {"text": "大家你看我、我看你，谁也没听明白。", "py": ["dà", "jiā", "nǐ", "kàn", "wǒ", "", "wǒ", "kàn", "nǐ", "", "shuí", "yě", "méi", "tīng", "míng", "bái", ""]}, {"text": "船继续往前走，一直靠了岸，他才顺着记号下水去找。", "py": ["chuán", "jì", "xù", "wǎng", "qián", "zǒu", "", "yì", "zhí", "kào", "le", "àn", "", "tā", "cái", "shùn", "zhe", "jì", "hào", "xià", "shuǐ", "qù", "zhǎo", ""]}, {"text": "他在水里摸了半天，连剑的影子也没摸到。", "py": ["tā", "zài", "shuǐ", "lǐ", "mō", "le", "bàn", "tiān", "", "lián", "jiàn", "de", "yǐng", "zi", "yě", "méi", "mō", "dào", ""]}, {"text": "岸上的人笑了：「船早走远了，剑可不会跟着船走啊。」", "py": ["àn", "shàng", "de", "rén", "xiào", "le", "", "", "chuán", "zǎo", "zǒu", "yuǎn", "le", "", "jiàn", "kě", "bù", "huì", "gēn", "zhe", "chuán", "zǒu", "a", "", ""]}, {"text": "剑落在河中央，记号却刻在船上，哪里还找得到呢？", "py": ["jiàn", "luò", "zài", "hé", "zhōng", "yāng", "", "jì", "hào", "què", "kè", "zài", "chuán", "shàng", "", "nǎ", "lǐ", "hái", "zhǎo", "de", "dào", "ne", ""]}, {"text": "「刻舟求剑」说的就是事情变了，办法还不肯变的人。", "py": ["", "kè", "zhōu", "qiú", "jiàn", "", "shuō", "de", "jiù", "shì", "shì", "qíng", "biàn", "le", "", "bàn", "fǎ", "hái", "bù", "kěn", "biàn", "de", "rén", ""]}]}</script>
+<script>
+(function () {
+  var dataNode = document.getElementById('story-data');
+  var btn = document.getElementById('exportStoryBtn');
+  if (!dataNode || !btn) return;
+  var data;
+  try { data = JSON.parse(dataNode.textContent); } catch (e) { return; }
+
+  var FONT_HZ = '"Kaiti SC","STKaiti","KaiTi","楷体","Songti SC","STSong",serif';
+  var FONT_PY = '"Avenir Next","Helvetica Neue",Arial,sans-serif';
+  var FONT_UI = '"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif';
+  var W = 1000, PAD = 46, CELL = 43, PUNC = 20;
+  var PY = 23, HZ = 35, ROW_H = 82, GAP = 22;
+  var innerW = W - PAD * 2;
+  var blob = null, objURL = null;
+
+  function roundRect(c, x, y, w, h, r) {
+    c.beginPath(); c.moveTo(x + r, y);
+    c.arcTo(x + w, y, x + w, y + h, r); c.arcTo(x + w, y + h, x, y + h, r);
+    c.arcTo(x, y + h, x, y, r);         c.arcTo(x, y, x + w, y, r);
+    c.closePath();
+  }
+  function wrap(c, text, maxW) {
+    var out = [], cur = '';
+    for (var i = 0; i < text.length; i++) {
+      var t = cur + text[i];
+      if (c.measureText(t).width > maxW && cur) { out.push(cur); cur = text[i]; }
+      else cur = t;
+    }
+    if (cur) out.push(cur);
+    return out;
+  }
+  /* 标点不单独占一格，贴到前一个字后面；网页版也是同样规则 */
+  function cellsOf(para) {
+    var text = para.text, py = para.py || [], out = [];
+    for (var i = 0; i < text.length; i++) {
+      var ch = text[i], p = py[i] || '';
+      if (!p) {
+        if (out.length) out[out.length - 1].punc += ch;
+        else out.push({ ch: '', py: '', punc: ch });
+      } else out.push({ ch: ch, py: p, punc: '' });
+    }
+    return out;
+  }
+  function cw(c) { return CELL + c.punc.length * PUNC; }
+  function rowW(row) { var s = 0; for (var i = 0; i < row.length; i++) s += cw(row[i]); return s; }
+  function layout(cells, indent) {
+    var rows = [], cur = [], used = indent;
+    for (var i = 0; i < cells.length; i++) {
+      var w = cw(cells[i]);
+      if (used + w > innerW && cur.length) { rows.push(cur); cur = []; used = 0; }
+      cur.push(cells[i]); used += w;
+    }
+    if (cur.length) rows.push(cur);
+    /* 段末至少 3 个字，避免孤字成行 */
+    if (rows.length > 1) {
+      var last = rows[rows.length - 1], prev = rows[rows.length - 2];
+      while (last.length < 5 && prev.length > 5) {
+        var moved = prev.pop();
+        if (rowW(last) + cw(moved) > innerW) { prev.push(moved); break; }
+        last.unshift(moved);
+      }
+    }
+    return rows;
+  }
+  function build() {
+    var probe = document.createElement('canvas').getContext('2d');
+    probe.font = '16px ' + FONT_UI;
+    var catLines = wrap(probe, data.category + ' ｜ 每个字的正上方就是它的拼音，指着字一个一个读；读完讲给家长听', innerW);
+    probe.font = '17px ' + FONT_UI;
+    var askLines = wrap(probe, '读完想一想：' + data.question, innerW - 34);
+    var allRows = data.paras.map(function (p) { return layout(cellsOf(p), CELL * 2); });
+    var nRows = 0;
+    allRows.forEach(function (r) { nRows += r.length; });
+    var askH = 20 + askLines.length * 26;
+    var H = PAD + 46 + catLines.length * 24 + 22
+          + nRows * ROW_H + data.paras.length * GAP
+          + askH + 34 + 26 + PAD;
+
+    var S = 2;                                 /* 2 倍分辨率，发微信/打印都清楚 */
+    var cv = document.createElement('canvas');
+    cv.width = W * S; cv.height = Math.ceil(H * S);
+    var c = cv.getContext('2d'); c.scale(S, S);
+    c.textBaseline = 'alphabetic';
+
+    c.fillStyle = '#fff'; c.fillRect(0, 0, W, H);
+    c.fillStyle = '#fffdf7'; c.strokeStyle = '#e9dcc0'; c.lineWidth = 2;
+    roundRect(c, 1, 1, W - 2, H - 2, 18); c.fill(); c.stroke();
+
+    var y = PAD;
+    c.textAlign = 'left'; c.fillStyle = '#7a4d1e';
+    c.font = '600 30px ' + FONT_HZ;
+    c.fillText('今日注音故事 ·《' + data.title + '》', PAD, y + 30);
+    y += 46;
+    c.fillStyle = '#8a8069'; c.font = '16px ' + FONT_UI;
+    catLines.forEach(function (l) { y += 24; c.fillText(l, PAD, y); });
+    y += 22;
+
+    allRows.forEach(function (rows) {
+      rows.forEach(function (row, ri) {
+        var x = PAD + (ri === 0 ? CELL * 2 : 0), top = y + 6;
+        row.forEach(function (cell) {
+          if (cell.py) {
+            c.save(); c.textAlign = 'center'; c.fillStyle = '#a9612b';
+            c.font = '600 ' + PY + 'px ' + FONT_PY;
+            var tw = c.measureText(cell.py).width, mx = CELL * 0.86;
+            c.translate(x + CELL / 2, top + PY);
+            if (tw > mx) c.scale(mx / tw, 1);
+            c.fillText(cell.py, 0, 0); c.restore();
+          }
+          c.textAlign = 'center'; c.fillStyle = '#2b2a28';
+          c.font = HZ + 'px ' + FONT_HZ;
+          c.fillText(cell.ch, x + CELL / 2, top + PY + 14 + HZ);
+          var px = x + CELL;
+          for (var k = 0; k < cell.punc.length; k++) {
+            c.fillText(cell.punc[k], px + PUNC / 2, top + PY + 14 + HZ);
+            px += PUNC;
+          }
+          x += cw(cell);
+        });
+        y += ROW_H;
+      });
+      y += GAP;
+    });
+    y += 12;
+    c.fillStyle = '#faf3e4'; roundRect(c, PAD, y, innerW, askH, 10); c.fill();
+    c.textAlign = 'left'; c.fillStyle = '#6b5a41'; c.font = '17px ' + FONT_UI;
+    askLines.forEach(function (l, i) { c.fillText(l, PAD + 16, y + 28 + i * 26); });
+    y += askH + 34;
+    c.textAlign = 'center'; c.fillStyle = '#a8a08c'; c.font = '14px ' + FONT_UI;
+    c.fillText('以宁 · 每日注音故事　|　' + data.date, W / 2, y);
+    return cv;
+  }
+
+  function download(url, name) {
+    var a = document.createElement('a');
+    a.href = url; a.download = name;
+    document.body.appendChild(a); a.click(); a.remove();
+  }
+  function closeModal() {
+    document.getElementById('imgModal').hidden = true;
+    document.body.style.overflow = '';
+  }
+  var saveBtn = document.getElementById('imgSaveBtn');
+  saveBtn.addEventListener('click', function () {
+    if (!blob || !objURL) return;
+    var name = '以宁注音故事-' + data.date + '.png';
+    try {
+      var file = new File([blob], name, { type: 'image/png' });
+      if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+        navigator.share({ files: [file], title: '注音故事 · ' + data.title })
+          .catch(function () { download(objURL, name); });
+        return;
+      }
+    } catch (e) { /* 老浏览器不支持 File/share，直接下载 */ }
+    download(objURL, name);
+  });
+  document.getElementById('imgCloseBtn').addEventListener('click', closeModal);
+  document.getElementById('imgModal').addEventListener('click', function (e) {
+    if (e.target === this) closeModal();
+  });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeModal(); });
+
+  btn.addEventListener('click', function () {
+    btn.disabled = true; var old = btn.textContent; btn.textContent = '⏳ 生成中…';
+    try {
+      var cv = build();
+      cv.toBlob(function (b) {
+        btn.disabled = false; btn.textContent = old;
+        if (!b) { alert('图片生成失败，请换个浏览器再试'); return; }
+        blob = b;
+        if (objURL) URL.revokeObjectURL(objURL);
+        objURL = URL.createObjectURL(b);
+        document.getElementById('imgPreview').src = objURL;
+        document.getElementById('imgModal').hidden = false;
+        document.body.style.overflow = 'hidden';
+        /* PC 直接下载一份；移动端交给「保存 / 分享」按钮或长按图片 */
+        if (!window.matchMedia || !window.matchMedia('(pointer: coarse)').matches) {
+          download(objURL, '以宁注音故事-' + data.date + '.png');
+        }
+      }, 'image/png');
+    } catch (e) {
+      btn.disabled = false; btn.textContent = old;
+      alert('图片生成失败：' + e.message);
+    }
+  });
+})();
+</script>
+</body></html>
